@@ -1,0 +1,73 @@
+import tkinter as tk 
+from tkinter import filedialog
+from PIL import Image
+
+#Create the window
+root = tk.Tk()
+root.geometry("300x200")
+root.title("File Selector")
+
+#Create the label
+label = tk.Label(
+    root, 
+    text="No file loaded.", 
+    bg="lightgrey", 
+    font=("Arial", 12), 
+    relief="solid", 
+    width=30, 
+    height=2
+) 
+
+#Function to select the file
+def select_file(text_box):
+    file_path = tk.filedialog.askopenfilename()
+    if file_path:
+        file_variable.set(file_path)
+        text_box.config(text=f"File Loaded:\n{file_path}")
+        path_string = file_variable.get() #Get the file path as a string
+        
+    #Ensure the file is a valid file type
+    if path_string.endswith(extensions):
+        comfirmation_label = tk.Label(
+            root, 
+            text="File loaded successfully.", 
+            bg="green", font=("Arial", 12), 
+            relief="solid", 
+            width=30, 
+            height=2
+    )
+        
+    comfirmation_label.pack(pady=10)
+        
+    #If the file is not a png file, convert it to a png file
+    if not path_string.endswith(".png"):
+            convert_to_png(file_path, path_string)
+            comfirmation_label.config(text="File loaded successfully. File has been converted to a PNG file.") 
+    else:
+        text_box.config(
+            text="Please upload a valid file type.", 
+            bg="red")
+
+#Converts the file to a png file if it is not already a png file
+def convert_to_png(path, path_string):  
+    
+    img = Image.open(path) #Open the image
+    name = path_string.split(".")[0] #Get the name of the file (split the list at the period and get the first element)
+    new_path = f"{name}.png" #Create the new path for the file
+    img.save(new_path) 
+    
+#Create the variable to store the file path
+file_variable = tk.StringVar() #Variable to store the file path
+path_string = file_variable.get() #Get the file path as a string
+
+
+button = tk.Button(root, text="Select File", command =lambda: select_file(label))
+
+#Accepted file types
+extensions = (".png", ".PNG", ".jpg", ".jpeg", ".heic", ".HEIC") 
+
+#Actually makes the label and button appear on the window
+label.pack(pady=10)
+button.pack()
+
+root.mainloop()
