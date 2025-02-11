@@ -1,15 +1,35 @@
+//libraries
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('querystring');
 const { Client } = require('pg');
+/*
+This code is just a basic template, creates a server at http://localhost:8080
+Server sends an upload file form, then saves the uploaded filename in the DB.
+*/
 
+/*
+TO DO: 
+connect server to frontend code
+Update DB to actual SQL tables 
+*/ 
+
+/*Note: you will need postgresSQL downloaded on your computer.
+update the password field with the one you set.
+The table I used is just a template for testing the DB connection, created using:
+CREATE TABLE uploads (
+    id SERIAL PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+*/
 // PostgreSQL client setup
 const client = new Client({
     user: 'postgres',
     host: 'localhost',
     database: 'postgres',
-    password: 'password',
+    password: 'password',//set as your DB password
     port: 5432, // Default PostgreSQL port
 });
 
@@ -33,14 +53,14 @@ const server = http.createServer((req, res) => {
             const filePath = path.join(__dirname, fileName);
             const fileData = rawData.split(`--${boundary}`)[1].split('\r\n\r\n')[1].split('\r\n--')[0];
 
-            //change later to save file data to database
+            //NOTE: change later to save file data to database
             fs.writeFile(filePath, fileData, async err => {//save file in directory
                 if (err) {
                     res.writeHead(500, { 'Content-Type': 'text/plain' });
                     res.end('Error saving file\n');
                 } else {
                     try {
-                        // Insert file metadata into PostgreSQL
+                        // Insert filename into PostgreSQL
                         await client.query('INSERT INTO uploads (file_name) VALUES ($1)', [fileName]);
                         res.writeHead(200, { 'Content-Type': 'text/plain' });
                         res.end(`File uploaded successfully: ${fileName}\n`);
