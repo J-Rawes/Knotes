@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang ="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Homepage</title>
+
+  <link rel="stylesheet" href="upload.css">
+
+</head>
+
+<body>
+
+  <div class="user">
+    <div id="return">
+      <a href="homepage.html">Back</a>
+    </div>
+    <div id="complete">
+      <button type="submit" id="subN" class="sub" onsubmit="return uploadNote()" value="process">Upload</button>
+    </div>
+  </div>
+
+
+  <br>
+  <br>
+
+    <h1>Select a File</h1>
+    <label id="imgButton">
+      <input type="file" id="fileUpload" accept="image/*">
+      Upload your Notes
+    </label>
+
+  <h1>Select and Crop Image</h1>
+  <div id="help">
+    <p>If you want to upload your entire image or if your image contains strictly text, chose the according options below. If there is a combination of both text and diagrams, crop the according parts and upload them at the bottom of the page.</p>
+  </div>
+
+  
+      <img hidden id="sourceImage" src="" alt="Source" />
+      <canvas id="selectionCanvas" width=640px height=480px></canvas>
+      <h2>Cropped Region</h2>
+      <canvas id="croppedCanvas"></canvas>
+
+        <br>
+
+        <div id="textModal" class="modal">
+          <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+              <h3>Edit Text</h3>
+              <textarea id="textInput" rows="8" cols="50" placeholder="Edit your text here..."></textarea><br>
+              <button class="modalB" onclick="saveText()">Save Text</button>
+              <button class="modalB" id="cancel" onclick="closeModal()">Cancel</button>
+          </div>
+      </div>
+
+      <form name="selectionType" method="get" onsubmit="return addScreenshot()">
+        <div class="radioB">
+        <input type="radio" id="imgSelect" name="imgType" value="imgSelect" />
+        <label for="imgSelect">Image</label>
+        <input type="radio" id="txtSelect" name="imgType" value="txtSelect" />
+        <label for="txtSelect">Text</label>
+        </div>
+        <button type="submit" class="sub" value="process">Confirm Selection</button>
+      </form>
+
+  <div class="main">
+
+  </div>
+
+</body>
+
+<script type="text/javascript" src="upload.js">
+</script>
+
+</html>

@@ -1,0 +1,243 @@
+* {
+  color: #423E37;
+  font-family: Verdana, sans-serif;
+  background-color: #fcfcfc;
+  font-size: 24px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+.main {
+  padding:40px;
+  margin: auto;
+  text-align: center;
+}
+
+#complete {
+  float: right;
+}
+
+a {
+  text-decoration: none;
+  width: 10%;
+  padding: 10px;
+  border: 2px solid #868079;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+a:hover {
+  background-color: #c9cba3;
+}
+
+a:active {
+  transition: 0.1s;
+  border-color: #c9cba3;
+}
+
+.user {
+text-align: right;
+min-width: 100%;
+}
+
+#return{
+float: left;
+padding: 10px;
+}
+
+#return a:hover {
+background-color: #f56476;
+}
+
+canvas {
+    border: 2px solid #423E37;
+    max-width: 50%;
+    max-height: 50%;
+    min-width: 20%;
+    min-height: 20%;
+}
+
+.sub {
+  display: inline-block;
+  border: 2px solid #868079;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.sub:hover {
+  background-color: #c9cba3;
+}
+
+.sub:active {
+  transition: 0.1s;
+  border-color: #c9cba3;
+}
+
+#subN {
+  padding: 10px;
+}
+
+.radioB input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radioB label {
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  padding: 2px;
+  display: inline-block;
+  border: 2px solid #868079;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.radioB input[type="radio"]:checked + label {
+  transition: 0.1s;
+  border-color: #423E37;
+  background-color: #a7adca;
+}
+
+.radioB input[type="radio"]:focus + label {
+  border-color: #423E37;
+}
+
+.radioB label:hover {
+  background-color: #c5c9db;
+}
+
+.radioB label:active {
+  transition: 0.1s;
+  border-color: #a7adca;
+}
+
+/* Modal Background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; 
+  z-index: 1000; /* Sits on top of other content */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: #423E37; /* Dark overlay */
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #fcfcfc;
+  margin: 10% auto; /* Center vertically and horizontally */
+  padding: 20px;
+  border: 2px solid #423E37;
+  border-radius: 10px;
+  width: 50%; /* Adjust the width */
+  box-shadow: 0 5px 15px #423E37;
+}
+
+/* Close Button */
+.close-button {
+  color: #868079;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #423E37;
+  text-decoration: none;
+}
+
+/* Text Area Styling */
+textarea {
+  width: 90%;
+  text-align: left;
+  margin: auto;
+  font-size: 16px;
+  border: 2px solid #423E37;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+canvas {
+  margin: auto;
+  border-radius: 10px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+#imgButton {
+  border: 2px solid #868079;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+#imgButton:hover {
+  background-color: #c5c9db;
+}
+
+#imgButton:active {
+  transition: 0.1s;
+  border: 2px solid #c5c9db;
+}
+
+.modalB {
+  padding: 10px;
+  border: 2px solid #868079;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+  cursor: pointer;
+}
+
+.modalB:active{
+  border-color: #c9cba3;
+}
+
+.modalB:hover {
+  background-color: #c9cba3;
+}
+
+#cancel:hover {
+  background-color: #f56476;
+}
+
+#cancel:active {
+  border-color: #f56476;
+}
+
+#help {
+  max-width: 60%;
+  margin: auto;
+}
