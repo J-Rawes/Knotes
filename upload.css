@@ -35,12 +35,12 @@ a {
 }
 
 a:hover {
-  background-color: #c9cba3;
+  background-color: #ffdb99;
 }
 
 a:active {
   transition: 0.1s;
-  border-color: #c9cba3;
+  border-color: #ffdb99;
 }
 
 .user {
@@ -113,7 +113,7 @@ canvas {
 .radioB input[type="radio"]:checked + label {
   transition: 0.1s;
   border-color: #423E37;
-  background-color: #a7adca;
+  background-color: #ffdb99;
 }
 
 .radioB input[type="radio"]:focus + label {
@@ -121,7 +121,7 @@ canvas {
 }
 
 .radioB label:hover {
-  background-color: #c5c9db;
+  background-color: #ffdb99;
 }
 
 .radioB label:active {
@@ -132,7 +132,7 @@ canvas {
 /* Modal Background */
 .modal {
   display: none; /* Hidden by default */
-  position: fixed; 
+  position: fixed;
   z-index: 1000; /* Sits on top of other content */
   left: 0;
   top: 0;
@@ -201,12 +201,12 @@ input[type="file"] {
 }
 
 #imgButton:hover {
-  background-color: #c5c9db;
+  background-color: #ffdb99;
 }
 
 #imgButton:active {
   transition: 0.1s;
-  border: 2px solid #c5c9db;
+  border: 2px solid #ffdb99;
 }
 
 .modalB {
@@ -222,11 +222,11 @@ input[type="file"] {
 }
 
 .modalB:active{
-  border-color: #c9cba3;
+  border-color: #ffdb99;
 }
 
 .modalB:hover {
-  background-color: #c9cba3;
+  background-color: #ffdb99;
 }
 
 #cancel:hover {
@@ -239,5 +239,67 @@ input[type="file"] {
 
 #help {
   max-width: 60%;
+  margin: auto;
+}
+
+#saveText:hover {
+  background-color: #c9cba3;
+}
+
+#saveText:active {
+  border-color: #c9cba3;
+}
+
+.u1 {
+  display: inline-block;
+  margin-bottom: 10px;
+  border: 2px solid #868079;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.u1:hover {
+  background-color: #c9cba3;
+}
+
+.u1:active {
+  transition: 0.1s;
+  border-color: #c9cba3;
+}
+
+#displayOptions{
+  display: none;
+}
+
+.badge{
+  background-color: transparent;
+}
+
+#grid {
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+#imgCanvas {
+  grid-row: 1/2;
+  grid-column: 1/2;
+  max-width: 100%;
+  min-width: 80%;
+}
+
+#txtCanvas {
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+#uModal-c {
+  width: 80%;
+  height: 100%;
   margin: auto;
 }
