@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 
+const vision = require('@google-cloud/vision');
+
 // PostgreSQL client setup
 const client = new Client({
     user: 'postgres',
