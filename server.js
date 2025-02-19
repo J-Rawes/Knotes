@@ -94,3 +94,25 @@ const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// Method for extracting from file
+
+const CREDENTIALS;
+
+const CONFIG = {
+    credentials: {
+        private_key: CREDENTIALS.private_key,
+        client_email: CREDENTIALS.client_email
+    }
+};
+
+async function extract() {
+
+const client = new vision.ImageAnnotatorClient(CONFIG);
+
+// Read a local image as a text document
+const [result] = await client.documentTextDetection('sampletext.png');
+const fullTextAnnotation = result.fullTextAnnotation;
+console.log(`Full text: ${fullTextAnnotation.text}`);
+
+}
