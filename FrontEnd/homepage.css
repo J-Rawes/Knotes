@@ -1,0 +1,53 @@
+* {
+  color: #423E37;
+  font-family: Verdana, sans-serif;
+  background-color: #fcfcfc;
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+.main {
+  padding:40px;
+  margin: auto;
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+  width: 10%;
+  padding: 10px;
+  border: 3px solid #868079;
+  border-radius: 2px;
+  background-color: #fcfcfc;
+  color: #423E37;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+a:hover {
+  background-color: #c9cba3;
+}
+
+a:active {
+  transition: 0.1s;
+  border-color: #c9cba3;
+}
+
+.user {
+  text-align: right;
+  min-width: 100%;
+}
+
+#userN {
+  text-align: right;
+}
+
+#courses {
+  margin: auto;
+  text-align: center;
+}

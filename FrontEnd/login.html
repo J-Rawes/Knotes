@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang ="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>User Login</title>
+
+  <link rel="stylesheet" href="login.css">
+
+</head>
+
+<body>
+
+<h1>Log In</h1>
+
+<div class="inputF">
+  <form name="logIn" method="post" onsubmit="return login()">
+    <p>
+      <label for="username">Username</label>
+      <div class="submit">
+        <input type="text" id="username" name="user" />
+      </div>
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <div class="submit">
+        <input type="password" id="password" name="password" />
+      </div>
+    </p>
+
+    <div class="submit">
+      <p>
+        <button id="sub" type="submit" value="process">Confirm</button>
+      </p>
+    </div>
+
+  </form>
+</div>
+
+<h3 id="message"></h3>
+
+</body>
+
+<script type="text/javascript" src="register.js">
+</script>
+
+</html>
