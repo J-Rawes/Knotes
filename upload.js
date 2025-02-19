@@ -4,6 +4,11 @@ const imageOutput = document.getElementById("sourceImage");
 var imageArray = new Array();
 var textArray = new Array();
 
+var displayImg = new Image;
+const imgCanvas = document.getElementById("imgCanvas");
+const txtCanvas = document.getElementById("txtCanvas");
+const imgCtx = imgCanvas.getContext("2d");
+
 fileInput.addEventListener("change", async () => {
     let [file] = fileInput.files
 
@@ -117,20 +122,19 @@ function addScreenshot() {
         openModal("Nathan Code Output...");  // Replace this with actual extracted text
     }
 
+    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
     return false;
 }
 
 function addScreenshot2() {
-    const imgButtonPressed = document.getElementById("imgSelect").checked;
+    const imageDataURL = selectionCanvas.toDataURL();
+    imageArray.push(imageDataURL);
+    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    return false;
+}
 
-    if (imgButtonPressed) {
-        const croppedImageDataURL = croppedCanvas.toDataURL();
-        imageArray.push(croppedImageDataURL);
-    } else {
-        // Open the modal window for text editing
-        openModal("Nathan Code Output...");  // Replace this with actual extracted text
-    }
-
+function addScreenshot3() {
+    openModal("Nathan Code Output...");  // Replace this with actual extracted text
     return false;
 }
 
@@ -150,16 +154,43 @@ function saveText() {
         textArray.push(text);
         console.log("Text saved:", text);
     }
-    closeModal();  // Close after saving
+    closeModal('textModal');  // Close after saving
+    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
 }
 
 // Close Modal Function
-function closeModal() {
-    const modal = document.getElementById("textModal");
+function closeModal(modalType) {
+    const modal = document.getElementById(String(modalType));
     modal.style.display = "none";  // Hide the modal
 }
 
+//This is where imgArray and textArray will be uploaded to the database
+function uploadNote() {
+    displayImg.src = imageArray[0];
+    displayImg.onload = () => {
+        imgCanvas.width = displayImg.naturalWidth;
+        imgCanvas.height = displayImg.naturalHeight;
+        imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+        const modal = document.getElementById("uploadModal");
+        modal.style.display = "block";  // Show the modal
+    }
+
+}
+
+function loadImg() {
+    const reader2 = new FileReader();
+    reader2.onload = (e) => {
+      displayImg.src = e.target.result;
+    };
+
+    reader2.onerror = (err) => {
+        console.error("Error reading file:", err);
+        alert("An error occurred while reading the file.");
+    };
 
 
+    reader2.readAsDataURL(imageArray[0]);
+}
 
 
+//displayImg.onload = () => { displayImg.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height); };
