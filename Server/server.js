@@ -16,7 +16,7 @@ client.connect()
     .then(() => console.log('Connected to PostgreSQL'))
     .catch(err => console.error('Connection error', err.stack));
 
-// Serve static files
+// Serve static files (This is so it recognizes js and css files)
 const serveStaticFile = (filePath, contentType, res) => {
     fs.readFile(filePath, (err, data) => {
         if (err) {
@@ -35,6 +35,7 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(url);
 
     // Serve static files (HTML, CSS, JS)
+    //USED IN SERVE STATIC FILE
     if (ext === '.html') {
         serveStaticFile(path.join(__dirname, url), 'text/html', res);
     } else if (ext === '.css') {
@@ -43,7 +44,8 @@ const server = http.createServer((req, res) => {
         serveStaticFile(path.join(__dirname, url), 'application/javascript', res);
     }
 
-    // Handle POST request for registration
+    // THIS IS WHERE RESISTER.JS GETS /register
+      //As far as I understand, other requests will be handled in a similar manner  
     else if (req.method === 'POST' && req.url === '/register') {
         let body = '';
 
@@ -61,7 +63,8 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-                // Insert into PostgreSQL (user_id is auto-generated)
+                // Insert into PostgreSQL (user_id shoudld be auto-generated, right now it is hardcoded)
+                //Passwords are stored as plaintext, we can use Jackson's code to fix this
                 client.query(
                     'INSERT INTO "Users" (user_id, uname, pword) VALUES ($1, $2, $3)',
                     [1, username, password],
@@ -83,7 +86,7 @@ const server = http.createServer((req, res) => {
         });
     }
 
-    // Default 404
+    // Default 404, BAD CONNECTION
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Not Found\n');
