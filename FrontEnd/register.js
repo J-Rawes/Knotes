@@ -1,3 +1,23 @@
+/*
+HOW sendToDB WORKS: 
+
+1. User enters valid username and pass
+2. sendToDB sends POST req. to /register
+  a. Content is currently being sent as JSON (See headers)
+  b. Stringify makes sure uname and password are being sent as a string
+3. Node.js recieves this request
+  a. .then waits for the servers response, response.text() is the response
+4. This message object in the DOM displays the server's response
+
+*/
+
+/*
+See the final else statement: When a user has all valid inputs for registration, the front-end code calls 
+             "sendToDB", localStorage simply allows the browser to remember login credentials, 
+             location.href reroutes the user to the homepage
+*/
+
+
 const client = require('./server.js'); //Grab client info from server.js
 
 function login() {
@@ -33,8 +53,8 @@ function login() {
   return false;
 }
 
-function sendToDB(uname, pword) {
-  fetch('/register', {
+function sendToDB(uname, pword) { // Whatever the user inputs
+  fetch('/register', { //Send a POST request to the Server /register route. (Frontend send data to server)
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
