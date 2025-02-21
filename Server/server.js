@@ -1,7 +1,13 @@
+/*TODO: 
+Handle Task logic (DB = Owen + Ares) (Text scan = Nathen)
+*/
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
+
+const vision = require('@google-cloud/vision');
 
 // PostgreSQL client setup
 const client = new Client({
@@ -16,7 +22,7 @@ client.connect()
     .then(() => console.log('Connected to PostgreSQL'))
     .catch(err => console.error('Connection error', err.stack));
 
-// Serve static files (This is so it recognizes js and css files)
+// Serve static files
 const serveStaticFile = (filePath, contentType, res) => {
     fs.readFile(filePath, (err, data) => {
         if (err) {
@@ -35,7 +41,6 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(url);
 
     // Serve static files (HTML, CSS, JS)
-    //USED IN SERVE STATIC FILE
     if (ext === '.html') {
         serveStaticFile(path.join(__dirname, url), 'text/html', res);
     } else if (ext === '.css') {
@@ -44,9 +49,9 @@ const server = http.createServer((req, res) => {
         serveStaticFile(path.join(__dirname, url), 'application/javascript', res);
     }
 
-    // THIS IS WHERE RESISTER.JS GETS /register
-      //As far as I understand, other requests will be handled in a similar manner  
-    else if (req.method === 'POST' && req.url === '/register') { /////////////////////////////////////   /register is the "task" in question
+        //TODO handle UID creation
+        // Handle POST request for registration
+    else if (req.method === 'POST' && req.url === '/register') { /////////////////////////////////////////////// /register is the "task" in question
         let body = '';
 
         req.on('data', chunk => {
@@ -63,11 +68,12 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-                // Insert into PostgreSQL (user_id shoudld be auto-generated, right now it is hardcoded)
-                //Passwords are stored as plaintext, we can use Jackson's code to fix this
+
+                //Figure out UID numbering system
+                // Insert into PostgreSQL (user_id is auto-generated)
                 client.query(
                     'INSERT INTO "Users" (user_id, uname, pword) VALUES ($1, $2, $3)',
-                    [1, username, password],
+                    [1, username, password], //Check DB for "next UID"
                     (err, result) => {
                         if (err) {
                             console.error('Database insert error:', err);
@@ -86,7 +92,7 @@ const server = http.createServer((req, res) => {
         });
     }
 
-    // Default 404, BAD CONNECTION
+    // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Not Found\n');
@@ -97,3 +103,25 @@ const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// Method for extracting from file
+
+const CREDENTIALS;
+
+const CONFIG = {
+    credentials: {
+        private_key: CREDENTIALS.private_key,
+        client_email: CREDENTIALS.client_email
+    }
+};
+
+async function extract() {
+
+const client = new vision.ImageAnnotatorClient(CONFIG);
+
+// Read a local image as a text document
+const [result] = await client.documentTextDetection('sampletext.png');
+const fullTextAnnotation = result.fullTextAnnotation;
+console.log(`Full text: ${fullTextAnnotation.text}`);
+
+}
