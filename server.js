@@ -1,3 +1,7 @@
+/*TODO: 
+Handle Task logic (DB = Owen + Ares) (Text scan = Nathen)
+*/
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
