@@ -1,3 +1,7 @@
+//TODO: See resgister.js and server.js code.
+//Create a new handle /submitText where the text is now pushed. Need to edit both server.js and this file
+//Text should be saved as a hash?
+
 const fileInput = document.getElementById("fileUpload")
 const imageOutput = document.getElementById("sourceImage");
 
