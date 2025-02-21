@@ -58,7 +58,7 @@ const server = http.createServer((req, res) => {
             body += chunk.toString();
         });
 
-        req.on('end', () => {
+        req.on('end', async () => {
             try {
                 const { username, password } = JSON.parse(body);
 
@@ -68,12 +68,11 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-
-                //Figure out UID numbering system
                 // Insert into PostgreSQL (user_id is auto-generated)
+                const user_gen_id = await generateUID();
                 client.query(
                     'INSERT INTO "Users" (user_id, uname, pword) VALUES ($1, $2, $3)',
-                    [1, username, password], //Check DB for "next UID"
+                    [user_gen_id, username, password],
                     (err, result) => {
                         if (err) {
                             console.error('Database insert error:', err);
@@ -124,4 +123,18 @@ const [result] = await client.documentTextDetection('sampletext.png');
 const fullTextAnnotation = result.fullTextAnnotation;
 console.log(`Full text: ${fullTextAnnotation.text}`);
 
+}
+
+// Method for generating UID on account creation
+
+async function generateUID() {
+    try {
+        const result = await client.query('SELECT COUNT(*) FROM "Users"');
+        const count = result.rows[0].count; // Check DB for "next UID"
+        return count;
+    } catch (err) {
+        console.error('Error generating UID:', err);
+        throw err;
+    }
+    
 }
