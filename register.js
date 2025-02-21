@@ -33,6 +33,8 @@ function login() {
   return false;
 }
 
+//TODO: Add attribute "task"
+
 function sendToDB(uname, pword) {
   fetch('/register', {
       method: 'POST',
