@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
 
     // THIS IS WHERE RESISTER.JS GETS /register
       //As far as I understand, other requests will be handled in a similar manner  
-    else if (req.method === 'POST' && req.url === '/register') {
+    else if (req.method === 'POST' && req.url === '/register') { /////////////////////////////////////   /register is the "task" in question
         let body = '';
 
         req.on('data', chunk => {
