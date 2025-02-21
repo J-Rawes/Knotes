@@ -67,10 +67,12 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
+
+                //Figure out UID numbering system
                 // Insert into PostgreSQL (user_id is auto-generated)
                 client.query(
                     'INSERT INTO "Users" (user_id, uname, pword) VALUES ($1, $2, $3)',
-                    [1, username, password],
+                    [1, username, password], //Check DB for "next UID"
                     (err, result) => {
                         if (err) {
                             console.error('Database insert error:', err);
