@@ -91,6 +91,33 @@ const server = http.createServer((req, res) => {
         });
     }
 
+    else if (req.method === 'POST' && req.url === '/submitText') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const content = JSON.parse(body);
+                var textImg = new Image;
+                var outputText;
+                textImg.src = content;
+                textImg.onload = () => {
+                    outputText = extract(textImg);
+                }
+                
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(outputText);
+
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Invalid request format');
+            }
+        });
+    }
+
     // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -114,12 +141,12 @@ const CONFIG = {
     }
 };
 
-async function extract() {
+async function extract(image) {
 
 const client = new vision.ImageAnnotatorClient(CONFIG);
 
 // Read a local image as a text document
-const [result] = await client.documentTextDetection('sampletext.png');
+const [result] = await client.documentTextDetection(image);
 const fullTextAnnotation = result.fullTextAnnotation;
 console.log(`Full text: ${fullTextAnnotation.text}`);
 
@@ -138,3 +165,4 @@ async function generateUID() {
     }
     
 }
+
