@@ -8,10 +8,15 @@ Knotes is a online service that allows users to upload their class notes and con
 
 ## **Contributors**
 Jackson Rawes - Developer, Team Lead
+<br>
 Owen Fleming - Developer
+<br>
 Ryan Ulgiati - Developer
+<br>
 Ares Miller - Developer
+<br>
 Nathan Hawrylak - Developer
+<br>
 Connor Dodds - Developer
 
 ## Contact
