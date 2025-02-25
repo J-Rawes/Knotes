@@ -1,7 +1,3 @@
-//TODO: See resgister.js and server.js code.
-//Create a new handle /submitText where the text is now pushed. Need to edit both server.js and this file
-//Text should be saved as a hash?
-
 const fileInput = document.getElementById("fileUpload")
 const imageOutput = document.getElementById("sourceImage");
 
@@ -113,8 +109,6 @@ selectionCanvas.addEventListener("mouseup", () => {
    
 });
 
-
-
 function addScreenshot() {
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
@@ -123,7 +117,9 @@ function addScreenshot() {
         imageArray.push(croppedImageDataURL);
     } else {
         // Open the modal window for text editing
-        openModal("Nathan Code Output...");  // Replace this with actual extracted text
+        const croppedImageDataURL = croppedCanvas.toDataURL();
+        const returnText = sendTextToServer(croppedImageDataURL);
+        openModal(returnText);  // Replace this with actual extracted text
     }
 
     document.getElementById("count").innerHTML = imageArray.length + textArray.length;
@@ -138,7 +134,9 @@ function addScreenshot2() {
 }
 
 function addScreenshot3() {
-    openModal("Nathan Code Output...");  // Replace this with actual extracted text
+    const croppedImageDataURL = croppedCanvas.toDataURL();
+    const returnText = sendTextToServer(croppedImageDataURL);
+    openModal(returnText);  // Replace this with actual extracted text
     return false;
 }
 
@@ -196,5 +194,22 @@ function loadImg() {
     reader2.readAsDataURL(imageArray[0]);
 }
 
+function sendTextToServer(text) { // Whatever the user inputs
+    
+    var content;
+    
+    fetch('/submitText', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: text})
+    })
+    .then(response => response.text())
+    .then(data => {
+        content = data;
+    })
+    .catch(error => console.error('Error:', error));
 
-//displayImg.onload = () => { displayImg.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height); };
+    return content;
+  }
