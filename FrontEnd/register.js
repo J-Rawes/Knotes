@@ -45,6 +45,9 @@ function login() {
   } else if (username.length === 0 || password.length === 0){
     document.getElementById("message").style.color = "#f56476";
     document.getElementById("message").innerHTML = "Please fill in all fields";
+  } else if (password.length < 8 || /[A-Z]/.test(password) == false || /\d/.test(password) == false) {
+    document.getElementById("message").style.color = "#f56476";
+    document.getElementById("message").innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
   } else { //User accepted
     sendToDB(username, password); //ACTUALLY SEND TO DB
     localStorage.setItem("username", username);
