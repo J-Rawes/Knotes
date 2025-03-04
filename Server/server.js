@@ -6,6 +6,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
+const bcrypt = require('bcrypt'); // Import bcrypt which is a hashing library
+
 
 const vision = require('@google-cloud/vision');
 
@@ -118,6 +120,39 @@ const server = http.createServer((req, res) => {
         });
     }
 
+    else if (req.method === 'POST' && req.url === '/hash') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const {plainTextPassword} = JSON.parse(body);
+                
+                if(!plainTextPassword){ //No password passed error
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end("Password is missing");
+                    return;
+                }
+
+                //Actual hashing here
+                const saltRounds = 10; // Number of rounds to generate the salt. A round is a hashing operation. The more rounds, the more secure the hash.
+                const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds); //Hash the password
+
+
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(hashedPassword); //Send password back to register.js
+
+            } catch (error) {
+                console.error('Error hashing password:', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error hashing password');
+            }
+        });
+    }
+
     // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -165,4 +200,7 @@ async function generateUID() {
     }
     
 }
+
+
+
 
