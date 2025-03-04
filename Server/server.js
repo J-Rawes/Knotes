@@ -153,6 +153,51 @@ const server = http.createServer((req, res) => {
         });
     }
 
+    else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const {courseID} = JSON.parse(body);
+                
+                if(!courseID){ //No password passed error
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end("Missing course ID");
+                    return;
+                }
+
+                // Get note count and IDs for the given course
+                const query = `
+                    SELECT ARRAY_AGG(note_id) AS note_ids
+                    FROM "Notes"
+                    WHERE course_id = $1
+                `;
+
+                const result = await client.query(query, [courseID]); 
+
+                if (result.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: "No notes found" }));
+                    return;
+                }
+
+                const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
+
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
+
+            } catch (error) {
+                console.error('Error hashing password:', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error hashing password');
+            }
+        });
+    }
+
     // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -200,7 +245,6 @@ async function generateUID() {
     }
     
 }
-
 
 
 
