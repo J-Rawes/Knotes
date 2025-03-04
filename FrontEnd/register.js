@@ -49,11 +49,27 @@ function login() {
     document.getElementById("message").style.color = "#f56476";
     document.getElementById("message").innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
   } else { //User accepted
-    sendToDB(username, password); //ACTUALLY SEND TO DB
+    hashPass(password, username) //SEND TO DB IS CALLED IN HERE
     localStorage.setItem("username", username);
     location.href = "homepage.html";  
   }
   return false;
+}
+
+function hashPass(pword, uname){
+    fetch('/hash', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({plainTextPassword: pword}) //This is the plaintext password being sent to the system
+    })
+    .then(response => response.text())
+    .then(hashedPassword => { //get the hased password back from the server and call send to DB
+        sendToDB(uname, hashedPassword); //SEND TO DB HAS BEEN MOVED HERE
+    })
+    .catch(error => console.error('Error:', error));
+
 }
 
 function sendToDB(uname, pword) { // Whatever the user inputs
