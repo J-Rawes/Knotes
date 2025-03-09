@@ -6,10 +6,10 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
-const bcrypt = require('bcrypt'); // Import bcrypt which is a hashing library
+const Hashes = require('jshashes'); // Import jshashes which is a hashing library
 
 
-const vision = require('@google-cloud/vision');
+// const vision = require('@google-cloud/vision');
 
 // PostgreSQL client setup
 const client = new Client({
@@ -51,8 +51,7 @@ const server = http.createServer((req, res) => {
         serveStaticFile(path.join(__dirname, url), 'application/javascript', res);
     }
 
-        //TODO handle UID creation
-        // Handle POST request for registration
+    // Handle POST request for registration
     else if (req.method === 'POST' && req.url === '/register') { /////////////////////////////////////////////// /register is the "task" in question
         let body = '';
 
@@ -109,46 +108,13 @@ const server = http.createServer((req, res) => {
                 textImg.onload = () => {
                     outputText = extract(textImg);
                 }
-                
+
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
                 res.end(outputText);
 
             } catch (error) {
                 res.writeHead(400, { 'Content-Type': 'text/plain' });
                 res.end('Invalid request format');
-            }
-        });
-    }
-
-    else if (req.method === 'POST' && req.url === '/hash') {
-        let body = '';
-
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-
-        req.on('end', async () => {
-            try {
-                const {plainTextPassword} = JSON.parse(body);
-                
-                if(!plainTextPassword){ //No password passed error
-                    res.writeHead(400, { 'Content-Type': 'text/plain' });
-                    res.end("Password is missing");
-                    return;
-                }
-
-                //Actual hashing here
-                const saltRounds = 10; // Number of rounds to generate the salt. A round is a hashing operation. The more rounds, the more secure the hash.
-                const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds); //Hash the password
-
-
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end(hashedPassword); //Send password back to register.js
-
-            } catch (error) {
-                console.error('Error hashing password:', error);
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end('Error hashing password');
             }
         });
     }
@@ -162,9 +128,9 @@ const server = http.createServer((req, res) => {
 
         req.on('end', async () => {
             try {
-                const {courseID} = JSON.parse(body);
-                
-                if(!courseID){ //No password passed error
+                const { courseID } = JSON.parse(body);
+
+                if (!courseID) { //No password passed error
                     res.writeHead(400, { 'Content-Type': 'text/plain' });
                     res.end("Missing course ID");
                     return;
@@ -177,7 +143,7 @@ const server = http.createServer((req, res) => {
                     WHERE course_id = $1
                 `;
 
-                const result = await client.query(query, [courseID]); 
+                const result = await client.query(query, [courseID]);
 
                 if (result.rows.length === 0) {
                     res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -188,7 +154,7 @@ const server = http.createServer((req, res) => {
                 const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
 
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
+                res.end(JSON.stringify({ noteIDs })); //Send note IDs to courseDisplay.js
 
             } catch (error) {
                 console.error('Error hashing password:', error);
@@ -197,6 +163,53 @@ const server = http.createServer((req, res) => {
             }
         });
     }
+
+
+    else if (req.method === 'POST' && req.url === '/login') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username, password } = JSON.parse(body);
+
+                if (!username || !password) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: "Missing username or password" }));
+                    return;
+                }
+
+                // Get note count and IDs for the given course
+                const query = `
+                    SELECT pword 
+                    FROM "Users"
+                    WHERE uname = $1;
+                `;
+
+                const result = await client.query(query, [username]);
+                const storedHashPass = result.rows[0].pword;
+
+
+
+                if (storedHashPass.trim() === password.trim()) {
+                    return res.status(200).json({ exists: true, message: "Login successful" });
+                } else {
+                    return res.status(401).json({ exists: false, message: "Incorrect password" });
+                }
+
+
+            } catch (error) {
+                console.error('Error verifying user:', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error hashing password');
+            }
+        });
+    }
+
+
 
     // Default 404
     else {
@@ -211,7 +224,7 @@ server.listen(PORT, () => {
 });
 
 // Method for extracting from file
-
+/*
 const CREDENTIALS;
 
 const CONFIG = {
@@ -231,7 +244,7 @@ const fullTextAnnotation = result.fullTextAnnotation;
 console.log(`Full text: ${fullTextAnnotation.text}`);
 
 }
-
+*/
 // Method for generating UID on account creation
 
 async function generateUID() {
@@ -243,7 +256,7 @@ async function generateUID() {
         console.error('Error generating UID:', err);
         throw err;
     }
-    
+
 }
 
 
