@@ -9,7 +9,7 @@ const { Client } = require('pg');
 const Hashes = require('jshashes'); // Import jshashes which is a hashing library
 
 
-// const vision = require('@google-cloud/vision');
+const vision = require('@google-cloud/vision');
 
 // PostgreSQL client setup
 const client = new Client({
@@ -101,19 +101,21 @@ const server = http.createServer((req, res) => {
 
         req.on('end', async () => {
             try {
-                const content = JSON.parse(body);
-                var textImg = new Image;
-                var outputText;
-                textImg.src = content;
-                textImg.onload = () => {
-                    outputText = extract(textImg);
-                }
+                var content = JSON.parse(body);
+                console.log(content);
+                content = content.content;
+                console.log(typeof content);
+                console.log("contents of: ", content);
+                const textImg = dataUrlToBuffer(content);
+                const extractedText = await extract(textImg);
 
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end(outputText);
+
+                res.writeHead(200, {'Content-Type': 'text/plain'});
+                res.end(extractedText);
 
             } catch (error) {
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.writeHead(400, {'Content-Type': 'text/plain'});
+                console.log(error);
                 res.end('Invalid request format');
             }
         });
@@ -195,10 +197,13 @@ const server = http.createServer((req, res) => {
 
 
                 if (storedHashPass.trim() === password.trim()) {
-                    return res.status(200).json({ exists: true, message: "Login successful" });
+                    res.writeHead(200, { 'Content-Type': 'text/plain' });
+                    res.end(JSON.stringify({ exists: true, message: "Login successful"  }));   
                 } else {
-                    return res.status(401).json({ exists: false, message: "Incorrect password" });
+                    res.writeHead(401, { 'Content-Type': 'text/plain' });
+                    res.end(JSON.stringify({ exists: false, message: "Incorrect password"  }));
                 }
+            
 
 
             } catch (error) {
@@ -235,16 +240,15 @@ const CONFIG = {
 };
 
 async function extract(image) {
-
-const client = new vision.ImageAnnotatorClient(CONFIG);
+    const client = new vision.ImageAnnotatorClient(CONFIG);
 
 // Read a local image as a text document
-const [result] = await client.documentTextDetection(image);
-const fullTextAnnotation = result.fullTextAnnotation;
-console.log(`Full text: ${fullTextAnnotation.text}`);
+    const [result] = await client.documentTextDetection(image);
+    const fullTextAnnotation = result.fullTextAnnotation;
+    return (fullTextAnnotation.text);
 
 }
-*/
+    */
 // Method for generating UID on account creation
 
 async function generateUID() {
@@ -257,6 +261,18 @@ async function generateUID() {
         throw err;
     }
 
+}
+
+function dataUrlToBuffer(dataUrl) {
+    if (typeof dataUrl !== "string") {
+        throw new Error("textImg must be a string");
+    }
+    //fs.writeFileSync('./filename.png', Buffer.from(dataUrl.split(',')[1], 'base64'))
+    const matches = dataUrl.match("^data:image/(png|jpeg);base64,(.+)$");
+    if (!matches) {
+        throw new Error('Invalid Data URL');
+    }
+    return Buffer.from(matches[2], 'base64');
 }
 
 
