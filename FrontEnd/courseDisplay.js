@@ -50,14 +50,14 @@ function generateButtons(notesArr) {
 }
 
 function loadArrayTest() {
-    imageArray.push('background.png');
-    imageArray.push('unknown-1.png');
+    imageArray.push('testIMG.jpg');
+    imageArray.push('testIMG2.jpg');
 }
 
 function loadTArrayTest() {
-    txtArray.push("Yo yo yo");
-    txtArray.push("it's hump day");
-    txtArray.push("tag three big ... fellas");
+    txtArray.push("Hello world");
+    txtArray.push("These would be notes displayed for the user");
+    txtArray.push("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet fermentum ex, id congue libero porta nec. Ut sed mollis nulla. Sed tincidunt suscipit metus, id suscipit quam malesuada sit amet. Nullam lacinia auctor nibh, mattis interdum diam auctor quis. Cras pharetra mauris eu commodo scelerisque. Vestibulum suscipit nec massa at sollicitudin. Vivamus elementum vehicula pharetra. Mauris tincidunt, urna mattis vulputate posuere, ante felis iaculis sem, sed pellentesque lectus nibh quis risus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean metus sem, tempor scelerisque nulla in, tincidunt sodales magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent ornare eu lacus ac convallis. Praesent nulla turpis, tempus vitae lacus laoreet, tempor lacinia arcu. Donec porta accumsan cursus. Morbi id neque ornare, euismod metus eu, fringilla libero. Cras et tortor sed justo sagittis porttitor.");
 }
 
 function displayNote() {
