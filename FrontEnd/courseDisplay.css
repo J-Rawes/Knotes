@@ -170,9 +170,18 @@ button:active {
   
   #txtCanvas {
     margin: auto;
+    text-align: left;
+    border: 2px solid #423E37;
+    width: 640px;
+    min-height: 240px;
     margin-top: 0;
     grid-row: 2/3;
     grid-column: 2/3;
+  }
+
+  #innerTxt {
+    text-align: left;
+    padding-left: 10px;
   }
 
   canvas {
