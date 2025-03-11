@@ -14,10 +14,10 @@ var imageArray = new Array();
 var txtArray = new Array();
 var displayImg = new Image;
 const imgCanvas = document.getElementById("imgCanvas");
-const txtCanvas = document.getElementById("txtCanvas");
+const txtCanvas = document.getElementById("innerTxt");
 const imgCtx = imgCanvas.getContext("2d");
-const txtCtx = txtCanvas.getContext("2d");
-txtCtx.font = "24px Verdana, sans-serif"
+//const txtCtx = txtCanvas.getContext("2d");
+//txtCtx.font = "24px Verdana, sans-serif"
 var iArrPointer = 0;
 var tArrPointer = 0;
 
@@ -68,7 +68,8 @@ function displayNote() {
         imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
         const modal = document.getElementById("noteModal");
         modal.style.display = "block";  // Show the modal
-        txtCtx.fillText(txtArray[tArrPointer],10,20);
+        txtCanvas.innerHTML = txtArray[tArrPointer];
+        //txtCtx.fillText(txtArray[tArrPointer],10,20);
     }
 }
 
@@ -112,6 +113,7 @@ function nextImg(foward) {
     imgCanvas.width = displayImg.naturalWidth;
     imgCanvas.height = displayImg.naturalHeight;
     imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+    txtCanvas.innerHTML = txtArray[tArrPointer];
     }
 }
 
@@ -130,8 +132,9 @@ function nextTxt(foward) {
             tArrPointer = tArrPointer - 1;
         }
     }
-    txtCtx.clearRect(0, 0, txtCanvas.width, txtCanvas.height);
-    txtCtx.fillText(txtArray[tArrPointer],10,20);
+    //txtCtx.clearRect(0, 0, txtCanvas.width, txtCanvas.height);
+    //txtCtx.fillText(txtArray[tArrPointer],10,20);
+    txtCanvas.innerHTML = txtArray[tArrPointer];
 }
 
 function getNoteCountAndID(CID){//Get note ID and title for the buttons 
