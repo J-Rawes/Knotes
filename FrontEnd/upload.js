@@ -108,7 +108,7 @@ selectionCanvas.addEventListener("mouseup", () => {
     croppedCtx.drawImage(sourceImage, x, y, width, height, 0, 0, width, height);
    
 });
-
+    
 function addScreenshot() {
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
@@ -118,8 +118,14 @@ function addScreenshot() {
     } else {
         // Open the modal window for text editing
         const croppedImageDataURL = croppedCanvas.toDataURL();
-        const returnText = sendTextToServer(croppedImageDataURL);
-        openModal(returnText);  // Replace this with actual extracted text
+        console.log(croppedImageDataURL);
+        const returnText = sendTextToServer(croppedImageDataURL); //SEND TO SERVER
+        
+        if (returnText) {
+            openModal(returnText);  // Replace this with actual extracted text
+        } else {
+            console.error('Failed to get text from server');
+        }
     }
 
     document.getElementById("count").innerHTML = imageArray.length + textArray.length;
@@ -134,9 +140,13 @@ function addScreenshot2() {
 }
 
 function addScreenshot3() {
-    const croppedImageDataURL = croppedCanvas.toDataURL();
-    const returnText = sendTextToServer(croppedImageDataURL);
-    openModal(returnText);  // Replace this with actual extracted text
+    const croppedImageDataURL = selectionCanvas.toDataURL();
+    const returnText = sendTextToServer(croppedImageDataURL); //SEND TO SERVER
+    if (returnText) {
+        openModal(returnText);  // Replace this with actual extracted text
+    } else {
+        console.error('Failed to get text from server');
+    }
     return false;
 }
 
@@ -148,7 +158,7 @@ function openModal(defaultText) {
     textInput.value = defaultText;  // Set default or extracted text
     modal.style.display = "block";  // Show the modal
 }
-
+    
 // Save Text Function
 function saveText() {
     const text = document.getElementById("textInput").value.trim();
@@ -194,22 +204,43 @@ function loadImg() {
     reader2.readAsDataURL(imageArray[0]);
 }
 
-function sendTextToServer(text) { // Whatever the user inputs
-    
-    var content;
-    
-    fetch('/submitText', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: text})
-    })
-    .then(response => response.text())
-    .then(data => {
-        content = data;
-    })
-    .catch(error => console.error('Error:', error));
+async function sendTextToServer(text) { // Whatever the user inputs
+    console.log("Reached send to server");
 
-    return content;
+    try {
+        const response = await fetch('/submitText', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: text }) // Proper JSON body
+        });
+
+        const data = await response.text(); // Wait for the response
+        console.log("Server response:", data);
+        return data; // Returns correct data
+    } catch (error) {
+        console.error('Error:', error);
+        return null; // Handle errors properly
+    }
   }
+/*
+ console.log("Reached send to server");
+
+    try {
+        const response = await fetch('/submitText', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'`
+            },
+            body: JSON.stringify({ content: text }) // ✅ Proper JSON body
+        });
+
+        const data = await response.text(); // ✅ Wait for the response
+        console.log("Server response:", data);
+        return data; // ✅ Returns correct data
+    } catch (error) {
+        console.error('Error:', error);
+        return null; // ✅ Handle errors properly
+    }
+*/ 
