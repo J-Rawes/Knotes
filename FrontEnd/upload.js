@@ -2,7 +2,9 @@ const fileInput = document.getElementById("fileUpload")
 const imageOutput = document.getElementById("sourceImage");
 
 var imageArray = new Array();
-var textArray = new Array();
+var txtArray = new Array();
+var iArrPointer = 0;
+var tArrPointer = 0;
 
 var displayImg = new Image;
 const imgCanvas = document.getElementById("imgCanvas");
@@ -108,7 +110,7 @@ selectionCanvas.addEventListener("mouseup", () => {
     croppedCtx.drawImage(sourceImage, x, y, width, height, 0, 0, width, height);
    
 });
-    
+
 function addScreenshot() {
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
@@ -118,35 +120,25 @@ function addScreenshot() {
     } else {
         // Open the modal window for text editing
         const croppedImageDataURL = croppedCanvas.toDataURL();
-        console.log(croppedImageDataURL);
-        const returnText = sendTextToServer(croppedImageDataURL); //SEND TO SERVER
-        
-        if (returnText) {
-            openModal(returnText);  // Replace this with actual extracted text
-        } else {
-            console.error('Failed to get text from server');
-        }
+        const returnText = sendTextToServer(croppedImageDataURL);
+        openModal(returnText);  // Replace this with actual extracted text
     }
 
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 function addScreenshot2() {
     const imageDataURL = selectionCanvas.toDataURL();
     imageArray.push(imageDataURL);
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 function addScreenshot3() {
-    const croppedImageDataURL = selectionCanvas.toDataURL();
-    const returnText = sendTextToServer(croppedImageDataURL); //SEND TO SERVER
-    if (returnText) {
-        openModal(returnText);  // Replace this with actual extracted text
-    } else {
-        console.error('Failed to get text from server');
-    }
+    const croppedImageDataURL = croppedCanvas.toDataURL();
+    const returnText = sendTextToServer(croppedImageDataURL);
+    openModal(returnText);  // Replace this with actual extracted text
     return false;
 }
 
@@ -158,16 +150,16 @@ function openModal(defaultText) {
     textInput.value = defaultText;  // Set default or extracted text
     modal.style.display = "block";  // Show the modal
 }
-    
+
 // Save Text Function
 function saveText() {
     const text = document.getElementById("textInput").value.trim();
     if (text) {
-        textArray.push(text);
+        txtArray.push(text);
         console.log("Text saved:", text);
     }
     closeModal('textModal');  // Close after saving
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
 }
 
 // Close Modal Function
@@ -183,6 +175,7 @@ function uploadNote() {
         imgCanvas.width = displayImg.naturalWidth;
         imgCanvas.height = displayImg.naturalHeight;
         imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+        txtCanvas.innerHTML = txtArray[tArrPointer];
         const modal = document.getElementById("uploadModal");
         modal.style.display = "block";  // Show the modal
     }
@@ -204,43 +197,65 @@ function loadImg() {
     reader2.readAsDataURL(imageArray[0]);
 }
 
-async function sendTextToServer(text) { // Whatever the user inputs
-    console.log("Reached send to server");
+function sendTextToServer(text) { // Whatever the user inputs
+    
+    var content;
+    
+    fetch('/submitText', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: text})
+    })
+    .then(response => response.text())
+    .then(data => {
+        content = data;
+    })
+    .catch(error => console.error('Error:', error));
 
-    try {
-        const response = await fetch('/submitText', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content: text }) // Proper JSON body
-        });
-
-        const data = await response.text(); // Wait for the response
-        console.log("Server response:", data);
-        return data; // Returns correct data
-    } catch (error) {
-        console.error('Error:', error);
-        return null; // Handle errors properly
-    }
+    return content;
   }
-/*
- console.log("Reached send to server");
 
-    try {
-        const response = await fetch('/submitText', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'`
-            },
-            body: JSON.stringify({ content: text }) // ✅ Proper JSON body
-        });
+function nextImg(foward) {
 
-        const data = await response.text(); // ✅ Wait for the response
-        console.log("Server response:", data);
-        return data; // ✅ Returns correct data
-    } catch (error) {
-        console.error('Error:', error);
-        return null; // ✅ Handle errors properly
+    if (foward==true) {
+        if (iArrPointer == imageArray.length - 1) {
+            iArrPointer = 0;
+        } else {
+            iArrPointer = iArrPointer + 1;
+        }
+    } else {
+        if (iArrPointer == 0) {
+            iArrPointer = imageArray.length - 1;
+        } else {
+            iArrPointer = iArrPointer - 1;
+        }
     }
-*/ 
+    displayImg.src = imageArray[iArrPointer];
+    displayImg.onload = () => {
+    imgCanvas.width = displayImg.naturalWidth;
+    imgCanvas.height = displayImg.naturalHeight;
+    imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+    }
+}
+
+function nextTxt(foward) {
+
+    if (foward==true) {
+        if (tArrPointer == txtArray.length - 1) {
+            tArrPointer = 0;
+        } else {
+            tArrPointer = tArrPointer + 1;
+        }
+    } else {
+        if (tArrPointer == 0) {
+            tArrPointer = txtArray.length - 1;
+        } else {
+            tArrPointer = tArrPointer - 1;
+        }
+    }
+    //txtCtx.clearRect(0, 0, txtCanvas.width, txtCanvas.height);
+    //txtCtx.fillText(txtArray[tArrPointer],10,20);
+    txtCanvas.innerHTML = txtArray[tArrPointer];
+}

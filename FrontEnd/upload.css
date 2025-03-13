@@ -5,12 +5,23 @@ html, body {
   padding:0;
 }
 
+body {
+  background-image: url('background.png');
+}
+
 * {
   color: #423E37;
   font-family: Verdana, sans-serif;
-  background-color: #fcfcfc;
   font-size: 24px;
   text-align: center;
+  text-decoration: none;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+div {
+  background-color: #ffffff;
 }
 
 h1 {
@@ -23,52 +34,51 @@ h1 {
   margin-bottom: 10px;
   padding: 2em;
   text-align: center;
-  border: 2px solid #423E37;
-  border-radius: 10px;
 }
 
 #complete {
   float: right;
-  margin: 0.5em 0.5em 0 0;
 }
 
 a {
   text-decoration: none;
-  width: 10%;
   padding: 10px;
-  border: 2px solid #868079;
-  border-radius: 10px;
-  background-color: #fcfcfc;
-  color: #423E37;
+  color: #ffffff;
+  background-color: #383B56;
   -webkit-transition: 0.2s;
   transition: 0.2s;
   outline: none;
 }
 
+
 a:hover {
-  background-color: #ffdb99;
+  background-color: #404463;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
 }
 
 a:active {
   transition: 0.1s;
-  border-color: #ffdb99;
+  background-color: #494D6F;
 }
 
 .user {
-min-width: 100%;
-padding-bottom: 3em;
-border: solid #423E37;
-border-width: 0 0 2px 0;
+  width: 100%;
+  min-width: 100%;
+  background-color: #383B56;
+  overflow: hidden;
 }
 
 #return{
-float: left;
-padding: 10px;
-margin: 0.5em 0 0 0.5em;
+  height: 100%;
+  float: left;
 }
 
-#return a:hover {
-background-color: #f56476;
+#return a {
+  display: block;
+  float: left;
+  height: 100%;
+  padding: 20px;
 }
 
 canvas {
@@ -81,26 +91,30 @@ canvas {
 
 .sub {
   display: inline-block;
-  border: 2px solid #868079;
-  border-radius: 10px;
-  background-color: #fcfcfc;
-  color: #423E37;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  cursor: pointer;
+  text-decoration: none;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #383B56;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
 }
 
 .sub:hover {
-  background-color: #c9cba3;
+  background-color: #404463;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
 }
 
 .sub:active {
   transition: 0.1s;
-  border-color: #c9cba3;
+  background-color: #494D6F;
 }
 
 #subN {
-  padding: 10px;
+  display: block;
+  height: 100%;
+  padding: 20px;
 }
 
 .radioB input[type="radio"] {
@@ -110,14 +124,11 @@ canvas {
 }
 
 .radioB label {
-  margin-top: 5px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin: 10px;
   padding: 2px;
   display: inline-block;
-  border: 2px solid #868079;
-  border-radius: 10px;
-  background-color: #fcfcfc;
+  border: 4px solid #41E2BA;
+  background-color: #ffffff;
   color: #423E37;
   -webkit-transition: 0.4s;
   transition: 0.4s;
@@ -125,22 +136,21 @@ canvas {
 }
 
 .radioB input[type="radio"]:checked + label {
-  transition: 0.1s;
-  border-color: #423E37;
-  background-color: #ffdb99;
+  transform: scale(1.1);
+  border-color: #71EACC;
+  background-color: #71EACC;
 }
 
 .radioB input[type="radio"]:focus + label {
-  border-color: #423E37;
+  border-color: #71EACC;
+  background-color: #71EACC;
+  transform: scale(1.1);
+  transition: 0.1s;
 }
 
 .radioB label:hover {
-  background-color: #ffdb99;
-}
-
-.radioB label:active {
-  transition: 0.1s;
-  border-color: #a7adca;
+  background-color: #41E2BA;
+  transition: 0.2s ease-in-out;
 }
 
 /* Modal Background */
@@ -158,11 +168,10 @@ canvas {
 
 /* Modal Content Box */
 .modal-content {
-  background-color: #fcfcfc;
+  background-color: #ffffff;
   margin: 10% auto; /* Center vertically and horizontally */
   padding: 20px;
   border: 2px solid #423E37;
-  border-radius: 10px;
   width: 50%; /* Adjust the width */
   box-shadow: 0 5px 15px #423E37;
 }
@@ -191,13 +200,11 @@ textarea {
   margin: auto;
   font-size: 16px;
   border: 2px solid #423E37;
-  border-radius: 5px;
   resize: vertical;
 }
 
 canvas {
   margin: auto;
-  border-radius: 10px;
 }
 
 input[type="file"] {
@@ -205,9 +212,8 @@ input[type="file"] {
 }
 
 #imgButton {
-  border: 2px solid #868079;
-  border-radius: 10px;
   display: inline-block;
+  background-color: #F7E733;
   padding: 6px 12px;
   cursor: pointer;
   -webkit-transition: 0.4s;
@@ -215,40 +221,46 @@ input[type="file"] {
 }
 
 #imgButton:hover {
-  background-color: #ffdb99;
+  background-color: #F8EC62;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
 }
 
 #imgButton:active {
   transition: 0.1s;
-  border: 2px solid #ffdb99;
+  background-color: #F9EE77;
 }
 
 .modalB {
-  padding: 10px;
-  border: 2px solid #868079;
-  border-radius: 10px;
-  background-color: #fcfcfc;
-  color: #423E37;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-  outline: none;
+  margin: 5px;
+  background-color: #F7E733;
+  padding: 6px 12px;
   cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .modalB:active{
-  border-color: #ffdb99;
+  transition: 0.1s;
+  background-color: #F9EE77;
 }
 
 .modalB:hover {
-  background-color: #ffdb99;
+  background-color: #F8EC62;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
+}
+
+#cancel {
+  background-color: #E97298;
 }
 
 #cancel:hover {
-  background-color: #f56476;
+  background-color: #EE95B1;
 }
 
 #cancel:active {
-  border-color: #f56476;
+  border-color: #F1A7BF;
 }
 
 #help {
@@ -256,33 +268,25 @@ input[type="file"] {
   margin: auto;
 }
 
-#saveText:hover {
-  background-color: #c9cba3;
-}
-
-#saveText:active {
-  border-color: #c9cba3;
-}
-
 .u1 {
   display: inline-block;
-  margin-bottom: 10px;
-  border: 2px solid #868079;
-  border-radius: 10px;
-  background-color: #fcfcfc;
-  color: #423E37;
+  background-color: #F7E733;
+  padding: 6px 12px;
+  margin: 5px;
+  cursor: pointer;
   -webkit-transition: 0.4s;
   transition: 0.4s;
-  cursor: pointer;
 }
 
 .u1:hover {
-  background-color: #c9cba3;
+  background-color: #F8EC62;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
 }
 
 .u1:active {
   transition: 0.1s;
-  border-color: #c9cba3;
+  background-color: #F9EE77;
 }
 
 #displayOptions{
@@ -294,7 +298,8 @@ input[type="file"] {
 }
 
 #grid {
-  max-width: 100%;
+  width: 100%;
+  height: 60%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
@@ -303,19 +308,73 @@ input[type="file"] {
 #imgCanvas {
   grid-row: 1/2;
   grid-column: 1/2;
-  max-width: 100%;
-  min-width: 80%;
+  min-width: 90%;
+  float: left;
+  margin: 10px;
 }
 
 #txtCanvas {
   grid-row: 1/2;
   grid-column: 2/3;
+  margin: 10px;
+  font-size: 16px;
 }
 
 #uModal-c {
   width: 80%;
   height: 100%;
   margin: auto;
+}
+
+#arrows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.browse {
+  border: none;
+  display: inline-block;
+  color: #423E37;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+  padding: 1em;
+  margin: auto;
+}
+
+#i {
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
+
+#t {
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+#formT {
+  width: 100%;
+  margin: 10px;
+  margin-top: 2em;
+}
+
+#formT input {
+  width: 30%;
+  padding: 5px;
+  margin: 2px;
+  border: 2px solid #868079;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #423E37;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+  text-align: left;
+}
+
+#formT input:focus{
+  border: 2px solid #423E37;
 }
 
 @media screen and (max-width: 600px) {
@@ -326,10 +385,6 @@ input[type="file"] {
   
   h1 {
     font-size: 24px;
-  }
-
-  .user {
-    padding-bottom: 4em;
   }
 
   .main {
@@ -347,10 +402,6 @@ input[type="file"] {
   
   h1 {
     font-size: 20px;
-  }
-
-  .user {
-    padding-bottom: 4em;
   }
 
   .main {
