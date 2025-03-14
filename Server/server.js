@@ -108,7 +108,7 @@ const server = http.createServer((req, res) => {
                 console.log("contents of: ", content);
                 const textImg = dataUrlToBuffer(content);
                 const extractedText = await extract(textImg);
-
+                console.log(extractedText);
 
                 res.writeHead(200, {'Content-Type': 'text/plain'});
                 res.end(extractedText);
@@ -248,7 +248,8 @@ async function extract(image) {
     return (fullTextAnnotation.text);
 
 }
-    */
+*/
+
 // Method for generating UID on account creation
 
 async function generateUID() {
