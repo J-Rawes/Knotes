@@ -111,7 +111,8 @@ selectionCanvas.addEventListener("mouseup", () => {
    
 });
 
-function addScreenshot() {
+async function addScreenshot(event) {
+    event.preventDefault();
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
     if (imgButtonPressed) {
@@ -120,8 +121,12 @@ function addScreenshot() {
     } else {
         // Open the modal window for text editing
         const croppedImageDataURL = croppedCanvas.toDataURL();
-        const returnText = sendTextToServer(croppedImageDataURL);
-        openModal(returnText);  // Replace this with actual extracted text
+        const returnText = await sendTextToServer(croppedImageDataURL);
+        if (returnText) {
+            openModal(returnText);  // Replace this with actual extracted text
+        } else {
+            console.error('Failed to get text from server');
+        }
     }
 
     document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
@@ -135,10 +140,14 @@ function addScreenshot2() {
     return false;
 }
 
-function addScreenshot3() {
+async function addScreenshot3() {
     const croppedImageDataURL = croppedCanvas.toDataURL();
-    const returnText = sendTextToServer(croppedImageDataURL);
-    openModal(returnText);  // Replace this with actual extracted text
+    const returnText = await sendTextToServer(croppedImageDataURL);
+    if (returnText) {
+        openModal(returnText);  
+    } else {
+        console.error('Failed to get text from server');
+    }
     return false;
 }
 
@@ -197,24 +206,23 @@ function loadImg() {
     reader2.readAsDataURL(imageArray[0]);
 }
 
-function sendTextToServer(text) { // Whatever the user inputs
-    
-    var content;
-    
-    fetch('/submitText', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: text})
-    })
-    .then(response => response.text())
-    .then(data => {
-        content = data;
-    })
-    .catch(error => console.error('Error:', error));
+async function sendTextToServer(text) { // Whatever the user inputs
+    try {
+        const response = await fetch('/submitText', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: text })
+        });
 
-    return content;
+        const data = await response.text();
+        console.log("Server response:", data);
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
   }
 
 function nextImg(foward) {
