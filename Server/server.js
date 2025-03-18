@@ -302,6 +302,41 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     }
 
+        else if (req.method === 'GET' && req.url === '/getCourseCount') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                // Get note count and IDs for the given course
+                const query = `
+                     SELECT course_name
+                    FROM "Courses"               
+                `;
+
+                const result = await client.query(query); 
+
+                if (result.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: "No courses found" }));
+                    return;
+                }
+
+                const courseNames = result.rows.map(row => row.course_name);
+
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(JSON.stringify({courseNames})); //Send both the count and note IDs to courseDisplay.js
+
+            } catch (error) {
+                console.error('Error Fetching Courses', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error Fetching Courses');
+            }
+        });
+    }
 
     // Default 404
     else {
