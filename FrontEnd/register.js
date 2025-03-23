@@ -51,9 +51,21 @@ async function register(event) {
     document.getElementById("message").innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
   } else { //User accepted
     let hashedPassword = SHA256.hex(password); //ACTUALLY HASH PASSWORD
-    await sendToDB(username, hashedPassword); //ACTUALLY SEND TO DB
-    localStorage.setItem("username", username);
-    location.href = "homepage.html";  
+    const response = await sendToDB(username, hashedPassword); //ACTUALLY SEND TO DB
+     
+    if (response === "Username already exists") {
+      document.getElementById("message").style.color = "#f56476";
+      document.getElementById("message").innerHTML = "Username already exists. Please choose another.";
+    } else if (response === "Missing username or password") {
+      document.getElementById("message").style.color = "#f56476";
+      document.getElementById("message").innerHTML = "Username or password missing. Please fill in all fields.";
+    } else if (response === "User registered successfully") {
+      localStorage.setItem("username", username);
+      location.href = "homepage.html"; // Redirect to homepage
+    } else {
+      document.getElementById("message").style.color = "#f56476";
+      document.getElementById("message").innerHTML = "An error occurred. Please try again.";
+    }
   }
   return false;
 }

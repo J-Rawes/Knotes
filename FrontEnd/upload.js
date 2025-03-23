@@ -267,3 +267,40 @@ function nextTxt(foward) {
     //txtCtx.fillText(txtArray[tArrPointer],10,20);
     txtCanvas.innerHTML = txtArray[tArrPointer];
 }
+
+confirmUpload = async () => {
+    const courseName = document.getElementById("course").value;
+    const noteTitle = document.getElementById("title").value;
+    //imageArray;
+    //txtArray;
+
+
+    const data = {
+        course: courseName,
+        title: noteTitle,
+        imageArray: imageArray,
+        txtArray: txtArray
+    }
+
+    try {
+        const response = await fetch('/uploadNote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log("Server response:", responseData);
+        alert("Note uploaded successfully!");
+        window.location.replace("/");
+    } catch (error) {
+        console.error('Error:', error);
+        alert("Failed to upload note. Please try again.");
+    }
+}

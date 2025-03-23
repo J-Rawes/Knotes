@@ -1,47 +1,36 @@
 //const client = require('./server.js');
 
-/*\
-1. onload, ask DB for number of uploaded notes and relevant info such as note author
-2. Make x amout of buttons on HTML site based on number of notes
-3. Display note info on each button
-4. On click, open modal and fill it with text and images of that note
-*/
-
-
-//DISCLAMER!!! THIS CODE STILL NEEDS A WAY TO RECIEVE THE COURSE ID, NOT SURE HOW IT WILL BE SET UP ON THE HOME PAGE
-
-var imageArray = new Array();
-var txtArray = new Array();
-var displayImg = new Image;
-const imgCanvas = document.getElementById("imgCanvas");
-const txtCanvas = document.getElementById("innerTxt");
-const imgCtx = imgCanvas.getContext("2d");
-//const txtCtx = txtCanvas.getContext("2d");
-//txtCtx.font = "24px Verdana, sans-serif"
-var iArrPointer = 0;
-var tArrPointer = 0;
 
 
 window.onload = function () {
-   // const noteIDs = new Array;
-   const noteIDs = [1,2,3,4,5,6];
-    loadArrayTest();
-    loadTArrayTest();
+    var imageArray = new Array();
+    var txtArray = new Array();
+    var displayImg = new Image;
+    const imgCanvas = document.getElementById("imgCanvas");
+    const txtCanvas = document.getElementById("innerTxt");
+    const imgCtx = imgCanvas.getContext("2d");
 
-    ///*step 1*/getNoteCountAndID(123); // Returns both a count of how many notes are for this course and their respective names/IDs
-    /*step 2*/generateButtons(noteIDs); // Change this number to set the default number of buttons 
+    //Get the course name from the URL (see courseSearch.js)
+    const courseName = localStorage.getItem("courseName");
+    const courseID = localStorage.getItem("courseID");
+    console.log(courseName + " " + courseID);
+
+
+    var iArrPointer = 0;
+    var tArrPointer = 0;
+   getCourseNoteInfo(courseID);
 }
 
 function generateButtons(notesArr) { 
     const container = document.getElementById("button-container");
     container.innerHTML = ""; // Clear existing buttons
 
-    /*step 3*/ notesArr.forEach((noteID, index) => {
+        notesArr.forEach((noteID, index) => {
         let button = document.createElement("button");
-        button.textContent = `Note ${noteID}`; // Display note ID on the button
+        button.textContent = `${note.title}`; // Display note ID on the button
 
         // Set onclick event to display note
-         /*step 4*/button.onclick = () => displayNote(noteID);
+        button.onclick = () => displayNote(note.noteID);
 
         // Append button to container
         container.appendChild(button);
@@ -69,7 +58,6 @@ function displayNote() {
         const modal = document.getElementById("noteModal");
         modal.style.display = "block";  // Show the modal
         txtCanvas.innerHTML = txtArray[tArrPointer];
-        //txtCtx.fillText(txtArray[tArrPointer],10,20);
     }
 }
 
@@ -137,27 +125,37 @@ function nextTxt(foward) {
     txtCanvas.innerHTML = txtArray[tArrPointer];
 }
 
-function getNoteCountAndID(CID){//Get note ID and title for the buttons 
-    fetch('/getNoteCountAndID', { 
+function displayCourseInfo(courseInfo) {
+    const courseInfoContainer = document.getElementById("course-info");
+    courseInfoContainer.innerHTML = `
+        <h2>${courseInfo.course_name}</h2>
+        <p>Course ID: ${courseInfo.course_id}</p>
+        <p>Other course information can go here...</p>
+    `;
+}
+
+function getCourseNoteInfo(courseID){//Get note ID and title for the buttons 
+    fetch('/getCourseNoteInfo', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({courseID : CID}) //send the course id
+        body: JSON.stringify({ courseID }) // Send the course ID
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Ares is gay ${response.status}`);
         }
         return response.json();
-})
+    })
     .then(data => {
-        if(!data.noteIDs){
+        if (!data.noteNames || !data.courseInfo) {
             console.error("Invalid response: ", data);
             return;
         }
-        
-        noteIDs = data.noteIDs; //Response back from server, only thing thats really important here
+
+        generateButtons(data.noteNames); // Generate buttons for notes
+        displayCourseInfo(data.courseInfo); // Display course information
 
     })
     .catch(error => console.error('Error:', error));
