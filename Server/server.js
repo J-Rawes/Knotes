@@ -69,6 +69,15 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
+                const checkQuery = 'SELECT uname FROM "Users" WHERE uname = $1';
+                const checkResult = await client.query(checkQuery, [username]);
+
+                if (checkResult.rows.length > 0) {
+                    res.writeHead(409, { 'Content-Type': 'text/plain' });
+                    res.end('Username already exists');
+                    return;
+                }
+
                 // Insert into PostgreSQL (user_id is auto-generated)
                 const user_gen_id = await generateUID();
                 client.query(
@@ -121,50 +130,7 @@ const server = http.createServer((req, res) => {
         });
     }
 
-    else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
-        let body = '';
 
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-
-        req.on('end', async () => {
-            try {
-                const { courseID } = JSON.parse(body);
-
-                if (!courseID) { //No password passed error
-                    res.writeHead(400, { 'Content-Type': 'text/plain' });
-                    res.end("Missing course ID");
-                    return;
-                }
-
-                // Get note count and IDs for the given course
-                const query = `
-                    SELECT ARRAY_AGG(note_id) AS note_ids
-                    FROM "Notes"
-                    WHERE course_id = $1
-                `;
-
-                const result = await client.query(query, [courseID]);
-
-                if (result.rows.length === 0) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "No notes found" }));
-                    return;
-                }
-
-                const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
-
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end(JSON.stringify({ noteIDs })); //Send note IDs to courseDisplay.js
-
-            } catch (error) {
-                console.error('Error hashing password:', error);
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end('Error hashing password');
-            }
-        });
-    }
 
 
     else if (req.method === 'POST' && req.url === '/login') {
@@ -213,11 +179,8 @@ const server = http.createServer((req, res) => {
             }
         });
     }
- //COURSE SEARCH QUERY// 
-    /*
-    Note For Owen/Ares/Ryan: To avoid SQL injection we need to have a catch on the front end for blank inputs and special characters. 
-    If not, we need to sanatize the inputs. We will discuss this in a future meeting.
-    */
+
+    //USED FOR COURSE SEARCH PAGE WHEN USER TYPES IN THE SEARCH BAR
     else if (req.method === 'POST' && req.url === '/courseSearch') { 
         let body = '';
     
@@ -257,6 +220,63 @@ const server = http.createServer((req, res) => {
             }
         });
     }
+    
+        //Used in Course Display Page, this is used to determine the amount of buttons and info fields about the course
+        else if (req.method === 'POST' && req.url === '/getCourseNoteInfo') {
+            let body = '';
+    
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+    
+            req.on('end', async () => {
+
+                const { courseID } = JSON.parse(body);
+
+                try {
+                    // Get note count and IDs for the given course
+                    const query = `
+                        SELECT title, note_id
+                        FROM "Notes"
+                        WHERE course_id = $1               
+                    `;
+
+                    const query2 = `
+                        SELECT *
+                        FROM "Courses"  
+                        WHERE course_id = $1              
+                    `;
+    
+                    const result = await client.query(query, [courseID]); 
+                    const result2 = await client.query(query2, [courseID]); 
+    
+                    if (result.rows.length === 0) {
+                        res.writeHead(404, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ message: "No notes found" }));
+                        return;
+                    }
+            
+                    if (result2.rows.length === 0) {
+                        res.writeHead(404, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ message: "No course found" }));
+                        return;
+                    }
+            
+                    const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id }));
+                    const courseInfo = result2.rows[0];
+    
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({noteNames, courseInfo})); //Send both the count and note IDs to courseDisplay.js
+    
+                } catch (error) {
+                    console.error('Error Fetching Courses', error);
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end('Error Fetching Courses');
+                }
+            });
+        }
+
+
 else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         let body = '';
 
@@ -302,6 +322,8 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     }
 
+
+        //Used in Course Search Page, this is used to determine the amount of buttons
         else if (req.method === 'GET' && req.url === '/getCourseCount') {
         let body = '';
 
@@ -313,7 +335,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
             try {
                 // Get note count and IDs for the given course
                 const query = `
-                     SELECT course_name
+                    SELECT course_name, course_id
                     FROM "Courses"               
                 `;
 
@@ -325,10 +347,10 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
                     return;
                 }
 
-                const courseNames = result.rows.map(row => row.course_name);
+                const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
 
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end(JSON.stringify({courseNames})); //Send both the count and note IDs to courseDisplay.js
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({courseArr})); //Send both the count and note IDs to courseDisplay.js
 
             } catch (error) {
                 console.error('Error Fetching Courses', error);
