@@ -3,6 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     startDoodleAnimation();
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+   let decodedCookie = decodeURIComponent(document.cookie);
+   let ca = decodedCookie.split(';');
+   username = ca[1];
+}
+
 function fadeInWelcomeBox() {
     const welcomeBox = document.querySelector(".welcome-box");
     if (!welcomeBox) return;
