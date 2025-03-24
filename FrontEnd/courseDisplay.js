@@ -1,6 +1,10 @@
 //const client = require('./server.js');
 
-
+document.addEventListener("DOMContentLoaded", function () {
+   let decodedCookie = decodeURIComponent(document.cookie);
+   let ca = decodedCookie.split(';');
+   username = ca[1];
+}
 
 window.onload = function () {
     var imageArray = new Array();
