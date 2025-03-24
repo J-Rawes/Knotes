@@ -60,7 +60,7 @@ async function login(event) {
       return false;
     }
 
-    localStorage.setItem("username", username);
+    document.cookie = "username = " + username;
     location.href = "homepage.html";
   }
 
