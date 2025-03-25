@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Homepage</title>
+  <title>Upload Notes</title>
 
   <link rel="stylesheet" href="upload.css">
 
@@ -17,14 +17,13 @@
       <a href="homepage.html">Back</a>
     </div>
     <div id="complete">
-      <button type="submit" id="subN" class="sub" onclick="return uploadNote()" value="process">Upload<span class="badge" style="vertical-align: top; font-size: small; color: #f56476;" id="count">0</span></button>
+      <button type="submit" id="subN" class="sub" onclick="return uploadNote()" value="process">Upload<span class="badge" style="vertical-align: top; font-size: small; color: #E86A92;" id="count">0</span></button>
     </div>
   </div>
 
-
-  <br>
   <br>
 
+  <div class="main">
     <h1>Select a File</h1>
     <label id="imgButton">
       <input type="file" id="fileUpload" accept="image/*" onchange="document.getElementById('displayOptions').style.display='block';">
@@ -60,7 +59,7 @@
         </div>
 
 
-      <form name="selectionType" method="get" onsubmit="return addScreenshot()">
+      <form name="selectionType" method="get" onsubmit="return addScreenshot(event)">
         <div class="radioB">
         <input type="radio" id="imgSelect" name="imgType" value="imgSelect" />
         <label for="imgSelect">Image</label>
@@ -73,20 +72,35 @@
       <div id="uploadModal" class="modal">
         <div class="modal-content" id="uModal-c">
           <span class="close-button" onclick="closeModal('uploadModal')">&times;</span>
+          <div id="formT">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" maxlength="25"/>
+            <label for="course">Course Code:</label>
+            <input type="text" id="course" name="course" maxlength="9"/>
+          </div>
           <div id="grid">
             <canvas id="imgCanvas" width=640px height=480px></canvas>
-            <canvas id="txtCanvas" width=640px height=480px></canvas>
+            <div id="txtCanvas"><p id="innerTxt"></p></div>
+          </div>
+          <div id="arrows">
+            <div id="i">
+              <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+            </div>
+            <div id="t">
+              <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+            </div>
           </div>
             <button class="modalB" id="saveText" onclick="confirmUpload()">Confirm</button>
             <button class="modalB" id="cancel" onclick="closeModal('uploadModal')">Cancel</button>
         </div>
       </div>
-
-  <div class="main">
-
   </div>
 
 </body>
+
+<br>
 
 <script type="text/javascript" src="upload.js">
 </script>

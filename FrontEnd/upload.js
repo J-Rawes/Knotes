@@ -2,12 +2,20 @@ const fileInput = document.getElementById("fileUpload")
 const imageOutput = document.getElementById("sourceImage");
 
 var imageArray = new Array();
-var textArray = new Array();
+var txtArray = new Array();
+var iArrPointer = 0;
+var tArrPointer = 0;
 
 var displayImg = new Image;
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("txtCanvas");
 const imgCtx = imgCanvas.getContext("2d");
+
+document.addEventListener("DOMContentLoaded", function () {
+   let decodedCookie = decodeURIComponent(document.cookie);
+   let ca = decodedCookie.split(';');
+   username = ca[1];
+}
 
 fileInput.addEventListener("change", async () => {
     let [file] = fileInput.files
@@ -109,7 +117,8 @@ selectionCanvas.addEventListener("mouseup", () => {
    
 });
 
-function addScreenshot() {
+async function addScreenshot(event) {
+    event.preventDefault();
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
     if (imgButtonPressed) {
@@ -118,25 +127,33 @@ function addScreenshot() {
     } else {
         // Open the modal window for text editing
         const croppedImageDataURL = croppedCanvas.toDataURL();
-        const returnText = sendTextToServer(croppedImageDataURL);
-        openModal(returnText);  // Replace this with actual extracted text
+        const returnText = await sendTextToServer(croppedImageDataURL);
+        if (returnText) {
+            openModal(returnText);  // Replace this with actual extracted text
+        } else {
+            console.error('Failed to get text from server');
+        }
     }
 
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 function addScreenshot2() {
     const imageDataURL = selectionCanvas.toDataURL();
     imageArray.push(imageDataURL);
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
-function addScreenshot3() {
+async function addScreenshot3() {
     const croppedImageDataURL = croppedCanvas.toDataURL();
-    const returnText = sendTextToServer(croppedImageDataURL);
-    openModal(returnText);  // Replace this with actual extracted text
+    const returnText = await sendTextToServer(croppedImageDataURL);
+    if (returnText) {
+        openModal(returnText);  
+    } else {
+        console.error('Failed to get text from server');
+    }
     return false;
 }
 
@@ -153,11 +170,11 @@ function openModal(defaultText) {
 function saveText() {
     const text = document.getElementById("textInput").value.trim();
     if (text) {
-        textArray.push(text);
+        txtArray.push(text);
         console.log("Text saved:", text);
     }
     closeModal('textModal');  // Close after saving
-    document.getElementById("count").innerHTML = imageArray.length + textArray.length;
+    document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
 }
 
 // Close Modal Function
@@ -173,6 +190,7 @@ function uploadNote() {
         imgCanvas.width = displayImg.naturalWidth;
         imgCanvas.height = displayImg.naturalHeight;
         imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+        txtCanvas.innerHTML = txtArray[tArrPointer];
         const modal = document.getElementById("uploadModal");
         modal.style.display = "block";  // Show the modal
     }
@@ -194,22 +212,101 @@ function loadImg() {
     reader2.readAsDataURL(imageArray[0]);
 }
 
-function sendTextToServer(text) { // Whatever the user inputs
-    
-    var content;
-    
-    fetch('/submitText', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: text})
-    })
-    .then(response => response.text())
-    .then(data => {
-        content = data;
-    })
-    .catch(error => console.error('Error:', error));
+async function sendTextToServer(text) { // Whatever the user inputs
+    try {
+        const response = await fetch('/submitText', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: text })
+        });
 
-    return content;
+        const data = await response.text();
+        console.log("Server response:", data);
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
   }
+
+function nextImg(foward) {
+
+    if (foward==true) {
+        if (iArrPointer == imageArray.length - 1) {
+            iArrPointer = 0;
+        } else {
+            iArrPointer = iArrPointer + 1;
+        }
+    } else {
+        if (iArrPointer == 0) {
+            iArrPointer = imageArray.length - 1;
+        } else {
+            iArrPointer = iArrPointer - 1;
+        }
+    }
+    displayImg.src = imageArray[iArrPointer];
+    displayImg.onload = () => {
+    imgCanvas.width = displayImg.naturalWidth;
+    imgCanvas.height = displayImg.naturalHeight;
+    imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+    }
+}
+
+function nextTxt(foward) {
+
+    if (foward==true) {
+        if (tArrPointer == txtArray.length - 1) {
+            tArrPointer = 0;
+        } else {
+            tArrPointer = tArrPointer + 1;
+        }
+    } else {
+        if (tArrPointer == 0) {
+            tArrPointer = txtArray.length - 1;
+        } else {
+            tArrPointer = tArrPointer - 1;
+        }
+    }
+    //txtCtx.clearRect(0, 0, txtCanvas.width, txtCanvas.height);
+    //txtCtx.fillText(txtArray[tArrPointer],10,20);
+    txtCanvas.innerHTML = txtArray[tArrPointer];
+}
+
+confirmUpload = async () => {
+    const courseName = document.getElementById("course").value;
+    const noteTitle = document.getElementById("title").value;
+    //imageArray;
+    //txtArray;
+
+
+    const data = {
+        course: courseName,
+        title: noteTitle,
+        imageArray: imageArray,
+        txtArray: txtArray
+    }
+
+    try {
+        const response = await fetch('/uploadNote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log("Server response:", responseData);
+        alert("Note uploaded successfully!");
+        window.location.replace("/");
+    } catch (error) {
+        console.error('Error:', error);
+        alert("Failed to upload note. Please try again.");
+    }
+}
