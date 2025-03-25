@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Create a p element for the like count
                 let likeCount = document.createElement("p");
-                likeCount.innerHTML = `&#x2665; ${note.likes}`; // Set the like count with heart icon
+                likeCount.innerHTML = `&#x2665; ${note.num_likes}`; // Set the like count with heart icon
                 likeCount.style.margin = "0"; // Optional: Remove default margin for p
                 likeCount.style.fontSize = "18px"; // Optional: Adjust font size for the like count
 
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (criteria === "title") {
                 notesArr.sort((a, b) => a.title.localeCompare(b.title));
             } else if (criteria === "likes") {
-                notesArr.sort((a, b) => b.likes - a.likes);
+                notesArr.sort((a, b) => b.num_likes - a.num_likes);
             }
 
             generateButtons(notesArr); // Generate buttons for notes
@@ -166,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function getCourseNoteInfo(courseID) { // Get note ID and title for the buttons 
             // Dummy data for testing purposes
+            /*
             const dummyCourseInfo = {
                 course_name: "Introduction to Programming",
                 institution: "Example University",
@@ -181,9 +182,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             displayCourseInfo(dummyCourseInfo);
             generateButtons(notesArr);
-
+            */
             // Uncomment the following code to fetch real data from the server
-            /*
+            
             fetch('/getCourseNoteInfo', {
                 method: 'POST',
                 headers: {
@@ -209,7 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 })
                 .catch(error => console.error('Error:', error));
-            */
         }
     }
 });
