@@ -13,13 +13,24 @@
 <body>
 
     <div class="user">
-        <div id="return">
-          <a href="homepage.html">Back</a>
-        </div>
+      <div id="return">
+        <a href="#" id="back-link">Back</a>
+      </div>
+    </div>
+
+    <div id="cName">
+      <div id="course-info" ></div> <!-- Course info will be displayed here -->
+    </div>
+
+    <div id="searchbar">
+        <input type="text" id="search" placeholder="Search for a note...">
         <br>
-        <div id="cName">
-            <h1>Course Name</h1>
-        </div>
+        <br>
+        <select id="sort-options">
+            <option value="title">Title A-Z</option>
+            <option value="likes">Number of Likes</option>
+        </select>
+        <button id="sort-button">Sort</button>
     </div>
 
     <div id="button-container"></div>

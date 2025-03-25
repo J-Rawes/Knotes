@@ -7,22 +7,20 @@
 </head>
 
 <body>
-  <h1>Log In</h1>
-
-  <h3 id="message"></h3>
+  <div id="header">
+    <h1>Log In</h1>
+  </div>
 
   <div class="inputF">
     <form name="logIn" id="logIn">
       <p>
-        <label for="username">Username</label>
         <div class="submit">
-          <input type="text" id="username" name="user" />
+          <input type="text" id="username" name="user" placeholder="Username"/>
         </div>
       </p>
       <p>
-        <label for="password">Password</label>
         <div class="submit">
-          <input type="password" id="password" name="password" />
+          <input type="password" id="password" name="password" placeholder="Password"/>
         </div>
       </p>
 
@@ -32,6 +30,7 @@
         </p>
       </div>
     </form>
+    <h3 id="message"></h3>
   </div>
 
   <script src="/node_modules/jshashes/hashes.js"></script>

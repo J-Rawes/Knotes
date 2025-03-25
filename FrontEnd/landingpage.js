@@ -3,12 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     startDoodleAnimation();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-   let decodedCookie = decodeURIComponent(document.cookie);
-   let ca = decodedCookie.split(';');
-   username = ca[1];
-}
-
 function fadeInWelcomeBox() {
     const welcomeBox = document.querySelector(".welcome-box");
     if (!welcomeBox) return;
@@ -29,6 +23,7 @@ function startDoodleAnimation() {
     canvas.style.top = "0";
     canvas.style.left = "0";
     canvas.style.zIndex = "-1"; // Send behind other content
+    canvas.style.backgroundColor = "#ffffff";
     const ctx = canvas.getContext("2d");
 
     if (!ctx) {
@@ -38,7 +33,7 @@ function startDoodleAnimation() {
 
     // Function to draw random doodles
     function drawDoodle() {
-        const colors = ["#FFC857", "#E9724C", "#C5283D", "#481D24", "#255F85"]; // Different colors for variation
+        const colors = ["#e86a92", "#f7e733", "#41e2ba", "#494D6F", "#F9EE77"]; // Different colors for variation
         const shapes = ["circle", "square", "triangle", "star", "hexagon"];
 
         const x = Math.random() * canvas.width;
