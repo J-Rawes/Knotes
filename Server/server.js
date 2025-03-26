@@ -360,12 +360,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     }
 
-          //COURSE SEARCH QUERY// 
-    /*
-    Note For Owen/Ares/Ryan: To avoid SQL injection we need to have a catch on the front end for blank inputs and special characters. 
-    If not, we need to sanatize the inputs. We will discuss this in a future meeting.
-    */
-    else if (req.method === 'POST' && req.url === '/courseSearch') { 
+    else if (req.method === 'POST' && req.url === '/uploadNote') {
         let body = '';
     
         req.on('data', chunk => {
@@ -373,37 +368,58 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     
         req.on('end', async () => {
-            try {
-                const { input } = JSON.parse(body);
+            const {courseName, noteTitle, imageArray, textArray} = JSON.parse(body);
     
-                if (!input) {
-                    res.writeHead(400, { 'Content-Type': 'text/plain' });
-                    res.end('Missing content');
-                    return;
+            try {
+
+                const getCourseID = `
+                    SELECT course_id
+                    FROM "Courses"
+                    WHERE "course_name" = $1
+                `;
+
+                const courseID = await client.query(getCourseID, [courseName]);
+
+               
+                const noteNum = await generateNID();
+                
+                // Insert note into the Notes table
+                const query = `
+                    INSERT INTO "Notes" (note_id, title, num_likes, course_id)  
+                    VALUES($1, $2, 0, $3)
+                `;
+                await client.query(query, [noteNum, title, courseID]);
+    
+                // Insert text entries into the Text table
+                for (const text of textArray) {
+                    const textNum = await generateID("Text");
+                    const query2 = `
+                        INSERT INTO "Text" (text_id, text, note_id)  
+                        VALUES($1, $2, $3)
+                    `;
+                    await client.query(query2, [textNum, text, noteNum]);
                 }
     
-                await client.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
+                // Insert image entries into the Images table
+                for (const image of imageArray) {
+                    const imageNum = await generateID("Images");
+                    const query3 = `
+                        INSERT INTO "Images" (image_id, image, note_id)  
+                        VALUES($1, $2, $3)
+                    `;
+                    await client.query(query3, [imageNum, image, noteNum]);
+                }
     
-                // Perform the similarity search with async/await
-                const query = `
-                    SELECT course_id, course_name, institution 
-                    FROM "Courses" 
-                    WHERE similarity(course_name, $1) > 0.3 
-                    ORDER BY similarity(course_name, $1) DESC 
-                    LIMIT 10;
-                `;
-    
-                const result = await client.query(query, [input]);
-    
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify(result.rows));
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end('Note uploaded successfully');
             } catch (error) {
-                console.error('Database query error:', error);
+                console.error('Error uploading note:', error);
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end('Database error');
             }
         });
     }
+    
 
     // Default 404
     else {
@@ -412,13 +428,14 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
     }
 });
 
+
+
 const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 // Method for extracting from file
-/*
 const CREDENTIALS;
 
 const CONFIG = {
@@ -437,17 +454,18 @@ async function extract(image) {
     return (fullTextAnnotation.text);
 
 }
-*/
 
-// Method for generating UID on account creation
 
-async function generateUID() {
+// Method for generating ID on table addition
+
+async function generateID(idType) {
     try {
-        const result = await client.query('SELECT COUNT(*) FROM "Users"');
+        const query = `SELECT COUNT(*) FROM "$1"`;
+        const result = await client.query(query, [idType]);
         const count = result.rows[0].count; // Check DB for "next UID"
         return count;
     } catch (err) {
-        console.error('Error generating UID:', err);
+        console.error(`Error generating ${idType}:`, err);
         throw err;
     }
 
