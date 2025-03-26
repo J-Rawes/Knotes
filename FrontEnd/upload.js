@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
    let decodedCookie = decodeURIComponent(document.cookie);
    let ca = decodedCookie.split(';');
    username = ca[1];
-}
+});
 
 fileInput.addEventListener("change", async () => {
     let [file] = fileInput.files
@@ -277,8 +277,6 @@ function nextTxt(foward) {
 confirmUpload = async () => {
     const courseName = document.getElementById("course").value;
     const noteTitle = document.getElementById("title").value;
-    //imageArray;
-    //txtArray;
 
 
     const data = {
