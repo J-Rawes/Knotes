@@ -1,32 +1,38 @@
 //const client = require('./server.js');
 
+var iArrPointer = 0;
+var tArrPointer = 0;
+var notesArr = []; // Array to store notes
+var filteredNotes = []; // Array to store filtered notes
+var imageArray = [];
+var txtArray = [];
+var displayImg = new Image();
+const imgCanvas = document.getElementById("imgCanvas");
+const txtCanvas = document.getElementById("innerTxt");
+const imgCtx = imgCanvas.getContext("2d");
+
 document.addEventListener("DOMContentLoaded", function () {
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
     let username = ca.length > 1 ? ca[1] : "Guest";
 
     window.onload = function () {
-        var imageArray = [];
-        var txtArray = [];
-        var displayImg = new Image();
-        const imgCanvas = document.getElementById("imgCanvas");
-        const txtCanvas = document.getElementById("innerTxt");
-        const imgCtx = imgCanvas.getContext("2d");
 
         // Get the course name from the URL (see courseSearch.js)
         const courseName = localStorage.getItem("courseName");
         const courseID = localStorage.getItem("courseID");
         console.log(courseName + " " + courseID);
 
-        var iArrPointer = 0;
-        var tArrPointer = 0;
-        var notesArr = []; // Array to store notes
-
         getCourseNoteInfo(courseID);
 
         document.getElementById("sort-button").addEventListener("click", function () {
             const sortOption = document.getElementById("sort-options").value;
             sortNotes(sortOption);
+        });
+
+        document.getElementById("search").addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase();
+            filterNotes(searchTerm);
         });
 
         sortNotes("title"); // Sort notes by title by default
@@ -52,25 +58,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Append the h1 and p to the button
                 button.appendChild(title);
                 button.appendChild(likeCount);
-
                 // Set onclick event to display note
                 button.onclick = () => displayNote(note.noteID);
 
                 // Append button to container
                 container.appendChild(button);
             });
-
-            
         }
 
         function sortNotes(criteria) {
             if (criteria === "title") {
-                notesArr.sort((a, b) => a.title.localeCompare(b.title));
+                filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
             } else if (criteria === "likes") {
-                notesArr.sort((a, b) => b.num_likes - a.num_likes);
+                filteredNotes.sort((a, b) => b.num_likes - a.num_likes);
             }
 
-            generateButtons(notesArr); // Generate buttons for notes
+            generateButtons(filteredNotes); // Generate buttons for notes
+        }
+
+        function filterNotes(searchTerm) {
+            filteredNotes = notesArr.filter(note => note.title.toLowerCase().includes(searchTerm));
+            generateButtons(filteredNotes);
         }
 
         function loadArrayTest() {
@@ -85,14 +93,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function displayNote() {
-            displayImg.src = imageArray[0];
+            loadArrayTest();
+            loadTArrayTest();
+            displayImg.src = imageArray[0]; // Use the first image for testing
             displayImg.onload = () => {
                 imgCanvas.width = displayImg.naturalWidth;
                 imgCanvas.height = displayImg.naturalHeight;
                 imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
                 const modal = document.getElementById("noteModal");
                 modal.style.display = "block";  // Show the modal
-                txtCanvas.innerHTML = txtArray[tArrPointer];
+                txtCanvas.innerHTML = txtArray[0]; // Use the first text for testing
             }
         }
 
@@ -155,6 +165,10 @@ document.addEventListener("DOMContentLoaded", function () {
             txtCanvas.innerHTML = txtArray[tArrPointer];
         }
 
+        // Ensure nextImg and nextTxt functions are accessible
+        window.nextImg = nextImg;
+        window.nextTxt = nextTxt;
+
         function displayCourseInfo(courseInfo) {
             const courseInfoContainer = document.getElementById("course-info");
             courseInfoContainer.innerHTML = `
@@ -166,7 +180,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function getCourseNoteInfo(courseID) { // Get note ID and title for the buttons 
             // Dummy data for testing purposes
-            /*
             const dummyCourseInfo = {
                 course_name: "Introduction to Programming",
                 institution: "Example University",
@@ -174,17 +187,19 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             notesArr = [
-                { noteID: 1, title: "A Note 1", likes: 10 },
-                { noteID: 1, title: "D Note 1", likes: 77 },
-                { noteID: 2, title: "C Note 2", likes: 5 },
-                { noteID: 3, title: "B Note 3", likes: 8 }
+                { noteID: 1, title: "A Note 1", num_likes: 10 },
+                { noteID: 1, title: "D Note 1", num_likes: 77 },
+                { noteID: 2, title: "C Note 2", num_likes: 5 },
+                { noteID: 3, title: "B Note 3", num_likes: 8 }
             ];
 
+            filteredNotes = notesArr.slice(); // Initialize filteredNotes with all notes
+
             displayCourseInfo(dummyCourseInfo);
-            generateButtons(notesArr);
-            */
+            generateButtons(filteredNotes);
+
             // Uncomment the following code to fetch real data from the server
-            
+            /*
             fetch('/getCourseNoteInfo', {
                 method: 'POST',
                 headers: {
@@ -205,11 +220,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                     notesArr = data.noteNames;
-                    generateButtons(notesArr); // Generate buttons for notes
+                    filteredNotes = notesArr.slice(); // Initialize filteredNotes with all notes
+                    generateButtons(filteredNotes); // Generate buttons for notes
                     displayCourseInfo(data.courseInfo); // Display course information
 
                 })
                 .catch(error => console.error('Error:', error));
+            */
         }
     }
 });
@@ -223,3 +240,48 @@ document.getElementById('back-link').addEventListener('click', function (event) 
       window.history.back(); // Fallback to browser's back functionality
     }
 });
+
+function closeModal(modalType) {
+    const modal = document.getElementById(String(modalType));
+    modal.style.display = "none";  // Hide the modal
+}
+
+function nextImg(foward) {
+    if (foward) {
+        if (iArrPointer == imageArray.length - 1) {
+            iArrPointer = 0;
+        } else {
+            iArrPointer = iArrPointer + 1;
+        }
+    } else {
+        if (iArrPointer == 0) {
+            iArrPointer = imageArray.length - 1;
+        } else {
+            iArrPointer = iArrPointer - 1;
+        }
+    }
+    displayImg.src = imageArray[iArrPointer];
+    displayImg.onload = () => {
+        imgCanvas.width = displayImg.naturalWidth;
+        imgCanvas.height = displayImg.naturalHeight;
+        imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+        txtCanvas.innerHTML = txtArray[tArrPointer];
+    }
+}
+
+function nextTxt(foward) {
+    if (foward) {
+        if (tArrPointer == txtArray.length - 1) {
+            tArrPointer = 0;
+        } else {
+            tArrPointer = tArrPointer + 1;
+        }
+    } else {
+        if (tArrPointer == 0) {
+            tArrPointer = txtArray.length - 1;
+        } else {
+            tArrPointer = tArrPointer - 1;
+        }
+    }
+    txtCanvas.innerHTML = txtArray[tArrPointer];
+}

@@ -26,16 +26,18 @@
         <input type="text" id="search" placeholder="Search for a note...">
         <br>
         <br>
-        <select id="sort-options">
+        <div id="sorting">
+          <select id="sort-options">
             <option value="title">Title A-Z</option>
             <option value="likes">Number of Likes</option>
         </select>
         <button id="sort-button">Sort</button>
+        </div>
     </div>
 
     <div id="button-container"></div>
 
-    <div id="noteModal" class="modal">
+    <!-- <div id="noteModal" class="modal">
         <div class="modal-content" id="uModal-c">
           <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
           <br>
@@ -50,6 +52,26 @@
             </div>
             <canvas id="imgCanvas" width=640px height=480px></canvas>
             <div id="txtCanvas"><p id="innerTxt"></p></div>
+          </div>
+        </div>
+      </div> -->
+
+      <div id="noteModal" class="modal">
+        <div class="modal-content" id="uModal-c">
+          <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+          <div id="grid">
+            <canvas id="imgCanvas"></canvas>
+            <div id="txtCanvas"><p id="innerTxt"></p></div>
+          </div>
+          <div id="arrows">
+            <div id="i">
+              <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+            </div>
+            <div id="t">
+              <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+            </div>
           </div>
         </div>
       </div>
