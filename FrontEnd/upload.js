@@ -274,17 +274,45 @@ function nextTxt(foward) {
     txtCanvas.innerHTML = txtArray[tArrPointer];
 }
 
+
+
+
+
 confirmUpload = async () => {
-    const courseName = document.getElementById("course").value;
-    const noteTitle = document.getElementById("title").value;
+    const courseName = document.getElementById("course").value.trim();
+    const noteTitle = document.getElementById("title").value.trim();
+    const conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
 
+    // Validation checks
+    if (courseName.length > 50) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerHTML = "Course name cannot exceed 50 characters.";
+        return;
+    } else if (conditions.some(el => courseName.includes(el))) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerHTML = "Course name cannot contain special characters: /\\|<>=&#";
+        return;
+    } else if (noteTitle.length > 100) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerHTML = "Note title cannot exceed 100 characters.";
+        return;
+    } else if (conditions.some(el => noteTitle.includes(el))) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerHTML = "Note title cannot contain special characters: /\\|<>=&#";
+        return;
+    } else if (courseName.length === 0 || noteTitle.length === 0) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerHTML = "Please fill in all fields.";
+        return;
+    }
 
+    // Data to send to the server
     const data = {
         course: courseName,
         title: noteTitle,
         imageArray: imageArray,
         txtArray: txtArray
-    }
+    };
 
     try {
         const response = await fetch('/uploadNote', {
@@ -307,4 +335,4 @@ confirmUpload = async () => {
         console.error('Error:', error);
         alert("Failed to upload note. Please try again.");
     }
-}
+};
