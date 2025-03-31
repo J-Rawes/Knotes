@@ -460,15 +460,16 @@ async function extract(image) {
 
 async function generateID(idType) {
     try {
-        const query = `SELECT COUNT(*) FROM "$1"`;
-        const result = await client.query(query, [idType]);
+        const query = `SELECT COUNT(*) FROM ` + idType;
+        console.log(query);
+        const result = await client.query(query);
+        console.log(result);
         const count = result.rows[0].count; // Check DB for "next UID"
         return count;
     } catch (err) {
         console.error(`Error generating ${idType}:`, err);
         throw err;
     }
-
 }
 
 function dataUrlToBuffer(dataUrl) {
