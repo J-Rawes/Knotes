@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>My Uploaded Notes</title>
+  <link rel="stylesheet" href="myUploadedNotes.css">
+</head>
+<body>
+  <!-- User Section -->
+  <div class="user">
+    <div id="return">
+      <a href="#" id="back-link">Back</a>
+    </div>
+  </div>
+
+  <!-- Course Name Section -->
+  <div id="cName">
+    <h1>My Uploaded Notes</h1>
+  </div>
+
+  <!-- Search Bar Section -->
+  <div id="searchbar">
+    <input type="text" id="search" placeholder="Search your notes...">
+    <br><br>
+    <div id="sorting">
+      <select id="sort-options">
+        <option value="title">Title A-Z</option>
+        <option value="likes">Number of Likes</option>
+      </select>
+      <button id="sort-button">Sort</button>
+    </div>
+  </div>
+
+  <!-- Button Container Section -->
+  <div id="button-container"></div>
+
+  <!-- Modal Section -->
+  <div id="noteModal" class="modal">
+    <div class="modal-content" id="uModal-c">
+      <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+      <div id="grid">
+        <canvas id="imgCanvas"></canvas>
+        <div id="txtCanvas">
+          <p id="innerTxt"></p>
+        </div>
+      </div>
+      <div id="arrows">
+        <!-- Image and text navigation arrows -->
+        <div id="i" style="display: none;">
+          <input type="button" onclick="cyclePair(false)" value="ᐊ" class="browse">
+          <input type="button" onclick="cyclePair(true)" value="ᐅ" class="browse">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="myUploadedNotes.js"></script>
+</body>
+</html>
