@@ -5,7 +5,8 @@ var displayImg = new Image();
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("innerTxt");
 const imgCtx = imgCanvas.getContext("2d");
-var pairPointer = 0; // Pointer for cycling through image-text pairs
+var imagePointer = 0; // Pointer for cycling through images
+var textPointer = 0; // Pointer for cycling through text
 var currentNoteID = null; // Track the currently displayed note
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,27 +33,28 @@ document.addEventListener("DOMContentLoaded", function () {
   function generateButtons(notesArr) {
     const container = document.getElementById("button-container");
     container.innerHTML = ""; // Clear existing buttons
-
+  
     notesArr.forEach((note) => {
       let button = document.createElement("button");
       button.className = "note-button";
-
+  
       // Create an element for note title
       let title = document.createElement("h1");
       title.textContent = note.title;
       title.style.margin = "0";
-
+  
       // Create an element for like count
       let likeCount = document.createElement("p");
       likeCount.innerHTML = `&#x2665; ${note.num_likes}`;
       likeCount.style.margin = "0";
       likeCount.style.fontSize = "18px";
-
+  
       button.appendChild(title);
       button.appendChild(likeCount);
-
+  
       // Onclick: display the note's details (images/text)
-      button.onclick = () => displayNote(note.noteID);
+      button.addEventListener("click", () => displayNote(note.noteID));
+  
       container.appendChild(button);
     });
   }
@@ -85,28 +87,29 @@ document.addEventListener("DOMContentLoaded", function () {
     // Track the current note ID
     currentNoteID = noteID;
 
-    // Reset pointer for cycling
-    pairPointer = 0;
+    // Reset pointers for cycling
+    imagePointer = 0;
+    textPointer = 0;
 
-    // Display the first image and text pair
-    displayPair(selectedNote);
+    // Display the first image and text
+    displayImage(selectedNote);
+    displayText(selectedNote);
 
-    // Show or hide the arrows based on the number of pairs
-    const totalPairs = Math.max(
-      selectedNote.images ? selectedNote.images.length : 0,
-      selectedNote.texts ? selectedNote.texts.length : 0
-    );
-    document.getElementById("i").style.display = totalPairs > 1 ? "flex" : "none";
+    // Show or hide the arrows based on the number of images and texts
+    const totalImages = selectedNote.images ? selectedNote.images.length : 0;
+    const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
+
+    document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
+    document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
 
     // Show the modal
     document.getElementById("noteModal").style.display = "block";
   }
 
-  // Function to display the current image-text pair
-  function displayPair(selectedNote) {
-    // Display the current image
-    if (selectedNote.images && selectedNote.images.length > pairPointer) {
-      displayImg.src = selectedNote.images[pairPointer];
+  // Function to display the current image
+  function displayImage(selectedNote) {
+    if (selectedNote.images && selectedNote.images.length > imagePointer) {
+      displayImg.src = selectedNote.images[imagePointer];
       displayImg.onload = () => {
         imgCanvas.width = displayImg.naturalWidth;
         imgCanvas.height = displayImg.naturalHeight;
@@ -115,34 +118,51 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear canvas if no image
     }
+  }
 
-    // Display the current text
-    if (selectedNote.texts && selectedNote.texts.length > pairPointer) {
-      txtCanvas.innerHTML = selectedNote.texts[pairPointer];
+  // Function to display the current text
+  function displayText(selectedNote) {
+    if (selectedNote.texts && selectedNote.texts.length > textPointer) {
+      txtCanvas.innerHTML = selectedNote.texts[textPointer];
     } else {
       txtCanvas.innerHTML = "No text available for this note.";
     }
   }
 
-  // Function to cycle through image-text pairs
-  window.cyclePair = function (forward) {
+  // Function to cycle through images
+  window.cycleImage = function (forward) {
     const selectedNote = notesArr.find(note => note.noteID === currentNoteID);
-    if (!selectedNote) return;
+    if (!selectedNote || !selectedNote.images) return;
 
-    const totalPairs = Math.max(
-      selectedNote.images ? selectedNote.images.length : 0,
-      selectedNote.texts ? selectedNote.texts.length : 0
-    );
+    const totalImages = selectedNote.images.length;
 
-    // Increment or decrement the pointer and wrap around if necessary
+    // Increment or decrement the pointer for images and wrap around if necessary
     if (forward) {
-      pairPointer = (pairPointer + 1) % totalPairs;
+      imagePointer = (imagePointer + 1) % totalImages;
     } else {
-      pairPointer = (pairPointer - 1 + totalPairs) % totalPairs;
+      imagePointer = (imagePointer - 1 + totalImages) % totalImages;
     }
 
-    // Display the new pair
-    displayPair(selectedNote);
+    // Display the new image
+    displayImage(selectedNote);
+  };
+
+  // Function to cycle through text
+  window.cycleText = function (forward) {
+    const selectedNote = notesArr.find(note => note.noteID === currentNoteID);
+    if (!selectedNote || !selectedNote.texts) return;
+
+    const totalTexts = selectedNote.texts.length;
+
+    // Increment or decrement the pointer for texts and wrap around if necessary
+    if (forward) {
+      textPointer = (textPointer + 1) % totalTexts;
+    } else {
+      textPointer = (textPointer - 1 + totalTexts) % totalTexts;
+    }
+
+    // Display the new text
+    displayText(selectedNote);
   };
 
   // Close modal function
