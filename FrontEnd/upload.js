@@ -39,6 +39,7 @@ const selectionCanvas = document.getElementById("selectionCanvas");
 const croppedCanvas = document.getElementById("croppedCanvas");
 const selectionCtx = selectionCanvas.getContext("2d");
 const croppedCtx = croppedCanvas.getContext("2d");
+var imgOriginal;
 
 let isSelecting = false;
 let startX, startY, currentX, currentY;
@@ -48,6 +49,7 @@ sourceImage.onload = () => {
     selectionCanvas.width = sourceImage.naturalWidth;
     selectionCanvas.height = sourceImage.naturalHeight;
     selectionCtx.drawImage(sourceImage, 0, 0, selectionCanvas.width, selectionCanvas.height);
+    imgOriginal = selectionCanvas.toDataURL();
 };
 
 // Get the correct mouse position relative to the canvas
@@ -185,16 +187,44 @@ function closeModal(modalType) {
 
 //This is where imgArray and textArray will be uploaded to the database
 function uploadNote() {
-    displayImg.src = imageArray[0];
-    displayImg.onload = () => {
-        imgCanvas.width = displayImg.naturalWidth;
-        imgCanvas.height = displayImg.naturalHeight;
-        imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
-        txtCanvas.innerHTML = txtArray[tArrPointer];
-        const modal = document.getElementById("uploadModal");
-        modal.style.display = "block";  // Show the modal
+    if (txtArray.length > 1) {
+        document.getElementById("t").style.display = "block";
+    } else {
+        document.getElementById("t").style.display = "none";
     }
-
+    if (imageArray.length > 0) {
+        // Load the first image
+        displayImg.src = imageArray[0];
+        imgCanvas.style.display = "block"; // Hide the canvas if no images are available
+        if (imageArray.length > 1) {
+            document.getElementById("i").style.display = "block";
+        } else {
+            document.getElementById("i").style.display = "none";
+        }
+        displayImg.onload = () => {
+            drawCanvasWithBadge(); // Draw the canvas with the badge after the image is loaded
+        };
+        if (txtArray.length > 0) {
+            drawTextCanvasWithBadge();
+            if (txtArray.length > 1) {document.getElementById("t").style.display = "block";}
+        }
+        // Show the modal after ensuring the canvas is updated
+        const modal = document.getElementById("uploadModal");
+        modal.style.display = "block";
+    } 
+    else {
+        imgCanvas.style.display = "none"; // Hide the canvas if no images are available
+        document.getElementById("i").style.display = "none";
+        if (txtArray.length > 0) {
+            drawTextCanvasWithBadge();
+            if (txtArray.length > 1) {document.getElementById("t").style.display = "block";}
+        } else {
+            txtCanvas.style.display = "none"; // Hide the canvas if no text is available
+            document.getElementById("t").style.display = "none";
+        }
+        const modal = document.getElementById("uploadModal");
+        modal.style.display = "block";
+    }
 }
 
 function loadImg() {
@@ -231,27 +261,26 @@ async function sendTextToServer(text) { // Whatever the user inputs
     }
   }
 
-function nextImg(foward) {
-
-    if (foward==true) {
-        if (iArrPointer == imageArray.length - 1) {
-            iArrPointer = 0;
+  function nextImg(forward) {
+    if (forward) {
+        if (iArrPointer === imageArray.length - 1) {
+            iArrPointer = 0; // Loop back to the first image
         } else {
-            iArrPointer = iArrPointer + 1;
+            iArrPointer += 1; // Move to the next image
         }
     } else {
-        if (iArrPointer == 0) {
-            iArrPointer = imageArray.length - 1;
+        if (iArrPointer === 0) {
+            iArrPointer = imageArray.length - 1; // Loop back to the last image
         } else {
-            iArrPointer = iArrPointer - 1;
+            iArrPointer -= 1; // Move to the previous image
         }
     }
+
+    // Load the new image and redraw the canvas with the badge
     displayImg.src = imageArray[iArrPointer];
     displayImg.onload = () => {
-    imgCanvas.width = displayImg.naturalWidth;
-    imgCanvas.height = displayImg.naturalHeight;
-    imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
-    }
+        drawCanvasWithBadge(); // Redraw the canvas with the badge
+    };
 }
 
 function nextTxt(foward) {
@@ -272,11 +301,230 @@ function nextTxt(foward) {
     //txtCtx.clearRect(0, 0, txtCanvas.width, txtCanvas.height);
     //txtCtx.fillText(txtArray[tArrPointer],10,20);
     txtCanvas.innerHTML = txtArray[tArrPointer];
+    drawTextCanvasWithBadge();
 }
 
+function drawTrashBadge() {
+    const badgeSize = 30; // Fixed size of the badge in pixels
+    const badgePadding = 10; // Padding from the top-right corner in pixels
 
+    // Get the canvas's bounding rectangle to calculate scaling
+    const rect = imgCanvas.getBoundingClientRect();
+    const scaleX = imgCanvas.width / rect.width; // Scale factor for X
+    const scaleY = imgCanvas.height / rect.height; // Scale factor for Y
 
+    // Calculate the badge's position on the canvas
+    const badgeX = imgCanvas.width - (badgePadding * scaleX) - (badgeSize * scaleX) / 2;
+    const badgeY = (badgePadding * scaleY) + (badgeSize * scaleY) / 2;
 
+    // Draw the trash badge
+    imgCtx.fillStyle = "red"; // Badge background color
+    imgCtx.beginPath();
+    imgCtx.arc(
+        badgeX, // X position
+        badgeY, // Y position
+        (badgeSize / 2) * scaleX, // Radius scaled to canvas
+        0,
+        2 * Math.PI
+    );
+    imgCtx.fill();
+
+    // Draw the trash icon (🗑️)
+    imgCtx.fillStyle = "white"; // Icon color
+    imgCtx.font = `${(badgeSize - 10) * scaleX}px Arial`; // Font size scaled to canvas
+    imgCtx.textAlign = "center";
+    imgCtx.textBaseline = "middle";
+    imgCtx.fillText("🗑️", badgeX, badgeY);
+}
+
+function deleteImage() {
+    console.log("made it");
+    // Check if imageArray exists and has images
+    if (imageArray.length > 0) {
+        // Remove the current image by creating a new array
+        const newArray = imageArray.filter((_, index) => index !== iArrPointer);
+
+        // Reassign the original array to the new array
+        while (imageArray.length > 0) {
+            imageArray.pop(); // Clear the original array
+        }
+        imageArray.push(...newArray); // Push the new array elements into the original array
+        document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
+
+        // Adjust the pointer to stay within bounds
+        if (iArrPointer >= imageArray.length) {
+            iArrPointer = 0; // Reset to the first image if the pointer exceeds the array length
+        }
+
+        // If there are more images, display the next one
+        if (imageArray.length > 0) {
+            displayImg.src = imageArray[iArrPointer];
+            displayImg.onload = () => {
+                drawCanvasWithBadge(); // Redraw the canvas with the badge
+            };
+
+            if (imageArray.length > 1) {
+                document.getElementById("i").style.display = "block";
+            } else {
+                document.getElementById("i").style.display = "none";
+            }
+        } else {
+            // If no images are left, clear the canvas
+            imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
+            imgCanvas.width = 0; // Reset canvas width
+            imgCanvas.height = 0; // Reset canvas height
+            imgCanvas.style.display = "none"; // Hide the canvas if no images are available
+        }
+    } else {
+        alert("No images to delete.");
+    }
+}
+
+function drawCanvasWithBadge() {
+    // Set canvas dimensions to match the image
+    imgCanvas.width = displayImg.naturalWidth;
+    imgCanvas.height = displayImg.naturalHeight;
+
+    // Draw the image on the canvas
+    imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
+
+    // Draw the trash badge
+    drawTrashBadge();
+}
+
+// Add a click event listener to detect clicks on the trash badge
+imgCanvas.addEventListener("click", (event) => {
+    const rect = imgCanvas.getBoundingClientRect();
+    const x = event.clientX - rect.left; // X position of the click
+    const y = event.clientY - rect.top; // Y position of the click
+
+    const badgeSize = 30; // Fixed size of the badge in pixels
+    const badgePadding = 10; // Padding from the top-right corner in pixels
+
+    // Get the canvas's bounding rectangle to calculate scaling
+    const scaleX = imgCanvas.width / rect.width; // Scale factor for X
+    const scaleY = imgCanvas.height / rect.height; // Scale factor for Y
+
+    // Calculate the badge's position relative to the canvas
+    const badgeX = imgCanvas.width - (badgePadding * scaleX) - (badgeSize * scaleX) / 2;
+    const badgeY = (badgePadding * scaleY) + (badgeSize * scaleY) / 2;
+
+    // Check if the click is inside the badge
+    const distance = Math.sqrt((x * scaleX - badgeX) ** 2 + (y * scaleY - badgeY) ** 2);
+    if (distance <= (badgeSize / 2) * scaleX) {
+        console.log("Trash badge clicked");
+        deleteImage(); // Call the deleteImage function
+    } else {
+        console.log("Canvas clicked outside the trash badge");
+    }
+});
+
+function drawTextTrashBadge() {
+    const badgeSize = 30; // Size of the trash badge in pixels
+    const badgePadding = 10; // Padding from the top-right corner in pixels
+
+    // Create the trash badge element
+    let trashBadge = document.getElementById("textTrashBadge");
+    if (!trashBadge) {
+        trashBadge = document.createElement("div");
+        trashBadge.id = "textTrashBadge";
+        trashBadge.style.position = "absolute";
+        trashBadge.style.width = `${badgeSize}px`;
+        trashBadge.style.height = `${badgeSize}px`;
+        trashBadge.style.backgroundColor = "red";
+        trashBadge.style.borderRadius = "50%";
+        trashBadge.style.display = "flex";
+        trashBadge.style.justifyContent = "center";
+        trashBadge.style.alignItems = "center";
+        trashBadge.style.color = "white";
+        trashBadge.style.fontSize = `${badgeSize - 10}px`;
+        trashBadge.style.cursor = "pointer";
+        trashBadge.innerText = "🗑️";
+
+        // Add click event listener to delete text
+        trashBadge.addEventListener("click", () => {
+            deleteText();
+        });
+
+        // Append the badge to the txtCanvas (div)
+        txtCanvas.appendChild(trashBadge);
+    }
+
+    // Position the trash badge in the top-right corner of the txtCanvas
+    trashBadge.style.top = `${badgePadding}px`;
+    trashBadge.style.right = `${badgePadding}px`;
+}
+
+function deleteText() {
+    // Check if txtArray exists and has text entries
+    if (txtArray.length > 0) {
+        // Remove the current text
+        txtArray.splice(tArrPointer, 1);
+
+        // Adjust the pointer
+        if (tArrPointer >= txtArray.length) {
+            tArrPointer = 0; // Reset to the first text if the pointer exceeds the array length
+        }
+
+        // Update the text in the txtCanvas
+        if (txtArray.length > 0) {
+            txtCanvas.innerText = txtArray[tArrPointer];
+            drawTextCanvasWithBadge();
+
+            if (txtArray.length > 1) {
+                document.getElementById("t").style.display = "block"; // Show the text badge if more than one text entry remains
+            } else {    
+                document.getElementById("t").style.display = "none"; // Hide the text badge if only one text entry remains
+            }
+
+        } else {
+            txtCanvas.style.display = "none"; // Hide the canvas if no text is available
+        }
+
+        // Update the count display
+        document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
+    } else {
+        alert("No text entries to delete.");
+    }
+}
+
+function drawTextCanvasWithBadge() {
+    // Clear the div
+    txtCanvas.innerText = "";
+
+    // Display the current text
+    txtCanvas.innerText = txtArray[tArrPointer] || "No text available";
+
+    // Draw the trash badge
+    drawTextTrashBadge();
+}
+
+// Add a click event listener to detect clicks on the trash badge for txtCanvas
+txtCanvas.addEventListener("click", (event) => {
+    const rect = txtCanvas.getBoundingClientRect();
+    const x = event.clientX - rect.left; // X position of the click
+    const y = event.clientY - rect.top; // Y position of the click
+
+    const badgeSize = 30; // Fixed size of the badge in pixels
+    const badgePadding = 10; // Padding from the top-right corner in pixels
+
+    // Get the canvas's bounding rectangle to calculate scaling
+    const scaleX = txtCanvas.width / rect.width; // Scale factor for X
+    const scaleY = txtCanvas.height / rect.height; // Scale factor for Y
+
+    // Calculate the badge's position relative to the canvas
+    const badgeX = txtCanvas.width - (badgePadding * scaleX) - (badgeSize * scaleX) / 2;
+    const badgeY = (badgePadding * scaleY) + (badgeSize * scaleY) / 2;
+
+    // Check if the click is inside the badge
+    const distance = Math.sqrt((x * scaleX - badgeX) ** 2 + (y * scaleY - badgeY) ** 2);
+    if (distance <= (badgeSize / 2) * scaleX) {
+        console.log("Text trash badge clicked");
+        deleteText(); // Call the deleteText function
+    } else {
+        console.log("Text canvas clicked outside the trash badge");
+    }
+});
 
 confirmUpload = async () => {
     const courseName = document.getElementById("course").value.trim();

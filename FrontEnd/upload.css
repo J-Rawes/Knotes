@@ -308,9 +308,11 @@ input[type="file"] {
 #imgCanvas {
   grid-row: 1/2;
   grid-column: 1/2;
-  min-width: 90%;
   float: left;
   margin: 10px;
+  margin: auto;
+  max-width: 90%;
+  max-height: 90%;
 }
 
 #txtCanvas {
@@ -318,6 +320,8 @@ input[type="file"] {
   grid-column: 2/3;
   margin: 10px;
   font-size: 16px;
+  border: 1px solid #cacaca;
+  text-align: left;
 }
 
 #uModal-c {
@@ -328,6 +332,7 @@ input[type="file"] {
 
 #arrows {
   display: grid;
+  height: 10%;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
 }
@@ -375,6 +380,41 @@ input[type="file"] {
 
 #formT input:focus{
   border: 2px solid #423E37;
+}
+
+/* Ensure the container is positioned relative */
+#imgCanvasContainer {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  height: fit-content;
+}
+
+/* Style for the canvas */
+#imgCanvas {
+  display: block;
+  border: 2px solid #423E37;
+  max-width: 90%;
+  max-height: 90%;
+  margin: auto;
+}
+
+/* Style for the trash badge */
+.trash-badge {
+  position: absolute;
+  top: 5px; /* Slightly inside the top edge of the canvas */
+  right: 5px; /* Slightly inside the right edge of the canvas */
+  background-color: red;
+  color: white;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 10; /* Ensure it appears above the canvas */
+}
+
+.trash-badge:hover {
+  background-color: darkred;
 }
 
 @media screen and (max-width: 600px) {
