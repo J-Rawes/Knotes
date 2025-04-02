@@ -82,8 +82,9 @@ a:active {
 }
 
 #button-container button {
-  background-color: #41E2BA;
-  border: none;
+  background-color: #ffffff;
+  border: 2px solid #cacaca;
+  border-radius: 12px;
   color: #423E37;
   font-size: 24px;
   margin-bottom: 0.5em;
@@ -97,7 +98,8 @@ a:active {
 }
 
 #button-container button:hover {
-  background-color: #71EACC;
+  border: 2px solid #F7E733;
+  box-shadow: inset 0 0 0 4px #F7E733; /* Adjust the size (4px) and color (#cacaca) */
   transform: scale(1.05);
   transition: 0.2s ease-in-out;
 }
@@ -108,7 +110,7 @@ a:active {
 }
 
 #button-container button:active {
-  background-color: #71EACC;
+  background-color: #F7E733;
 }
 
 #searchbar {
@@ -137,6 +139,7 @@ a:active {
 button {
   background-color: #F7E733;
   border: none;
+  border-radius: 12px;
   color: #423E37;
   font-size: 24px;
   margin: auto;
@@ -278,7 +281,7 @@ canvas {
   font-size: 16px;
   padding: 8px;
   border: 1px solid #cacaca; /* Matches the blue used in links/buttons */
-  border-radius: 5px;
+  border-radius: 12px;
   background-color: #ffffff; /* Matches the background of input fields */
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;

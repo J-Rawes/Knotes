@@ -101,6 +101,7 @@ button {
     background-color: #F7E733;
     border: none;
     color: #423E37;
+    border-radius: 12px;
     font-size: 60px;
     margin: auto;
     margin-bottom: 0.5em;
@@ -115,6 +116,7 @@ button:hover {
     background-color: #F8EC62;
     transform: scale(1.05);
     transition: 0.2s ease-in-out;
+    box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
   }
   
 button:active {
