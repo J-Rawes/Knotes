@@ -23,61 +23,78 @@ async function register(event) {
 
   event.preventDefault();
 
-  var username = document.getElementById("username").value; //user's username
-  var password = document.getElementById("password").value; //user's password
-  var password2 = document.getElementById("password2").value;
-  var conditions = ["\\","<",">","|","/","=","&","#"];
+  const messagefield = document.getElementById("message");
+  var username = document.getElementById("username").value.trim(); // user's username
+  var password = document.getElementById("password").value.trim(); // user's password
+  var password2 = document.getElementById("password2").value.trim();
+  var securityQuestion = document.getElementById("questions").value; // selected security question
+  var securityAnswer = document.getElementById("securityAnswer").value.trim(); // user's security answer
+  var conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
 
-  if (username.length > 16) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Username cannot exceed 16 characters";
-  } else if (conditions.some(el => username.includes(el))) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Username cannot contain special characters: /\\|<>=&#";
-  } else if (password.length > 16) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Password cannot exceed 16 characters";
-  } else if (conditions.some(el => password.includes(el))) {
-    document.getElementById("message").style.color = "red";
-    document.getElementById("message").innerHTML = "Password cannot contain special characters: /\\|<>=&#";
-  } else if (password !== password2) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Passwords do not match";
-  } else if (username.length === 0 || password.length === 0){
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Please fill in all fields";
-  } else if (password.length < 8 || /[A-Z]/.test(password) == false || /\d/.test(password) == false) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
-  } else { //User accepted
-    let hashedPassword = SHA256.hex(password); //ACTUALLY HASH PASSWORD
-    const response = await sendToDB(username, hashedPassword); //ACTUALLY SEND TO DB
-     
-    if (response === "Username already exists") {
-      document.getElementById("message").style.color = "#f56476";
-      document.getElementById("message").innerHTML = "Username already exists. Please choose another.";
-    } else if (response === "Missing username or password") {
-      document.getElementById("message").style.color = "#f56476";
-      document.getElementById("message").innerHTML = "Username or password missing. Please fill in all fields.";
-    } else if (response === "User registered successfully") {
-      localStorage.setItem("username", username);
-      location.href = "homepage.html"; // Redirect to homepage
-    } else {
-      document.getElementById("message").style.color = "#f56476";
-      document.getElementById("message").innerHTML = "An error occurred. Please try again.";
-    }
+if (username.length > 16) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Username cannot exceed 16 characters";
+} else if (conditions.some(el => username.includes(el))) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Username cannot contain special characters: /\\|<>=&#";
+} else if (password.length > 16) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Password cannot exceed 16 characters";
+} else if (conditions.some(el => password.includes(el))) {
+  messagefield.style.color = "red";
+  messagefield.innerHTML = "Password cannot contain special characters: /\\|<>=&#";
+} else if (password !== password2) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Passwords do not match";
+} else if (username.length === 0 || password.length === 0) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Please fill in all fields";
+} else if (securityQuestion === "default") {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Please select a security question";
+} else if (securityQuestion === "") {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Please select a security question";
+} else if (securityAnswer.length === 0) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Please provide an answer to the security question";
+} else if (conditions.some(el => securityAnswer.includes(el))) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Security answer cannot contain special characters: /\\|<>=&#";
+} else if (password.length < 8 || /[A-Z]/.test(password) == false || /\d/.test(password) == false) {
+  messagefield.style.color = "#f56476";
+  messagefield.innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
+} else { // User accepted
+  let hashedPassword = SHA256.hex(password); // ACTUALLY HASH PASSWORD
+  let hashedSecurityAnswer = SHA256.hex(securityAnswer); //ACTUALLY HASH SECURITY QUESTION ANSWER
+  const response = await sendToDB(username, hashedPassword, securityQuestion, hashedSecurityAnswer); // ACTUALLY SEND TO DB
+   
+  if (response === "Username already exists") {
+    messagefield.style.color = "#f56476";
+    messagefield.innerHTML = "Username already exists. Please choose another.";
+  } else if (response === "A required field is missing") {
+    messagefield.style.color = "#f56476";
+    messagefield.innerHTML = "A required field is missing. Please ensure all fields are filled.";
+  } else if (response === "User registered successfully") {
+    localStorage.setItem("username", username);
+    location.href = "homepage.html"; // Redirect to homepage
+  } else {
+    messagefield.style.color = "#f56476";
+    messagefield.innerHTML = "An error occurred. Please try again.";
   }
+}
   return false;
 }
 
-async function sendToDB(uname, pword) { // Whatever the user inputs
+async function sendToDB(uname, pword, securityq, securityq_ans) { // Whatever the user inputs
   try {
     let response = await fetch('/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: uname, password: pword })
+      body: JSON.stringify({ username: uname, password: pword, securityQuestion: securityq, securityAnswer: securityq_ans })
     });
 
+    console.log("Server Response:", response);
     let data = await response.text();
     console.log("Server Response:", data);
 

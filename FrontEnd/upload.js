@@ -527,8 +527,10 @@ txtCanvas.addEventListener("click", (event) => {
 });
 
 confirmUpload = async () => {
-    const courseName = document.getElementById("course").value.trim();
-    const noteTitle = document.getElementById("title").value.trim();
+    const courseName = document.getElementById("course").value;
+    console.log("The course name is: " + courseName);
+    const noteTitle = document.getElementById("title").value;
+    console.log("The Note title is: " + noteTitle);
     const conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
 
     // Validation checks
@@ -561,6 +563,8 @@ confirmUpload = async () => {
         imageArray: imageArray,
         txtArray: txtArray
     };
+
+    console.log("Data to be sent:", data);
 
     try {
         const response = await fetch('/uploadNote', {

@@ -1,102 +1,150 @@
-/*
-HOW sendToDB WORKS: 
-
-1. User enters valid username and pass
-2. sendToDB sends POST req. to /register
-  a. Content is currently being sent as JSON (See headers)
-  b. Stringify makes sure uname and password are being sent as a string
-3. Node.js recieves this request
-  a. .then waits for the servers response, response.text() is the response
-4. This message object in the DOM displays the server's response
-
-*/
-
-/*
-See the final else statement: When a user has all valid inputs for registration, the front-end code calls 
-             "sendToDB", localStorage simply allows the browser to remember login credentials, 
-             location.href reroutes the user to the homepage
-*/
-
 const SHA256 = new Hashes.SHA256();
-var exists = false;
 
-async function login(event) {
+// Step 1: Verify Username
+document.getElementById("checkUsernameButton").addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
 
-  event.preventDefault();
-
-  var username = document.getElementById("username").value; //user's username
-  var password = document.getElementById("password").value; //user's password
-  var confpassword = document.getElementById("confPassword").value; //user's password
-  var conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
-
-
-  if (password !== confpassword) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Passwords do not match";
-  } else if (username.length > 16) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Username cannot exceed 16 characters";
-  }
-
-  if (username.length > 16) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Username cannot exceed 16 characters";
-  } else if (conditions.some(el => username.includes(el))) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Username cannot contain special characters: /\\|<>=&#";
-  } else if (password.length > 16) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Password cannot exceed 16 characters";
-  } else if (conditions.some(el => password.includes(el))) {
-    document.getElementById("message").style.color = "red";
-    document.getElementById("message").innerHTML = "Password cannot contain special characters: /\\|<>=&#";
-  } else if (username.length === 0 || password.length === 0) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Please fill in all fields";
-  } else if (password.length < 8 || /[A-Z]/.test(password) == false || /\d/.test(password) == false) {
-    document.getElementById("message").style.color = "#f56476";
-    document.getElementById("message").innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
-  } else { 
-    //constrains met
-    console.log(username, password);
-    let hashedPassword = SHA256.hex(password); //ACTUALLY HASH PASSWORD
-    console.log(hashedPassword);
-
-    response = await checkWithDB(username, hashedPassword); //ACTUALLY SEND TO DB
-
-    if (response === false) {
-      document.getElementById("message").style.color = "#f56476";
-      document.getElementById("message").innerHTML = "Incorrect Username or Password";
-      return false;
+    if (!username) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "Please enter your username.";
+        return;
     }
 
-    // Redirect to login page after successful password reset
-    document.getElementById("message").style.color = "green";
-    document.getElementById("message").innerHTML = "Password reset successful! Redirecting...";
-    setTimeout(() => {
-    location.href = "login.html"; // Replace with the correct path to your login page
-}   , 2000); // Redirect after 2 seconds
-  }
+    try {
+        const response = await fetch('/verifyUsername', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+        });
 
-  return false;
+        const data = await response.json();
+
+        if (data.exists) {
+            // Username found, display the security question
+            document.getElementById("usernameForm").style.display = "none";
+            document.getElementById("securityQuestionForm").style.display = "block";
+            document.getElementById("securityQuestionLabel").innerText = data.securityQuestion;
+        } else {
+            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").innerText = "Username not found.";
+        }
+    } catch (error) {
+        console.error("Error verifying username:", error);
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "An error occurred. Please try again.";
+    }
+});
+
+// Step 2: Verify Security Question Answer
+document.getElementById("checkSecurityAnswerButton").addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
+    const securityAnswer = document.getElementById("securityAnswer").value.trim();
+
+    if (!securityAnswer) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "Please enter your security answer.";
+        return;
+    }
+
+    try {
+        let hashedSecurityAnswer = SHA256.hex(securityAnswer); // Hash the security answer before sending it
+        console.log(hashedSecurityAnswer);
+        let response = await fetch('/verifySecurityAnswer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, securityAnswer: hashedSecurityAnswer })
+        });
+
+        let data = await response.json();
+
+        console.log(data);
+
+        if (data) {
+            // Security answer is correct, display the reset password form
+            document.getElementById("securityQuestionForm").style.display = "none";
+            document.getElementById("resetPasswordForm").style.display = "block";
+        } else {
+            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").innerText = "Incorrect security answer.";
+        }
+    } catch (error) {
+        console.error("Error verifying security answer:", error);
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "An error occurred. Please try again.";
+    }
+});
+
+// Step 3: Reset Password
+document.getElementById("resetPasswordButton").addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
+    const newPassword = document.getElementById("newPassword").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+    if (!newPassword || !confirmPassword) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "Please fill in all password fields.";
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "Passwords do not match.";
+        return;
+    }
+
+    if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "Password must be at least 8 characters long and include at least one capital letter and one number.";
+        return;
+    }
+
+    try {
+        const hashedPassword = SHA256.hex(newPassword); // Hash the password before sending it
+        const response = await fetch('/resetPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, newPassword: hashedPassword })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById("message").style.color = "green";
+            document.getElementById("message").innerText = "Password reset successful! Redirecting to login...";
+            setTimeout(() => {
+                window.location.href = "login.html"; // Redirect to login page
+            }, 2000);
+        } else {
+            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").innerText = "Failed to reset password. Please try again.";
+        }
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").innerText = "An error occurred. Please try again.";
+    }
+});
+
+async function verifyIdentity(username, securityQuestion, securityAnswer) {
+    const response = await fetch('/verifyIdentity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, securityQuestion, securityAnswer })
+    });
+    return response.text();
 }
 
-async function checkWithDB(uname, pword) { // Whatever the user inputs
-  try {
-    let response = await fetch('/resetPassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username: uname, password: pword })
-    })
-
-    let data = await response.json();  // Convert response to JSON
-    return data;
-
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    document.getElementById("message").innerText = "Error connecting to server.";
-    return "Error";
-  }
+async function resetPassword(username, newPassword) {
+    const response = await fetch('/resetPassword', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, newPassword })
+    });
+    return response.text();
 }
