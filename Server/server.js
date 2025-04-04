@@ -61,11 +61,11 @@ const server = http.createServer((req, res) => {
 
         req.on('end', async () => {
             try {
-                const { username, password } = JSON.parse(body);
+                const { username, password, securityQuestion, securityAnswer } = JSON.parse(body);
 
-                if (!username || !password) {
+                if (!username || !password || !securityQuestion || !securityAnswer) {
                     res.writeHead(400, { 'Content-Type': 'text/plain' });
-                    res.end('Missing username or password');
+                    res.end('A required field is missing');
                     return;
                 }
 
@@ -79,11 +79,13 @@ const server = http.createServer((req, res) => {
                 }
 
                 // Insert into PostgreSQL (user_id is auto-generated)
-                const user_gen_id = await generateUID();
+                console.log("hello");
+                const user_gen_id = await generateID("Users", "user_id");
+                console.log("User ID: ", user_gen_id); // Log the generated user ID
                 client.query(
-                    'INSERT INTO "Users" (user_id, uname, pword) VALUES ($1, $2, $3)',
-                    [user_gen_id, username, password],
-                    (err, result) => {
+                    'INSERT INTO "Users" (user_id, uname, pword, securityq, securityq_ans) VALUES ($1, $2, $3, $4, $5)',
+                    [user_gen_id, username, password, securityQuestion, securityAnswer],
+                    (err) => {
                         if (err) {
                             console.error('Database insert error:', err);
                             res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -311,13 +313,13 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
 
                 const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
 
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.writeHead(200, { 'Content-Type': 'te' });
                 res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
 
             } catch (error) {
                 console.error('Error hashing password:', error);
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end('Error hashing password');
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({error: "Error hashing password"}));
             }
         });
     }
@@ -368,31 +370,37 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     
         req.on('end', async () => {
-            const {courseName, noteTitle, imageArray, textArray} = JSON.parse(body);
+            const {course, title, imageArray, txtArray} = JSON.parse(body);
+
+            console.log("Course:", course);
+            console.log("Title:", title);
+            console.log("Image Array:", imageArray);
+            console.log("Text Array:", txtArray);
     
             try {
 
                 const getCourseID = `
                     SELECT course_id
                     FROM "Courses"
-                    WHERE "course_name" = $1
+                    WHERE course_name = $1
                 `;
 
-                const courseID = await client.query(getCourseID, [courseName]);
+                const courseIDResult = await client.query(getCourseID, [course]);
+                const courseID = courseIDResult.rows[0]?.course_id;
 
                
-                const noteNum = await generateNID();
+                const noteNum = await generateID("Notes", "note_id");
                 
                 // Insert note into the Notes table
                 const query = `
                     INSERT INTO "Notes" (note_id, title, num_likes, course_id)  
-                    VALUES($1, $2, 0, $3)
+                    VALUES($1, $2, $3, $4)
                 `;
-                await client.query(query, [noteNum, title, courseID]);
+                await client.query(query, [noteNum, title, numlikes=0, courseID]);
     
                 // Insert text entries into the Text table
-                for (const text of textArray) {
-                    const textNum = await generateID("Text");
+                for (const text of txtArray) {
+                    const textNum = await generateID("Text", "text_id");
                     const query2 = `
                         INSERT INTO "Text" (text_id, text, note_id)  
                         VALUES($1, $2, $3)
@@ -402,7 +410,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
     
                 // Insert image entries into the Images table
                 for (const image of imageArray) {
-                    const imageNum = await generateID("Images");
+                    const imageNum = await generateID("Images", "image_id");
                     const query3 = `
                         INSERT INTO "Images" (image_id, image, note_id)  
                         VALUES($1, $2, $3)
@@ -410,16 +418,137 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
                     await client.query(query3, [imageNum, image, noteNum]);
                 }
     
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end('Note uploaded successfully');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({message: 'Note uploaded successfully'}));
             } catch (error) {
                 console.error('Error uploading note:', error);
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Database error');
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({error: 'Database error'}));
             }
         });
     }
     
+    else if (req.method === 'POST' && req.url === '/verifySecurityAnswer') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username, securityAnswer } = JSON.parse(body);
+
+                if (!username || !securityAnswer) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing username or security answer' }));
+                    return;
+                }
+
+                // Query to get the stored hashed security answer
+                const query = `
+                    SELECT securityq_ans
+                    FROM "Users"
+                    WHERE uname = $1
+                `;
+
+                const result = await client.query(query, [username]);
+
+                if (result.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'User not found' }));
+                    return;
+                }
+
+                const storedHashAnswer = result.rows[0].securityq_ans;
+
+                // Compare the stored hash with the provided hash
+                if (storedHashAnswer.trim() === securityAnswer.trim()) {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: true, message: 'Security answer verified' }));
+                } else {
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: 'Incorrect security answer' }));
+                }
+            } catch (error) {
+                console.error('Error verifying security answer:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
+    else if (req.method === 'POST' && req.url === '/resetPassword') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username, newPassword } = JSON.parse(body);
+
+                if (!username || !newPassword) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing required fields' }));
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Password must be at least 8 characters long' }));
+                    return;
+                }
+
+                const query = `
+                    UPDATE "Users"
+                    SET pword = $1
+                    WHERE uname = $2
+                `;
+
+                await client.query(query, [newPassword, username]);
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, message: 'Password reset successfully' }));
+            } catch (error) {
+                console.error('Error resetting password:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
+    else if (req.method === 'POST' && req.url === '/verifyUsername') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username } = JSON.parse(body);
+
+                // Check if the username exists in the database
+                const query = 'SELECT securityq FROM "Users" WHERE uname = $1';
+                const result = await client.query(query, [username]);
+
+                if (result.rows.length > 0) {
+                    const securityQuestion = result.rows[0].securityq;
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ exists: true, securityQuestion }));
+                } else {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ exists: false }));
+                }
+            } catch (error) {
+                console.error('Error verifying username:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
 
     // Default 404
     else {
@@ -436,6 +565,7 @@ server.listen(PORT, () => {
 });
 
 // Method for extracting from file
+
 const CREDENTIALS;
 
 const CONFIG = {
@@ -458,14 +588,15 @@ async function extract(image) {
 
 // Method for generating ID on table addition
 
-async function generateID(idType) {
+async function generateID(idType, columnName) {
+    console.log("Generating ID for: ", idType);
     try {
-        const query = `SELECT COUNT(*) FROM ` + idType;
+        const query = `SELECT MAX(${columnName}) AS max_id FROM "${idType}"`; // Use MAX to find the highest ID
         console.log(query);
         const result = await client.query(query);
         console.log(result);
-        const count = result.rows[0].count; // Check DB for "next UID"
-        return count;
+        const maxId = result.rows[0].max_id || 0; // Default to 0 if no rows exist
+        return maxId + 1; // Increment the highest ID by 1
     } catch (err) {
         console.error(`Error generating ${idType}:`, err);
         throw err;
