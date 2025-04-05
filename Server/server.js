@@ -8,6 +8,10 @@ const path = require('path');
 const { Client } = require('pg');
 const Hashes = require('jshashes'); // Import jshashes which is a hashing library
 
+const jwt = require('jsonwebtoken'); //For keeping users authenticated
+const JWT_SECRET = "ChickenJockey" // super seceret key (shhhhh)
+
+
 
 const vision = require('@google-cloud/vision');
 
@@ -39,7 +43,7 @@ const serveStaticFile = (filePath, contentType, res) => {
 
 // Create server
 const server = http.createServer((req, res) => {
-    const url = req.url === '/' ? '/landingpage.html' : req.url;
+    const url = req.url === '/' ? '/register.html' : req.url;
     const ext = path.extname(url);
 
     // Serve static files (HTML, CSS, JS)
@@ -79,7 +83,6 @@ const server = http.createServer((req, res) => {
                 }
 
                 // Insert into PostgreSQL (user_id is auto-generated)
-                console.log("hello");
                 const user_gen_id = await generateID("Users", "user_id");
                 console.log("User ID: ", user_gen_id); // Log the generated user ID
                 client.query(
@@ -91,8 +94,11 @@ const server = http.createServer((req, res) => {
                             res.writeHead(500, { 'Content-Type': 'text/plain' });
                             res.end('Database error');
                         } else {
+
+                            const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h'}); //GENEREATE JWT HERE
+
                             res.writeHead(200, { 'Content-Type': 'text/plain' });
-                            res.end('User registered successfully');
+                            res.end('User registered successfully', token);
                         }
                     }
                 );
@@ -164,11 +170,14 @@ const server = http.createServer((req, res) => {
 
 
 
-                if (storedHashPass.trim() === password.trim()) {
-                    res.writeHead(200, { 'Content-Type': 'text/plain' });
-                    res.end(JSON.stringify({ exists: true, message: "Login successful"  }));   
+                if (storedHashPass && storedHashPass.trim() === password.trim()) {
+
+                    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h'}); //GENEREATE JWT HERE
+
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ exists: true, token: token, message: "Login successful", }));   
                 } else {
-                    res.writeHead(401, { 'Content-Type': 'text/plain' });
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ exists: false, message: "Incorrect password"  }));
                 }
             
@@ -313,7 +322,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
 
                 const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
 
-                res.writeHead(200, { 'Content-Type': 'te' });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
 
             } catch (error) {
@@ -550,6 +559,13 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     }
 
+    else if (req.method === 'GET' && req.url === '/protected') {
+        authenticateToken(req, res, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'This is a protected route', user: req.user }));
+        });
+    }
+
     // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -586,6 +602,7 @@ async function extract(image) {
 }
 
 
+
 // Method for generating ID on table addition
 
 async function generateID(idType, columnName) {
@@ -613,6 +630,28 @@ function dataUrlToBuffer(dataUrl) {
         throw new Error('Invalid Data URL');
     }
     return Buffer.from(matches[2], 'base64');
+}
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Access token required' }));
+        return;
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid token' }));
+            return;
+        }
+
+        req.user = user; // Attach user info to the request
+        next();
+    });
 }
 
 
