@@ -76,6 +76,7 @@ if (username.length > 16) {
     messagefield.style.color = "#f56476";
     messagefield.innerHTML = "A required field is missing. Please ensure all fields are filled.";
   } else if (response === "User registered successfully") {
+    document.cookie = `authtoken=${response.token}; path=/; secure; SameSite=Strict`;
     localStorage.setItem("username", username);
     location.href = "homepage.html"; // Redirect to homepage
   } else {

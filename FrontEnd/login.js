@@ -24,8 +24,6 @@ async function login(event) {
 
   event.preventDefault();
 
-  console.log("We got here");
-
   var username = document.getElementById("username").value; //user's username
   var password = document.getElementById("password").value; //user's password
   var conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
@@ -52,15 +50,17 @@ async function login(event) {
     console.log(username, password);
     let hashedPassword = SHA256.hex(password); //ACTUALLY HASH PASSWORD
     console.log(hashedPassword);
-    exists = await checkWithDB(username, hashedPassword); //ACTUALLY SEND TO DB
 
-    if (!exists) {
+    let response = await checkWithDB(username, hashedPassword); //ACTUALLY SEND TO DB
+
+    if (!response.exists) {
       document.getElementById("message").style.color = "#f56476";
       document.getElementById("message").innerHTML = "Incorrect Username or Password";
       return false;
     }
 
-    document.cookie = "username = " + username;
+    document.cookie = `authtoken=${response.token}; path=/; secure; SameSite=Strict`;
+    localStorage.setItem("username", username);
     location.href = "homepage.html";
   }
 
@@ -78,7 +78,7 @@ async function checkWithDB(uname, pword) { // Whatever the user inputs
     })
 
     let data = await response.json();  // Convert response to JSON
-    return data.exists || false;  // Return boolean value
+    return data;
   } catch (error) {
     console.error("Fetch Error:", error);
     document.getElementById("message").innerText = "Error connecting to server.";

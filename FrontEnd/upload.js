@@ -11,12 +11,6 @@ const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("txtCanvas");
 const imgCtx = imgCanvas.getContext("2d");
 
-document.addEventListener("DOMContentLoaded", function () {
-   let decodedCookie = decodeURIComponent(document.cookie);
-   let ca = decodedCookie.split(';');
-   username = ca[1];
-});
-
 fileInput.addEventListener("change", async () => {
     let [file] = fileInput.files
 
