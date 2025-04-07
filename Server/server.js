@@ -247,7 +247,7 @@ const server = http.createServer((req, res) => {
                 try {
                     // Get note count and IDs for the given course
                     const query = `
-                        SELECT title, note_id
+                        SELECT title, note_id, num_likes
                         FROM "Notes"
                         WHERE course_id = $1               
                     `;
@@ -273,7 +273,7 @@ const server = http.createServer((req, res) => {
                         return;
                     }
             
-                    const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id }));
+                    const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id, num_likes: row.num_likes }));
                     const courseInfo = result2.rows[0];
     
                     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -288,7 +288,7 @@ const server = http.createServer((req, res) => {
         }
 
 
-else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
+else if (req.method === 'POST' && req.url === '/getNoteCountAndID') { //USED TO CREATE BUTTONS
         let body = '';
 
         req.on('data', chunk => {
@@ -379,12 +379,13 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     
         req.on('end', async () => {
-            const {course, title, imageArray, txtArray} = JSON.parse(body);
+            const {course, title, imageArray, txtArray, username} = JSON.parse(body);
 
             console.log("Course:", course);
             console.log("Title:", title);
             console.log("Image Array:", imageArray);
             console.log("Text Array:", txtArray);
+            console.log("Username:", username);
     
             try {
 
@@ -397,15 +398,24 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
                 const courseIDResult = await client.query(getCourseID, [course]);
                 const courseID = courseIDResult.rows[0]?.course_id;
 
+                // Query to get the user_id from the Users table
+                const getUserIDQuery = `
+                    SELECT user_id
+                    FROM "Users"
+                    WHERE uname = $1
+        `       ;
+                const userIDResult = await client.query(getUserIDQuery, [username]);
+                const userID = userIDResult.rows[0]?.user_id;
+
                
                 const noteNum = await generateID("Notes", "note_id");
                 
                 // Insert note into the Notes table
                 const query = `
-                    INSERT INTO "Notes" (note_id, title, num_likes, course_id)  
-                    VALUES($1, $2, $3, $4)
+                    INSERT INTO "Notes" (note_id, title, num_likes, course_id, user_id)  
+                    VALUES($1, $2, $3, $4, $5)
                 `;
-                await client.query(query, [noteNum, title, numlikes=0, courseID]);
+                await client.query(query, [noteNum, title, numlikes=0, courseID, userID]);
     
                 // Insert text entries into the Text table
                 for (const text of txtArray) {
@@ -426,7 +436,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
                     `;
                     await client.query(query3, [imageNum, image, noteNum]);
                 }
-    
+
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({message: 'Note uploaded successfully'}));
             } catch (error) {
@@ -559,10 +569,114 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') {
         });
     }
 
+    else if (req.method === 'POST' && req.url === '/deleteNote') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { noteID } = JSON.parse(body);
+                const query = 'DELETE FROM "Notes" WHERE "note_id" = $1';
+                const result = await client.query(query, [noteID]);
+                
+                if (result.rowCount === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Note not found' }));
+                    return;
+                }
+                else{
+                    res.writeHead(200, { 'Content-Type': 'text/plain' });
+                    res.end("Note Successfully Deleted");
+                    return;
+                }
+            } catch (error) {
+                console.error('Error verifying username:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
     else if (req.method === 'GET' && req.url === '/protected') {
         authenticateToken(req, res, () => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'This is a protected route', user: req.user }));
+        });
+    }
+
+    else if (req.method === 'POST' && req.url === '/getNoteTombstoneInfo') { 
+        let body = '';
+    
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+    
+        req.on('end', async () => {
+            try { 7
+                const { noteID } = JSON.parse(body);
+               
+                 const query = `
+                    SELECT *
+                    FROM "Images" 
+                    WHERE note_id = $1
+                `;
+
+                const query2 = `
+                    SELECT *
+                    FROM "Text" 
+                    WHERE note_id = $1               
+                `;
+
+                const query3 = `
+                    SELECT *
+                    FROM "Notes" 
+                    WHERE note_id = $1               
+                `;
+    
+            
+
+
+                const imageResult = await client.query(query, [noteID]);
+                const textResult = await client.query(query2, [noteID]);
+                const tombstoneResult = await client.query(query3, [noteID]);
+              
+                
+    
+                // Extract the data
+                // Convert bytea images to Base64
+                const images = imageResult.rows.map(row => {
+                    return row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null;
+                });
+                console.log("Images: ", images);
+                const text = textResult.rows.map(row => row.text); // Array of text
+                const noteInfo = tombstoneResult.rows[0]; // Course info (single object)
+
+                // Query the Users table to get the username
+                const getUsernameQuery = `
+                    SELECT uname
+                    FROM "Users"
+                    WHERE user_id = $1
+                `;
+
+                const userResult = await client.query(getUsernameQuery, [noteInfo.user_id]);
+                const username = userResult.rows[0]?.uname;
+                noteInfo.username = username;
+
+                console.log("Tombstone Info: ", noteInfo);
+                console.log(images);
+                console.log(text);
+
+                // Return the data as a JSON response
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ images, text, noteInfo }));
+            } catch (error) {
+                console.error('Database query error:', error);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Database error');
+            }
         });
     }
 
