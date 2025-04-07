@@ -97,19 +97,37 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("t").style.display = "none"; // Show the arrow buttons
             txtCanvas.style.display = "none"; // Hide the canvas if no text is available
             imgCanvas.style.display = "none"; // Hide the canvas if no image is available
-            console.log("We got here");
             //Info from server
+
             let response = await populateNote(noteID);
-            try{let imageArray = response.images;}catch{let imageArray = null;}
-            try{let txtArray = response.text;}catch{let txtArray = null;}
+
+            try {
+                imageArray = response.images || [];
+            } catch {
+                imageArray = [];
+            }
+        
+            try {
+                txtArray = response.text || [];
+            } catch {
+                txtArray = [];
+            }
+            
+            console.log(txtArray[0]);
+            console.log(imageArray[0]);
             let noteTombstone = response.noteInfo;
+            
+            // console.log(response.noteInfo);
+            console.log(imageArray[0]);
 
             document.getElementById("noteTitle").innerHTML = noteTombstone.title; // Set the note title in the modal
-            document.getElementById("noteAuthor").innerHTML = noteTombstone.author; // Set the note author in the modal
+            document.getElementById("noteAuthor").innerHTML = noteTombstone.username; // Set the note author in the modal
             
             if (imageArray.length > 0) {
+                console.log("There is something in the image array")
                 imgCanvas.style.display = "block"; // Show the canvas if an image is available
                 if (imageArray.length > 1) {
+                    console.log("There is more than one image")
                     document.getElementById("i").style.display = "block"; // Show the arrow buttons
                 }
                 displayImg.src = imageArray[0]; // Use the first image for testing
@@ -119,15 +137,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     imgCtx.drawImage(displayImg, 0, 0, imgCanvas.width, imgCanvas.height);
                 }
             } else {
+                console.log("There is nothing in the image array")
                 imgCanvas.style.display = "none"; // Hide the canvas if no image is available
             }
             if (txtArray.length > 0) {
+                console.log("There is something in the text array")
                 txtCanvas.innerHTML = txtArray[0]; // Use the first text for testing
                 txtCanvas.style.display = "block"; // Show the text canvas
                 if (txtArray.length > 1) {
+                    console.log("There is more than one text")
                     document.getElementById("t").style.display = "block"; // Show the arrow buttons
                 }
             } else {
+                console.log("There is nothing in the text array")
                 txtCanvas.style.display = "none"; // Hide the canvas if no text is available
             }
 
