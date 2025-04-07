@@ -127,6 +127,7 @@ canvas {
   -webkit-transition: 0.2s;
   transition: 0.2s;
   outline: none;
+  border-radius: 0px;
 }
 
 #subN:hover {

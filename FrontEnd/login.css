@@ -52,6 +52,7 @@ input:focus{
   padding: 10px;
   display: inline-block;
   background-color: #F7E733;
+  border-radius: 12px;
   border: none;
   color: #423E37;
   -webkit-transition: 0.4s;

@@ -11,9 +11,9 @@ var currentNoteID = null; // Track the currently displayed note
 
 document.addEventListener("DOMContentLoaded", function () {
   // Retrieve the logged-in user identifier (via cookie, token, etc.)
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  let username = ca.length > 1 ? ca[1].trim() : "Guest";
+  //let decodedCookie = decodeURIComponent(document.cookie);
+  //let ca = decodedCookie.split(';');
+  //let username = ca.length > 1 ? ca[1].trim() : "Guest";
 
   // Set up event listeners for sort and search
   document.getElementById("sort-button").addEventListener("click", function () {
@@ -75,35 +75,47 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Function to display a specific note
-  function displayNote(noteID) {
-    // Find the specific note by its ID
-    const selectedNote = notesArr.find(note => note.noteID === noteID);
+  async function displayNote(noteID) {
+    try {
+      // Fetch note details from the server
+      const response = await fetch('/getNoteDetails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ noteID })
+      });
 
-    if (!selectedNote) {
-      console.error("Note not found!");
-      return;
+      const selectedNote = await response.json();
+
+      if (!selectedNote || response.status !== 200) {
+        console.error("Note not found or error fetching note details!");
+        return;
+      }
+
+      // Track the current note ID
+      currentNoteID = noteID;
+
+      // Reset pointers for cycling
+      imagePointer = 0;
+      textPointer = 0;
+
+      // Display the first image and text
+      displayImage(selectedNote);
+      displayText(selectedNote);
+
+      // Show or hide the arrows based on the number of images and texts
+      const totalImages = selectedNote.images ? selectedNote.images.length : 0;
+      const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
+
+      document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
+      document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
+
+      // Show the modal
+      document.getElementById("noteModal").style.display = "block";
+    } catch (error) {
+      console.error("Error fetching note details:", error);
     }
-
-    // Track the current note ID
-    currentNoteID = noteID;
-
-    // Reset pointers for cycling
-    imagePointer = 0;
-    textPointer = 0;
-
-    // Display the first image and text
-    displayImage(selectedNote);
-    displayText(selectedNote);
-
-    // Show or hide the arrows based on the number of images and texts
-    const totalImages = selectedNote.images ? selectedNote.images.length : 0;
-    const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
-
-    document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
-    document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
-
-    // Show the modal
-    document.getElementById("noteModal").style.display = "block";
   }
 
   // Function to display the current image
@@ -129,54 +141,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Function to cycle through images
-  window.cycleImage = function (forward) {
-    const selectedNote = notesArr.find(note => note.noteID === currentNoteID);
-    if (!selectedNote || !selectedNote.images) return;
-
-    const totalImages = selectedNote.images.length;
-
-    // Increment or decrement the pointer for images and wrap around if necessary
-    if (forward) {
-      imagePointer = (imagePointer + 1) % totalImages;
-    } else {
-      imagePointer = (imagePointer - 1 + totalImages) % totalImages;
-    }
-
-    // Display the new image
-    displayImage(selectedNote);
-  };
-
-  // Function to cycle through text
-  window.cycleText = function (forward) {
-    const selectedNote = notesArr.find(note => note.noteID === currentNoteID);
-    if (!selectedNote || !selectedNote.texts) return;
-
-    const totalTexts = selectedNote.texts.length;
-
-    // Increment or decrement the pointer for texts and wrap around if necessary
-    if (forward) {
-      textPointer = (textPointer + 1) % totalTexts;
-    } else {
-      textPointer = (textPointer - 1 + totalTexts) % totalTexts;
-    }
-
-    // Display the new text
-    displayText(selectedNote);
-  };
-
-  // Close modal function
-  window.closeModal = function (modalID) {
-    document.getElementById(modalID).style.display = "none";
-  };
-
   // Function to fetch the user's uploaded notes from the server
   function getUserUploadedNotes() {
     // For now, use dummy data:
     notesArr = [
-      { noteID: 1, title: "My First Note", num_likes: 15, images: ["testIMG.jpg"], texts: ["This is the first note."] },
-      { noteID: 2, title: "Vacation Plan", num_likes: 23, images: ["testIMG2.jpg", "testIMG2_alt.jpg"], texts: ["Vacation ideas.", "Packing list."] },
-      { noteID: 3, title: "Project Ideas", num_likes: 9, images: ["testIMG3.jpg"], texts: ["Brainstorming project ideas."] }
+      { noteID: 1, title: "My First Note", num_likes: 15 },
+      { noteID: 2, title: "Vacation Plan", num_likes: 23 },
+      { noteID: 3, title: "Project Ideas", num_likes: 9 }
     ];
     filteredNotes = notesArr.slice();
     generateButtons(filteredNotes);
@@ -192,3 +163,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+async function deleteNote(noteID) {
+  try {
+    let response = await fetch('/deleteNote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ noteID: noteID })
+    });
+
+    let data = await response.json(); // Convert response to JSON
+    return data;
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    document.getElementById("message").innerText = "Error connecting to server.";
+    return "Error";
+  }
+}
+
+function getNoteID(){
+  return this.currentNoteID;
+}

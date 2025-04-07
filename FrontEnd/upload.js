@@ -158,6 +158,8 @@ function openModal(defaultText) {
     const modal = document.getElementById("textModal");
     const textInput = document.getElementById("textInput");
 
+    defaultText = defaultText.replace(/[\n\r]+/g, ' ');
+
     textInput.value = defaultText;  // Set default or extracted text
     modal.style.display = "block";  // Show the modal
 }
@@ -550,12 +552,15 @@ confirmUpload = async () => {
         return;
     }
 
+    const username = localStorage.getItem("username");
+
     // Data to send to the server
     const data = {
         course: courseName,
         title: noteTitle,
         imageArray: imageArray,
-        txtArray: txtArray
+        txtArray: txtArray,
+        username: username
     };
 
     console.log("Data to be sent:", data);

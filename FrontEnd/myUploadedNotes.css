@@ -333,6 +333,37 @@ canvas {
   grid-column: 2/3;
 }
 
+.modalB {
+  margin: auto;
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.modalB:active{
+  transition: 0.1s;
+}
+
+.modalB:hover {
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
+}
+
+#cancel {
+  background-color: #E97298;
+}
+
+#cancel:hover {
+  background-color: #EE95B1;
+}
+
+#cancel:active {
+  border-color: #F1A7BF;
+}
+
 @media screen and (max-width: 600px) {
 
   * {

@@ -17,6 +17,9 @@
   <div id="cName">
     <h1>My Uploaded Notes</h1>
   </div>
+  
+  <!-- Display User's Name -->
+  <h1 id="userN"></h1>
 
   <!-- Search Bar Section -->
   <div id="searchbar">
@@ -56,6 +59,7 @@
           <input type="button" onclick="cycleText(true)" value="ᐅ" class="browse">
         </div>
       </div>
+      <button class="modalB" id="cancel" onclick="deleteNote(getNoteID())">Delete</button>
     </div>
   </div>
 
