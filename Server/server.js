@@ -43,7 +43,7 @@ const serveStaticFile = (filePath, contentType, res) => {
 
 // Create server
 const server = http.createServer((req, res) => {
-    const url = req.url === '/' ? '/register.html' : req.url;
+    const url = req.url === '/' ? '/landingpage.html' : req.url;
     const ext = path.extname(url);
 
     // Serve static files (HTML, CSS, JS)
