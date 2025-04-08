@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>My Uploaded Notes</title>
+  <link rel="stylesheet" href="myUploadedNotes.css">
+</head>
+<body>
+
+  <!-- User Section -->
+  <div class="user">
+    <div id="return">
+      <a href="#" id="back-link">Back</a>
+    </div>
+  </div>
+
+  <!-- Course Name Section -->
+  <div id="cName">
+    <h1>My Uploaded Notes</h1>
+  </div>
+
+  <!-- Search Bar Section -->
+  <div id="searchbar">
+    <div class="input-box">
+      <input type="text" id="search" required>
+      <label>Search</label>
+    </div>
+    <div id="sorting">
+      <select id="sort-options">
+        <option value="title">Title A-Z</option>
+        <option value="likes">Number of Likes</option>
+      </select>
+      <button id="sort-button">Sort</button>
+    </div>
+  </div>
+
+  <!-- Button Container Section -->
+  <div id="button-container"></div>
+
+  <!-- Modal Section -->
+  <div id="noteModal" class="modal">
+    <div class="modal-content" id="uModal-c">
+      <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+      <div id="grid">
+        <canvas id="imgCanvas"></canvas>
+        <div id="txtCanvas">
+          <p id="innerTxt"></p>
+        </div>
+      </div>
+      <div id="arrows">
+        <!-- Arrows for cycling images -->
+        <div id="image-arrows">
+          <input type="button" onclick="cycleImage(false)" value="ᐊ" class="browse">
+          <input type="button" onclick="cycleImage(true)" value="ᐅ" class="browse">
+        </div>
+        <!-- Arrows for cycling text -->
+        <div id="text-arrows">
+          <input type="button" onclick="cycleText(false)" value="ᐊ" class="browse">
+          <input type="button" onclick="cycleText(true)" value="ᐅ" class="browse">
+        </div>
+      </div>
+      <button class="modalB" id="cancel" onclick="deleteNote(getNoteID())">Delete</button>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/common.js"></script>
+  <script src="myUploadedNotes.js"></script>
+</body>
+</html>

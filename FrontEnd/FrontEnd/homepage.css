@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+html, body {
+  height: 100%;
+  background: #212121;
+}
+
+h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+.main {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5%;
+  padding: 2em;
+}
+
+.main a {
+  background-color: #323232;
+  border: 4px solid #323232;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 32px;
+  display: inline-block;
+  padding: 2em;
+  width: 90%;
+  margin-bottom: 1em;
+}
+
+.main a:hover {
+  border: 4px solid #14FFEC;
+}
+
+#return{
+  height: 100%;
+  float: left;
+}
+
+#return a {
+  display: block;
+  float: left;
+  width: 200px;
+  text-align: center;
+  font-size: 18px;
+  height: 100%;
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 40px;
+  margin: 5px;
+  background-color: #212121;
+}
+
+a {
+  text-decoration: none;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #383B56;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+#return a:hover {
+  border: 2px solid #14FFEC;
+}
+
+
+
+.user {
+  width: 100%;
+  min-width: 100%;
+  overflow: hidden;
+}
+
+#userN {
+  float: right;
+  margin: 15px;
+  color: #14FFEC;
+}
+
+#courses {
+  margin: auto;
+  text-align: center;
+}
+
+#titleH {
+  font-size: 72px;
+  color: #ffffff;
+  border: 8px solid #ffffff;
+  text-shadow: 4px 4px 8px rgb(0, 0, 0);
+  box-shadow: 4px 4px 8px rgb(0, 0, 0);
+}
+
+#box {
+  padding-top: 4em;
+  width: 16em;
+  margin: auto;
+}
+
+.logo {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px; /* Add some space below the logo */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo on the x-axis */
+}
+
+.logo img {
+    width: 130px; /* Adjust the size of the logo */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Add spacing between the logo and the text */
+}
+
+.logo h2 {
+    font-size: 5em; /* Adjust the font size */
+    color: #14FFEC; /* Match the theme color */
+    margin: 0;
+}
+
+#button-container {
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
+  gap: 1em; /* Add spacing between buttons */
+  margin: auto; /* Center the container itself */
+  margin-top: 1em;
+  width: 90%; /* Adjust width to fit the content */
+}
+
+@media screen and (max-width: 600px) {
+
+  * {
+    font-size: 12px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    padding: 1em;
+  }
+
+  #button-container {
+    grid-template-columns: 1fr; /* 1 column */
+  }
+
+}
+
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+
+  * {
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+
+  #button-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    margin-bottom: 10px;
+    padding: 1em;
+  }
+
+}

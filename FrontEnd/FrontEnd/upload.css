@@ -1,0 +1,478 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+html, body {
+    height: 100%;
+    background: #212121;
+  }
+
+
+h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+.main {
+  margin: 2em 10em 2em 10em;
+  margin-bottom: 10px;
+  padding: 2em;
+  text-align: center;
+}
+
+#complete {
+  float: right;
+}
+
+#return{
+  height: 100%;
+  float: left;
+  background: transparent;
+}
+
+#return a {
+  display: block;
+  float: left;
+  width: 150px;
+  text-align: center;
+  font-size: 18px;
+  height: 100%;
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 40px;
+  margin: 5px;
+  background-color: #212121;
+}
+
+a {
+  text-decoration: none;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #383B56;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+#return a:hover {
+  border: 2px solid #14FFEC;
+}
+
+.user {
+  position: fixed; /* Fix the div to the top of the screen */
+  top: 0; /* Align it to the top */
+  left: 0; /* Align it to the left */
+  width: 100%; /* Make it span the full width of the screen */
+  min-width: 100%;
+  background-color: #212121;
+  overflow: hidden;
+  z-index: 1000; /* Ensure it stays above other elements */
+}
+
+#return{
+  height: 100%;
+  float: left;
+}
+
+#return a {
+  display: block;
+  float: left;
+  height: 100%;
+  padding: 20px;
+}
+
+canvas {
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
+    max-width: 50%;
+    max-height: 50%;
+    min-width: 20%;
+    min-height: 20%;
+}
+
+.sub {
+  display: inline-block;
+  text-decoration: none;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #212121;
+  border-radius: 12px;
+  border: 2px solid #0D7377;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  
+}
+
+.sub:hover {
+  border-color: #14FFEC;
+}
+
+#subN {
+  height: 100%;
+  padding: 20px;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #14FFEC;
+  color: #212121;
+  border-radius: 40px;
+  width: 150px;
+  font-size: 18px;
+  margin: 5px;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+#subN:hover {
+  background: #13E3D5;
+  transition: .5s ease;
+}
+
+.radioB input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radioB label {
+  margin: 10px;
+  padding: 6px;
+  display: inline-block;
+  background-color: #212121;
+  border: 2px solid #323232;
+  border-radius: 12px;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.radioB input[type="radio"]:checked + label {
+  border-color: #14FFEC;
+  background-color: #14FFEC;
+  color: #212121;
+}
+
+.radioB input[type="radio"]:focus + label {
+  background-color: #14FFEC;
+  color: #212121;
+}
+
+.radioB label:hover {
+  border-color: #0D7377;
+  transition: 0.2s ease-in-out;
+}
+
+/* Modal Background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000; /* Sits on top of other content */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: #1A1A1A; /* Dark overlay */
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #212121;
+  margin: 10% auto; /* Center vertically and horizontally */
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 10px;
+  width: 50%; /* Adjust the width */
+  text-align: center;
+}
+
+/* Close Button */
+.close-button {
+  color: #fff;
+  float: right;
+  font-size: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  margin-right: 5px;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #14FFEC;
+  text-decoration: none;
+}
+
+/* Text Area Styling */
+textarea {
+  width: 90%;
+  text-align: left;
+  margin: auto;
+  font-size: 16px;
+  border: 2px solid #13E3D5;
+  resize: vertical;
+}
+
+canvas {
+  margin: auto;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+#imgButton {
+  display: inline-block;
+  border: 2px solid #0D7377;
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+#imgButton:hover {
+  border-color: #14FFEC;
+}
+
+.modalB {
+  margin: 5px;
+  border: 2px solid #0D7377;
+  background-color: #212121;
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.modalB:hover {
+  border-color: #14FFEC;
+}
+
+#cancel:hover {
+  border-color: #ff1744;
+}
+
+
+#help {
+  max-width: 80%;
+  margin: auto;
+}
+
+.u1 {
+  display: inline-block;
+  background-color: #212121;
+  border: #0D7377 solid 2px;
+  border-radius: 20px;
+  padding: 6px 12px;
+  margin: 5px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.u1:hover {
+  border-color: #14FFEC;
+}
+
+#displayOptions{
+  display: none;
+}
+
+.badge{
+  background-color: transparent;
+}
+
+#grid {
+  width: 100%;
+  height: 60%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+#imgCanvas {
+  grid-row: 1/2;
+  grid-column: 1/2;
+  float: left;
+  margin: 10px;
+  margin: auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+#txtCanvas {
+  grid-row: 1/2;
+  grid-column: 2/3;
+  margin: 10px;
+  font-size: 16px;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
+  text-align: left;
+}
+
+#uModal-c {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+
+#arrows {
+  display: grid;
+  height: 10%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.browse {
+  border: none;
+  display: inline-block;
+  color: #13E3D5;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+  padding: 1em;
+  margin: auto;
+}
+
+#i {
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
+
+#t {
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+#formT {
+  width: 100%;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+/* Ensure the container is positioned relative */
+#imgCanvasContainer {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  height: fit-content;
+}
+
+/* Style for the canvas */
+#imgCanvas {
+  display: block;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  margin: auto;
+}
+
+/* Style for the trash badge */
+.trash-badge {
+  position: absolute;
+  top: 5px; /* Slightly inside the top edge of the canvas */
+  right: 5px; /* Slightly inside the right edge of the canvas */
+  background-color: #ff1744;
+  color: white;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 10; /* Ensure it appears above the canvas */
+}
+
+.trash-badge:hover {
+  background-color: #ff1744;
+}
+
+.input-box {
+  position: relative;
+  margin: 25px 0;
+}
+.input-box input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #0d7377;
+  outline: none;
+  border-radius: 10px;
+  font-size: 1em;
+  color: #fff;
+  padding: 0 20px;
+  transition: .5s ease;
+}
+.input-box input:focus,
+.input-box input:valid {
+  border-color: #14FFEC;
+}
+.input-box label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s ease;
+}
+.input-box input:focus~label,
+.input-box input:valid~label {
+  top: 1px;
+  font-size: .8em;
+  background: #212121;
+  padding: 0 6px;
+  color: #14FFEC;
+}
+
+#title {
+  margin-right: 10px;
+}
+
+#course {
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 600px) {
+
+  * {
+    font-size: 12px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    padding: 1em;
+  }
+
+}
+
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+
+  * {
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    margin-bottom: 10px;
+    padding: 1em;
+  }
+
+}

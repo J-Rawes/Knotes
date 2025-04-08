@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="/node_modules/jshashes/hashes.js"></script>
+    <script src="login.js"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="container">
+    <div class="login-box">
+        <h2>Register</h2>
+        <form name="register" id="registerForm">
+            <div class="input-box">
+                <input type="text" id="username" required>
+                <label>Username</label>
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" required>
+                <label>Password</label>
+            </div>
+            <div class="input-box">
+              <input type="password" id="password2" required>
+              <label>Confirm Password</label>
+            </div>
+            <label id="qLabel">Choose a Security Question:</label>
+
+            <select name="questions" id="questions">
+              <option value="default" disabled selected>Select a security question</option>
+              <option value="mothers_maiden_name">What is your mother's maiden name?</option>
+              <option value="first_pet">What was the name of your first pet?</option>
+              <option value="elementary_school">What was the name of your elementary school?</option>
+              <option value="birth_city">In what city were you born?</option>
+              <option value="fathers_middle_name">What is your father's middle name?</option>
+              <option value="first_car">What was the make of your first car?</option>
+              <option value="favorite_teacher">What is your favorite teacher's name?</option>
+              <option value="street_grew_up">What is the name of the street you grew up on?</option>
+              <option value="childhood_nickname">What was your childhood nickname?</option>
+              <option value="favorite_childhood_friend">What is the name of your favorite childhood friend?</option>
+              <option value="first_employer">What was the name of your first employer?</option>
+              <option value="favorite_book">What is your favorite book?</option>
+              <option value="dream_job">What is your dream job?</option>
+              <option value="birth_hospital">What is the name of the hospital where you were born?</option>
+              <option value="first_stuffed_animal">What is the name of your first stuffed animal?</option>
+            </select>
+
+            <div class="input-box">
+              <input type="text" id="securityAnswer" required/>
+              <label>Answer</label>
+            </div>
+
+            <button type="submit" class="btn">Register</button>
+        </form>
+    </div>
+  </div>
+
+    <script>
+      //Attach event listener to prevent form submission
+      document.getElementById("registerForm").addEventListener("submit", register);
+    </script>
+    
+</body>
+</html>
+
+
+<!--
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Account Creation</title>
+  <link rel="stylesheet" href="register.css">
+</head>
+
+<body>
+
+
+
+  <div class="inputF">
+    <form name="registerForm" id="registerForm">
+      <p>
+        <div class="submit">
+          <input type="text" id="username" name="user" placeholder="Username"/>
+        </div>
+      </p>
+      <p>
+        <div class="submit">
+          <input type="password" id="password" name="password" placeholder="Password"/> 
+        </div>
+      </p>
+      <p>
+        <div class="submit">
+          <input type="password" id="password2" name="password2" placeholder="Confirm Password"/>
+        </div>
+      </p>
+
+      <label for="questions">Choose a Security Question:</label>
+
+      <select name="questions" id="questions">
+        <option value="default" disabled selected>Select a security question</option>
+        <option value="mothers_maiden_name">What is your mother's maiden name?</option>
+        <option value="first_pet">What was the name of your first pet?</option>
+        <option value="elementary_school">What was the name of your elementary school?</option>
+        <option value="birth_city">In what city were you born?</option>
+        <option value="fathers_middle_name">What is your father's middle name?</option>
+        <option value="first_car">What was the make of your first car?</option>
+        <option value="favorite_teacher">What is your favorite teacher's name?</option>
+        <option value="street_grew_up">What is the name of the street you grew up on?</option>
+        <option value="childhood_nickname">What was your childhood nickname?</option>
+        <option value="favorite_childhood_friend">What is the name of your favorite childhood friend?</option>
+        <option value="first_employer">What was the name of your first employer?</option>
+        <option value="favorite_book">What is your favorite book?</option>
+        <option value="dream_job">What is your dream job?</option>
+        <option value="birth_hospital">What is the name of the hospital where you were born?</option>
+        <option value="first_stuffed_animal">What is the name of your first stuffed animal?</option>
+      </select>
+
+      <p>
+        <div class="submit">
+          <input type="text" id="securityAnswer" name="securityAnswer" placeholder="Answer to Security Question" />
+        </div>
+      </p>
+
+      <div class="submit">
+        <p>
+          <button id="sub" type="submit">Register</button>
+        </p>
+      </div>
+
+    </form>
+    <h3 id="message"></h3>
+  </div>
+
+  <script src="/node_modules/jshashes/hashes.js"></script>
+  <script src="register.js"></script>
+  <script>
+    // Attach event listener to prevent form submission
+    document.getElementById("registerForm").addEventListener("submit", register);
+  </script>
+
+</body>
+</html>
+
+-->

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html lang ="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Course Display</title>
+
+  <link rel="stylesheet" href="courseDisplay.css">
+
+</head>
+
+<body>
+
+    <div class="user">
+      <div id="return">
+        <a href="#" id="back-link">Back</a>
+      </div>
+    </div>
+
+    <div id="cName">
+      <div id="course-info" ></div> <!-- Course info will be displayed here -->
+    </div>
+
+    <div id="searchbar">
+        <input type="text" id="search" placeholder="Search for a note...">
+        <br>
+        <br>
+        <div id="sorting">
+          <select id="sort-options">
+            <option value="title">Title A-Z</option>
+            <option value="likes">Number of Likes</option>
+            <option value="liked">Liked Notes</option>
+        </select>
+        <button id="sort-button">Sort</button>
+        </div>
+    </div>
+
+    <div id="button-container"></div>
+
+    <!-- <div id="noteModal" class="modal">
+        <div class="modal-content" id="uModal-c">
+          <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+          <br>
+          <div id="grid">
+            <div id="i">
+                <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+                <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+            </div>
+            <div id="t">
+                <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+                <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+            </div>
+            <canvas id="imgCanvas" width=640px height=480px></canvas>
+            <div id="txtCanvas"><p id="innerTxt"></p></div>
+          </div>
+        </div>
+      </div> -->
+
+      <div id="noteModal" class="modal">
+        <div class="modal-content" id="uModal-c">
+          <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+          <button id="like-button" onclick="likeNote()">&#x2665; Like</button>
+          <h1 id="noteTitle">Example Title</h1>
+          <h2 id="noteAuthor">By: Example Author</h2>
+          <div id="grid">
+            <canvas id="imgCanvas"></canvas>
+            <div id="txtCanvas"><p id="innerTxt"></p></div>
+          </div>
+          <div id="arrows">
+            <div id="i">
+              <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+            </div>
+            <div id="t">
+              <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+              <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+</body>
+
+<script type="text/javascript" src="/common.js"></script>
+<script type="text/javascript" src="courseDisplay.js">
+</script>
+
+</html>

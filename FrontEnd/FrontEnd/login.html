@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <script src="/node_modules/jshashes/hashes.js"></script>
+    <script src="login.js"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="logo">
+    <img src="KnotesLogo.png" alt="Logo">
+    <h2>Knotes</h2>
+  </div>
+    <div class="container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form name="logIn" id="logIn">
+                <div class="input-box">
+                    <input type="text" id="username" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="forgot-pass">
+                    <a href="forgotPassword.html">Forgot your password?</a>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <div class="signup-link">
+                    <a href="register.html">Signup</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+      //Attach event listener to prevent form submission
+      document.getElementById("logIn").addEventListener("submit", login);
+    </script>
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+<!--#############################################################
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>User Login</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+  <div id="header">
+    <h1>Log In</h1>
+  </div>
+
+  <div class="inputF">
+    <form name="logIn" id="logIn">
+      <p>
+        <div class="submit">
+          <input type="text" id="username" name="user" placeholder="Username"/>
+        </div>
+      </p>
+      <p>
+        <div class="submit">
+          <input type="password" id="password" name="password" placeholder="Password"/>
+        </div>
+        <p><a href="forgotPassword.html" style="display: block; text-align: center;">Forgot Your Password?</a></p>
+      </p>
+
+      <div class="submit">
+        <p>
+          <button id="sub" type="submit">Confirm</button>
+        </p>
+      </div>
+    </form>
+    <h3 id="message"></h3>
+  </div>
+
+  <script src="/node_modules/jshashes/hashes.js"></script>
+  <script src="login.js"></script>
+  <script>
+    //Attach event listener to prevent form submission
+    document.getElementById("logIn").addEventListener("submit", login);
+  </script>
+
+</body>
+</html>
+-->

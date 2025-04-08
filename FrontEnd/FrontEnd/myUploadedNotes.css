@@ -1,0 +1,415 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: #212121;
+}
+
+#return{
+  height: 100%;
+  float: left;
+}
+
+#return a {
+  display: block;
+  float: left;
+  width: 150px;
+  text-align: center;
+  font-size: 18px;
+  height: 100%;
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 40px;
+  margin: 5px;
+  background-color: #212121;
+}
+
+a {
+  text-decoration: none;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #383B56;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  outline: none;
+}
+
+#return a:hover {
+  border: 2px solid #14FFEC;
+}
+
+#cName {
+  width: 100%;
+  font-size: 2em;
+  color: #14FFEC;
+  text-align: center;
+  margin-bottom: 20px; /* Add some space below the logo */
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo on the x-axis */
+}
+
+#button-container {
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
+  gap: 1em; /* Add spacing between buttons */
+  margin: auto; /* Center the container itself */
+  margin-top: 1em;
+  width: 90%; /* Adjust width to fit the content */
+}
+
+#button-container button {
+  background-color: #212121;
+  border: 4px solid #323232;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+#button-container button:hover {
+  border-color: #14FFEC;
+}
+
+#description {
+  margin: auto;
+  text-align: center;
+}
+
+#searchbar {
+  justify-content: center; /* Center horizontally */
+  align-items: center;
+  width: 100%; /* Ensure it spans the full width */
+  margin: auto; /* Center the search bar */
+}
+#searchbar span {
+  position: absolute;
+  left: 0;
+  width: 32px;
+  height: 6px;
+  background: #212121;
+  border-radius: 8px;
+}
+
+.input-box {
+  justify-content: center;
+  position: relative;
+  width: 40%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+.input-box input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #0d7377;
+  outline: none;
+  border-radius: 40px;
+  font-size: 1em;
+  color: #fff;
+  padding: 0 20px;
+  transition: .5s ease;
+}
+.input-box input:focus,
+.input-box input:valid {
+  border-color: #14FFEC;
+}
+.input-box label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s ease;
+}
+.input-box input:focus~label,
+.input-box input:valid~label {
+  top: 1px;
+  font-size: .8em;
+  background: #212121;
+  padding: 0 6px;
+  color: #14FFEC;
+}
+
+button {
+  background-color: #212121;
+  border: 4px solid #323232;
+  color: #fff;
+  font-size: 24px;
+  margin: auto;
+  margin-bottom: 0.5em;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #14FFEC;
+}
+
+button:active {
+  background-color: #14FFEC;
+}
+
+#sort-button {
+  padding: 0.25em;
+  padding-left: 2em;
+  padding-right: 2em;
+  margin: auto;
+  margin-left: 5px;
+  font-size: 16px;
+  height: 50px;
+  width: 100px;
+  border: 1px solid #0D7377; /* Default border color */
+  border-radius: 10px;
+  background-color: #212121; /* Default background color */
+  color: #ffffff; /* Text color */
+  }
+
+#sort-button:hover {
+  border-color: #14FFEC; /* Change border to blue on hover */
+}
+
+
+#sort-button:focus {
+  outline: none; /* Remove focus outline */
+}
+
+#sorting {
+  margin: auto;
+  text-align: center;
+  align-items: center;
+}
+
+#course-info {
+  margin: auto;
+  text-align: center;
+  width: 80%;
+}
+
+#course-info p {
+  font-size: 16px;
+  text-align: justify;
+  margin: 0.5em;
+}
+
+#course-info h1, b, p {
+  margin-bottom: 0.5em;
+}
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000; /* Sits on top of other content */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: #1A1A1A; /* Dark overlay */
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #212121;
+  margin: 10% auto; /* Center vertically and horizontally */
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 10px;
+  width: 50%; /* Adjust the width */
+  text-align: center;
+}
+
+/* Close Button */
+.close-button {
+  color: #fff;
+  float: right;
+  font-size: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  margin-right: 5px;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #14FFEC;
+  text-decoration: none;
+}
+
+#grid {
+  width: 100%;
+  height: 80%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 10fr;
+  margin: auto;
+}
+
+#imgCanvas {
+  margin: auto;
+  margin-top: 0;
+  grid-row: 2/3;
+  grid-column: 1/2;
+  max-width: 100%;
+  min-width: 80%;
+}
+
+#txtCanvas {
+  margin: auto;
+  text-align: left;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
+  width: 640px;
+  margin-top: 0;
+  grid-row: 2/3;
+  grid-column: 2/3;
+}
+
+#innerTxt {
+  text-align: left;
+  padding-left: 10px;
+}
+
+canvas {
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
+  max-width: 50%;
+  max-height: 50%;
+}
+
+#uModal-c {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+
+#sort-options {
+  font-size: 16px;
+  margin-right: 5px;
+  height: 50px;
+  width: 180px;
+  padding: 8px;
+  border: 2px solid #0D7377; /* Matches the blue used in links/buttons */
+  border-radius: 10px;
+  color: #fff;
+  background-color: #212121; /* Default background color */
+}
+
+#sort-options option {
+  color: #fff; /* Text color for options */
+  background-color: #212121; /* Default background color for options */
+  padding: 5px;
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+#sort-options option:hover {
+  border-color: #14FFEC; /* Change background to blue on hover */
+  color: #212121; /* Optional: Change text color to match the theme */
+}
+
+#arrows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.browse {
+  border: none;
+  display: inline-block;
+  background-color: #212121; /* THIS WAS WHITE */
+  color: #fff;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+  padding: 1em;
+  margin: auto;
+}
+
+#i {
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
+
+#t {
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+.modalB {
+  margin: auto;
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+#cancel {
+  background-color: #212121;
+  border: 2px solid #0D7377;
+}
+
+#cancel:hover {
+  border-color: #14FFEC;
+}
+
+@media screen and (max-width: 600px) {
+
+  * {
+    font-size: 12px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    padding: 1em;
+  }
+
+  #button-container {
+    grid-template-columns: 1fr; /* 1 column */
+  }
+
+}
+
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+
+  * {
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+
+  #button-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    margin-bottom: 10px;
+    padding: 1em;
+  }
+
+}
