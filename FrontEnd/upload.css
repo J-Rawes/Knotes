@@ -1,28 +1,17 @@
-html, body {
-  width:100%;
-  height:100%;
-  margin:0;
-  padding:0;
-}
-
-body {
-  background-image: url('background.png');
-}
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 * {
-  color: #423E37;
-  font-family: Verdana, sans-serif;
-  font-size: 24px;
-  text-align: center;
-  text-decoration: none;
-  padding: 0;
-  border: none;
-  background: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
 }
 
-div {
-  background-color: #ffffff;
-}
+html, body {
+    height: 100%;
+    background: #212121;
+  }
+
 
 h1 {
   font-size: 32px;
@@ -40,6 +29,26 @@ h1 {
   float: right;
 }
 
+#return{
+  height: 100%;
+  float: left;
+  background: transparent;
+}
+
+#return a {
+  display: block;
+  float: left;
+  width: 150px;
+  text-align: center;
+  font-size: 18px;
+  height: 100%;
+  padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 40px;
+  margin: 5px;
+  background-color: #212121;
+}
+
 a {
   text-decoration: none;
   padding: 10px;
@@ -50,16 +59,8 @@ a {
   outline: none;
 }
 
-
-a:hover {
-  background-color: #404463;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-}
-
-a:active {
-  transition: 0.1s;
-  background-color: #494D6F;
+#return a:hover {
+  border: 2px solid #14FFEC;
 }
 
 .user {
@@ -68,7 +69,7 @@ a:active {
   left: 0; /* Align it to the left */
   width: 100%; /* Make it span the full width of the screen */
   min-width: 100%;
-  background-color: #383B56;
+  background-color: #212121;
   overflow: hidden;
   z-index: 1000; /* Ensure it stays above other elements */
 }
@@ -86,7 +87,8 @@ a:active {
 }
 
 canvas {
-    border: 2px solid #423E37;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
     max-width: 50%;
     max-height: 50%;
     min-width: 20%;
@@ -98,47 +100,37 @@ canvas {
   text-decoration: none;
   padding: 10px;
   margin-top: 10px;
-  background-color: #F7E733;
+  background-color: #212121;
   border-radius: 12px;
+  border: 2px solid #0D7377;
   -webkit-transition: 0.2s;
   transition: 0.2s;
-  outline: none;
+  
 }
 
 .sub:hover {
-  background-color: #F8EC62;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
-}
-
-.sub:active {
-  transition: 0.1s;
-  background-color: #F9EE77;
+  border-color: #14FFEC;
 }
 
 #subN {
-  display: block;
   height: 100%;
   padding: 20px;
   text-decoration: none;
   color: #ffffff;
-  background-color: #383B56;
+  background-color: #14FFEC;
+  color: #212121;
+  border-radius: 40px;
+  width: 150px;
+  font-size: 18px;
+  margin: 5px;
   -webkit-transition: 0.2s;
   transition: 0.2s;
   outline: none;
-  border-radius: 0px;
 }
 
 #subN:hover {
-  background-color: #404463;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-}
-
-#subN:active {
-  transition: 0.1s;
-  background-color: #494D6F;
+  background: #13E3D5;
+  transition: .5s ease;
 }
 
 .radioB input[type="radio"] {
@@ -151,31 +143,28 @@ canvas {
   margin: 10px;
   padding: 6px;
   display: inline-block;
-  border: 2px solid #cacaca;
+  background-color: #212121;
+  border: 2px solid #323232;
   border-radius: 12px;
-  background-color: #ffffff;
-  color: #423E37;
   -webkit-transition: 0.4s;
   transition: 0.4s;
   cursor: pointer;
 }
 
 .radioB input[type="radio"]:checked + label {
-  transform: scale(1.1);
-  border-color: #F7E733;
-  background-color: #F7E733;
+  border-color: #14FFEC;
+  background-color: #14FFEC;
+  color: #212121;
 }
 
 .radioB input[type="radio"]:focus + label {
-  border-color: #F7E733;
-  background-color: #F7E733;
-  transform: scale(1.1);
+  background-color: #14FFEC;
+  color: #212121;
 }
 
 .radioB label:hover {
-  border-color: #F7E733;
+  border-color: #0D7377;
   transition: 0.2s ease-in-out;
-  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
 }
 
 /* Modal Background */
@@ -188,33 +177,35 @@ canvas {
   width: 100%;
   height: 100%;
   overflow: auto; /* Enable scrolling if needed */
-  background-color: #423E37; /* Dark overlay */
+  background-color: #1A1A1A; /* Dark overlay */
 }
 
 /* Modal Content Box */
 .modal-content {
-  background-color: #ffffff;
+  background-color: #212121;
   margin: 10% auto; /* Center vertically and horizontally */
   padding: 20px;
-  border: 2px solid #423E37;
+  border: 2px solid #0D7377;
+  border-radius: 10px;
   width: 50%; /* Adjust the width */
-  box-shadow: 0 5px 15px #423E37;
+  text-align: center;
 }
 
 /* Close Button */
 .close-button {
-  color: #868079;
+  color: #fff;
   float: right;
-  font-size: 28px;
+  font-size: 50px;
   font-weight: bold;
   cursor: pointer;
   -webkit-transition: 0.2s;
   transition: 0.2s;
+  margin-right: 5px;
 }
 
 .close-button:hover,
 .close-button:focus {
-  color: #423E37;
+  color: #14FFEC;
   text-decoration: none;
 }
 
@@ -224,7 +215,7 @@ textarea {
   text-align: left;
   margin: auto;
   font-size: 16px;
-  border: 2px solid #423E37;
+  border: 2px solid #13E3D5;
   resize: vertical;
 }
 
@@ -238,8 +229,8 @@ input[type="file"] {
 
 #imgButton {
   display: inline-block;
-  background-color: #F7E733;
-  border-radius: 12px;
+  border: 2px solid #0D7377;
+  border-radius: 20px;
   padding: 6px 12px;
   cursor: pointer;
   -webkit-transition: 0.4s;
@@ -247,20 +238,13 @@ input[type="file"] {
 }
 
 #imgButton:hover {
-  background-color: #F8EC62;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
-}
-
-#imgButton:active {
-  transition: 0.1s;
-  background-color: #F9EE77;
+  border-color: #14FFEC;
 }
 
 .modalB {
   margin: 5px;
-  background-color: #F7E733;
+  border: 2px solid #0D7377;
+  background-color: #212121;
   border-radius: 12px;
   padding: 6px 12px;
   cursor: pointer;
@@ -268,29 +252,14 @@ input[type="file"] {
   transition: 0.4s;
 }
 
-.modalB:active{
-  transition: 0.1s;
-  background-color: #F9EE77;
-}
-
 .modalB:hover {
-  background-color: #F8EC62;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
-}
-
-#cancel {
-  background-color: #E97298;
+  border-color: #14FFEC;
 }
 
 #cancel:hover {
-  background-color: #EE95B1;
+  border-color: #ff1744;
 }
 
-#cancel:active {
-  border-color: #F1A7BF;
-}
 
 #help {
   max-width: 80%;
@@ -299,7 +268,9 @@ input[type="file"] {
 
 .u1 {
   display: inline-block;
-  background-color: #F7E733;
+  background-color: #212121;
+  border: #0D7377 solid 2px;
+  border-radius: 20px;
   padding: 6px 12px;
   margin: 5px;
   cursor: pointer;
@@ -308,14 +279,7 @@ input[type="file"] {
 }
 
 .u1:hover {
-  background-color: #F8EC62;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
-}
-
-.u1:active {
-  transition: 0.1s;
-  background-color: #F9EE77;
+  border-color: #14FFEC;
 }
 
 #displayOptions{
@@ -349,7 +313,8 @@ input[type="file"] {
   grid-column: 2/3;
   margin: 10px;
   font-size: 16px;
-  border: 1px solid #cacaca;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
   text-align: left;
 }
 
@@ -369,7 +334,7 @@ input[type="file"] {
 .browse {
   border: none;
   display: inline-block;
-  color: #423E37;
+  color: #13E3D5;
   -webkit-transition: 0.4s;
   transition: 0.4s;
   cursor: pointer;
@@ -389,26 +354,9 @@ input[type="file"] {
 
 #formT {
   width: 100%;
-  margin: 10px;
-  margin-top: 2em;
-}
-
-#formT input {
-  width: 30%;
-  padding: 5px;
-  margin: 2px;
-  border: 2px solid #868079;
-  border-radius: 4px;
-  background-color: #ffffff;
-  color: #423E37;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-  outline: none;
-  text-align: left;
-}
-
-#formT input:focus{
-  border: 2px solid #423E37;
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 /* Ensure the container is positioned relative */
@@ -422,7 +370,8 @@ input[type="file"] {
 /* Style for the canvas */
 #imgCanvas {
   display: block;
-  border: 2px solid #423E37;
+  border: 2px solid #13E3D5;
+  border-radius: 10px;
   max-width: 90%;
   max-height: 90%;
   margin: auto;
@@ -433,7 +382,7 @@ input[type="file"] {
   position: absolute;
   top: 5px; /* Slightly inside the top edge of the canvas */
   right: 5px; /* Slightly inside the right edge of the canvas */
-  background-color: red;
+  background-color: #ff1744;
   color: white;
   padding: 5px;
   border-radius: 50%;
@@ -443,7 +392,54 @@ input[type="file"] {
 }
 
 .trash-badge:hover {
-  background-color: darkred;
+  background-color: #ff1744;
+}
+
+.input-box {
+  position: relative;
+  margin: 25px 0;
+}
+.input-box input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #0d7377;
+  outline: none;
+  border-radius: 10px;
+  font-size: 1em;
+  color: #fff;
+  padding: 0 20px;
+  transition: .5s ease;
+}
+.input-box input:focus,
+.input-box input:valid {
+  border-color: #14FFEC;
+}
+.input-box label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s ease;
+}
+.input-box input:focus~label,
+.input-box input:valid~label {
+  top: 1px;
+  font-size: .8em;
+  background: #212121;
+  padding: 0 6px;
+  color: #14FFEC;
+}
+
+#title {
+  margin-right: 10px;
+}
+
+#course {
+  margin-left: 10px;
 }
 
 @media screen and (max-width: 600px) {

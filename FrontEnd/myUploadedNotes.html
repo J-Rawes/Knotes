@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="myUploadedNotes.css">
 </head>
 <body>
+
   <!-- User Section -->
   <div class="user">
     <div id="return">
@@ -17,14 +18,13 @@
   <div id="cName">
     <h1>My Uploaded Notes</h1>
   </div>
-  
-  <!-- Display User's Name -->
-  <h1 id="userN"></h1>
 
   <!-- Search Bar Section -->
   <div id="searchbar">
-    <input type="text" id="search" placeholder="Search your notes...">
-    <br><br>
+    <div class="input-box">
+      <input type="text" id="search" required>
+      <label>Search</label>
+    </div>
     <div id="sorting">
       <select id="sort-options">
         <option value="title">Title A-Z</option>

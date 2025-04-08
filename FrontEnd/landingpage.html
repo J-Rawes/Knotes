@@ -1,44 +1,32 @@
 <!DOCTYPE html>
-
-<html lang ="en">
-
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Homepage</title>
-
-  <link rel="stylesheet" href="landingpage.css">
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knotes</title>
+    <script src="/node_modules/jshashes/hashes.js"></script>
+    <script src="login.js"></script>
+    <link rel="stylesheet" href="landingpage.css">
 </head>
+<body>
 
-<body >
-    <div id="fractal-container"></div>
-  <div class="user">
-    
-    <h2 id="titleH2">KNOTES</h2>
+  <div class="bg-animation" style="background-color: #212121;">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
+    <div id="stars4"></div>
+</div>
 
-    <div id="return">
-      <a href="login.html" >Login</a><a href="register.html">Sign Up</a>
-      <div style="clear:both;"></div>
+    <div id="interactive-container">
+      <div id="welcome-section">
+        <h1>Welcome to Knotes</h1>
     </div>
-    <h1 id="userN"></h1>
-  </div>
+    </div>
 
-  <div class="welcome-message">
-  <h1>Welcome to Knotes!</h1>
-  </div>
+    <a href="login.html" class="btn">Login</a>
 
-  <div class="welcome-box" style="color: #ffffff;">
-    <p>
-      Taking good notes is essential for learning and retaining information. But what happens when students miss a class or struggle with note-taking due to disabilities? Knotes is here to help.
-    </p>
-    <p>
-      Knotes is an online platform where students can upload and share their class notes. These notes are compiled into easy-to-read formats with both text and images. Users can browse through notes shared by classmates, show their support with a like, and save their favorites for later. Popular notes get prioritized, making it easier for students to find the best study resources for their courses.
-    </p>
-  </div>
- 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
   <script src="landingpage.js" defer></script>
 </body>
-
-
-
 </html>

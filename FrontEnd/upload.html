@@ -78,13 +78,19 @@
         <div class="modal-content" id="uModal-c">
           <span class="close-button" onclick="closeModal('uploadModal')">&times;</span>
           <div id="formT">
-            <input type="text" id="title" name="title" maxlength="25" placeholder="Title"/>
-            <input type="text" id="course" name="course" maxlength="25" placeholder="Course Code"/>
+            <div class="input-box">
+              <input type="text" id="title" maxlength="50" required>
+              <label>Title</label>
+            </div>
+            <div class="input-box">
+              <input type="text" id="course" maxlength="9" required>
+              <label>Course Code</label>
+            </div>
           </div>
           <div id="message" style="color: #f56476; margin-top: 10px;"></div>
           <div id="grid">
             <canvas id="imgCanvas" width=640px height=480px></canvas>
-            <div id="txtCanvas" style="position: relative; width: 80%; border: 1px solid black; padding: 10px; overflow: hidden;">
+            <div id="txtCanvas" style="position: relative; width: 80%; padding: 10px; overflow: hidden; display: none;">
               <p id="innerTxt" style="margin: 0; padding-right: 40px; overflow-wrap: break-word;"></p>
               <!-- Trash badge will be dynamically added here -->
             </div>

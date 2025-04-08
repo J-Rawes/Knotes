@@ -1,96 +1,135 @@
-document.addEventListener("DOMContentLoaded", function () {
-    fadeInWelcomeBox();
-    startDoodleAnimation();
-});
+document.addEventListener("DOMContentLoaded", () => {
+    const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Vector, Events } = Matter;
 
-function fadeInWelcomeBox() {
-    const welcomeBox = document.querySelector(".welcome-box");
-    if (!welcomeBox) return;
-    welcomeBox.style.opacity = 0;
-    welcomeBox.style.transition = "opacity 2s ease-in-out";
-    setTimeout(() => {
-        welcomeBox.style.opacity = 1;
-    }, 100);
-}
+    // Create engine and world
+    const engine = Engine.create();
+    const world = engine.world;
 
-function startDoodleAnimation() {
-    // Create and set up the canvas
-    const canvas = document.createElement("canvas");
-    document.body.appendChild(canvas);
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.position = "fixed";
-    canvas.style.top = "0";
-    canvas.style.left = "0";
-    canvas.style.zIndex = "-1"; // Send behind other content
-    canvas.style.backgroundColor = "#ffffff";
-    const ctx = canvas.getContext("2d");
+    world.gravity.y = 0; // No gravity on the y-axis
+    world.gravity.x = 0; // No gravity on the x-axis
 
-    if (!ctx) {
-        console.error("Canvas context is not available.");
-        return;
-    }
-
-    // Function to draw random doodles
-    function drawDoodle() {
-        const colors = ["#e86a92", "#f7e733", "#41e2ba", "#494D6F", "#F9EE77"]; // Different colors for variation
-        const shapes = ["circle", "square", "triangle", "star", "hexagon"];
-
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const size = Math.random() * 40 + 10; // Random size between 10 and 50
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const shape = shapes[Math.floor(Math.random() * shapes.length)];
-        const rotation = Math.random() * Math.PI * 2; // Random rotation angle
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rotation);
-        ctx.beginPath();
-
-        if (shape === "circle") {
-            ctx.arc(0, 0, size, 0, Math.PI * 2);
-        } else if (shape === "square") {
-            ctx.rect(-size / 2, -size / 2, size, size);
-        } else if (shape === "triangle") {
-            ctx.moveTo(-size / 2, size / 2);
-            ctx.lineTo(size / 2, size / 2);
-            ctx.lineTo(0, -size / 2);
-            ctx.closePath();
-        } else if (shape === "star") {
-            const spikes = 5;
-            const outerRadius = size;
-            const innerRadius = size / 2;
-            for (let i = 0; i < spikes; i++) {
-                ctx.lineTo(Math.cos((i * 2 * Math.PI) / spikes) * outerRadius, Math.sin((i * 2 * Math.PI) / spikes) * outerRadius);
-                ctx.lineTo(Math.cos(((i + 0.5) * 2 * Math.PI) / spikes) * innerRadius, Math.sin(((i + 0.5) * 2 * Math.PI) / spikes) * innerRadius);
-            }
-            ctx.closePath();
-        } else if (shape === "hexagon") {
-            const sides = 6;
-            for (let i = 0; i < sides; i++) {
-                ctx.lineTo(Math.cos((i * 2 * Math.PI) / sides) * size, Math.sin((i * 2 * Math.PI) / sides) * size);
-            }
-            ctx.closePath();
+    // Create renderer
+    const render = Render.create({
+        element: document.getElementById("interactive-container"),
+        engine: engine,
+        options: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            wireframes: false, // Use solid shapes
+            background: "transparent"
         }
-
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    // Draw a doodle every second
-    function animate() {
-        drawDoodle();
-        setTimeout(animate, 1000);
-    }
-
-    animate(); // Start animation loop
-
-    // Resize canvas if the window resizes
-    window.addEventListener("resize", () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
     });
-}
+
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    // Add boundaries (walls)
+    const boundaries = [
+        Bodies.rectangle(window.innerWidth / 2, -10, window.innerWidth, 20, { isStatic: true }), // Top
+        Bodies.rectangle(window.innerWidth / 2, window.innerHeight + 10, window.innerWidth, 20, { isStatic: true }), // Bottom
+        Bodies.rectangle(-10, window.innerHeight / 2, 20, window.innerHeight, { isStatic: true }), // Left
+        Bodies.rectangle(window.innerWidth + 10, window.innerHeight / 2, 20, window.innerHeight, { isStatic: true }) // Right
+    ];
+    World.add(world, boundaries);
+
+    // Add evenly distributed circles
+    const shapes = [];
+    const circleRadius = 15; // Smaller size for circles
+    const numCircles = 50; // Increase the number of circles
+
+    const logoArea = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2 - 140,
+        width: 200,
+        height: 100
+    };
+
+    const welcomeArea = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        width: 300,
+        height: 150
+    };
+
+    for (let i = 0; i < numCircles; i++) {
+        let x, y;
+
+        // Ensure circles do not spawn in the logo or welcome message areas
+        do {
+            x = Math.random() * window.innerWidth;
+            y = Math.random() * window.innerHeight;
+        } while (
+            x > logoArea.x - logoArea.width / 2 &&
+            x < logoArea.x + logoArea.width / 2 &&
+            y > logoArea.y - logoArea.height / 2 &&
+            y < logoArea.y + logoArea.height / 2
+        );
+
+        const circle = Bodies.circle(x, y, circleRadius, {
+            restitution: 0.9,
+            render: { fillStyle: "#0D7377" }
+        });
+
+        // Add a slow initial velocity to the circles
+        const velocity = Vector.create((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2);
+        Matter.Body.setVelocity(circle, velocity);
+
+        shapes.push(circle);
+    }
+
+    const logo = Bodies.rectangle(window.innerWidth / 2, window.innerHeight / 2 - 140, 150, 50, {
+        isStatic: true, // Make the logo static
+        render: {
+            sprite: {
+                texture: "KnotesLogo.png",
+                xScale: 0.5,
+                yScale: 0.5
+            }
+        }
+    });
+
+    World.add(world, [...shapes, logo]);
+
+    // Cap the velocity of shapes
+    const maxVelocity = 5; // Maximum allowed velocity
+    Events.on(engine, "afterUpdate", () => {
+        shapes.forEach((shape) => {
+            const velocity = shape.velocity;
+            const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+
+            if (speed > maxVelocity) {
+                const scale = maxVelocity / speed;
+                Matter.Body.setVelocity(shape, {
+                    x: velocity.x * scale,
+                    y: velocity.y * scale
+                });
+            }
+        });
+    });
+
+    // Add mouse control
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(engine, {
+        mouse: mouse,
+        constraint: {
+            stiffness: 0.2,
+            render: {
+                visible: false
+            }
+        }
+    });
+    World.add(world, mouseConstraint);
+
+    // Keep canvas responsive
+    window.addEventListener("resize", () => {
+        render.canvas.width = window.innerWidth;
+        render.canvas.height = window.innerHeight;
+
+        // Update boundaries
+        Matter.Body.setPosition(boundaries[0], { x: window.innerWidth / 2, y: -10 });
+        Matter.Body.setPosition(boundaries[1], { x: window.innerWidth / 2, y: window.innerHeight + 10 });
+        Matter.Body.setPosition(boundaries[2], { x: -10, y: window.innerHeight / 2 });
+        Matter.Body.setPosition(boundaries[3], { x: window.innerWidth + 10, y: window.innerHeight / 2 });
+    });
+});

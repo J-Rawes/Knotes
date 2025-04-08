@@ -1,14 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 * {
-  color: #423E37;
-  font-family: Verdana, sans-serif;
-  font-size: 24px;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
 }
 
 html, body {
   height: 100%;
+  background: #212121;
 }
 
 h1 {
@@ -27,23 +28,19 @@ h1 {
 }
 
 .main a {
-  background-color: #F7E733;
-  color: #423E37;
-  border-radius: 12px;
+  background-color: #323232;
+  border: 4px solid #323232;
+  color: #fff;
+  border-radius: 20px;
   font-size: 32px;
   display: inline-block;
   padding: 2em;
-  width: 30%;
+  width: 90%;
   margin-bottom: 1em;
 }
 
 .main a:hover {
-  background-color: #F8EC62;
-  box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
-}
-
-.main a:active {
-  background-color: #F9EE77;
+  border: 4px solid #14FFEC;
 }
 
 #return{
@@ -54,8 +51,15 @@ h1 {
 #return a {
   display: block;
   float: left;
+  width: 200px;
+  text-align: center;
+  font-size: 18px;
   height: 100%;
   padding: 20px;
+  border: 2px solid #0D7377;
+  border-radius: 40px;
+  margin: 5px;
+  background-color: #212121;
 }
 
 a {
@@ -68,29 +72,22 @@ a {
   outline: none;
 }
 
-
-a:hover {
-  background-color: #404463;
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
+#return a:hover {
+  border: 2px solid #14FFEC;
 }
 
-a:active {
-  transition: 0.1s;
-  background-color: #494D6F;
-}
+
 
 .user {
   width: 100%;
   min-width: 100%;
-  background-color: #383B56;
   overflow: hidden;
 }
 
 #userN {
   float: right;
   margin: 15px;
-  color: #F7E733;
+  color: #14FFEC;
 }
 
 #courses {
@@ -112,20 +109,75 @@ a:active {
   margin: auto;
 }
 
-#top {
-  position: relative;
+.logo {
   width: 100%;
-  height: 12em;
-  background-image: url('banner2.png');
-  background-position: center;
-  background-size: cover;
+  text-align: center;
+  margin-bottom: 20px; /* Add some space below the logo */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo on the x-axis */
 }
 
-/* Add a fading gradient effect */
-#top::after {
-  content: "";
-  position: absolute;
-  bottom: 0; left: 0; width: 100%; height: 6%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #F4F4F4 100%);
+.logo img {
+    width: 130px; /* Adjust the size of the logo */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Add spacing between the logo and the text */
 }
 
+.logo h2 {
+    font-size: 5em; /* Adjust the font size */
+    color: #14FFEC; /* Match the theme color */
+    margin: 0;
+}
+
+#button-container {
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
+  gap: 1em; /* Add spacing between buttons */
+  margin: auto; /* Center the container itself */
+  margin-top: 1em;
+  width: 90%; /* Adjust width to fit the content */
+}
+
+@media screen and (max-width: 600px) {
+
+  * {
+    font-size: 12px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    padding: 1em;
+  }
+
+  #button-container {
+    grid-template-columns: 1fr; /* 1 column */
+  }
+
+}
+
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+
+  * {
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+
+  #button-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  }
+
+  .main {
+    margin: 2em 5em 2em 5em;
+    margin-bottom: 10px;
+    padding: 1em;
+  }
+
+}
