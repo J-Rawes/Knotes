@@ -69,13 +69,13 @@ if (username.length > 16) {
   let hashedSecurityAnswer = SHA256.hex(securityAnswer); //ACTUALLY HASH SECURITY QUESTION ANSWER
   const response = await sendToDB(username, hashedPassword, securityQuestion, hashedSecurityAnswer); // ACTUALLY SEND TO DB
    
-  if (response === "Username already exists") {
+  if (response.message === "Username already exists") {
     messagefield.style.color = "#f56476";
     messagefield.innerHTML = "Username already exists. Please choose another.";
-  } else if (response === "A required field is missing") {
+  } else if (response.message === "A required field is missing") {
     messagefield.style.color = "#f56476";
     messagefield.innerHTML = "A required field is missing. Please ensure all fields are filled.";
-  } else if (response === "User registered successfully") {
+  } else if (response.message === "User registered successfully") {
     document.cookie = `authtoken=${response.token}; path=/; secure; SameSite=Strict`;
     localStorage.setItem("username", username);
     location.href = "homepage.html"; // Redirect to homepage
@@ -96,10 +96,9 @@ async function sendToDB(uname, pword, securityq, securityq_ans) { // Whatever th
     });
 
     console.log("Server Response:", response);
-    let data = await response.text();
+    let data = await response.json();
     console.log("Server Response:", data);
-
-    document.getElementById("message").innerText = data;
+    console.log("Server Response:", response.message);
     return data;
   } catch (error) {
     console.error("Fetch Error:", error);

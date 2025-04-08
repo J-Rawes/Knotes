@@ -12,6 +12,7 @@ const txtCanvas = document.getElementById("innerTxt");
 const imgCtx = imgCanvas.getContext("2d");
 var currentNote = 0;
 var likedNotes;
+var courseID;
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Get the course name from the URL (see courseSearch.js)
         const courseName = localStorage.getItem("courseName");
-        const courseID = localStorage.getItem("courseID");
+        courseID = localStorage.getItem("courseID");
         console.log(courseName + " " + courseID);
 
         getCourseNoteInfo(courseID);
@@ -383,7 +384,7 @@ function likeNote(x) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({currentNote, username})
+        body: JSON.stringify({currentNote, courseID, username})
     })
         .catch(error => console.error('Error:', error));
   }
