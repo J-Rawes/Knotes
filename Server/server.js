@@ -29,7 +29,13 @@ client.connect()
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'FrontEnd')));
+// ✅ Serve static files from ../FrontEnd relative to server.js
+app.use(express.static(path.join(__dirname, '..', 'FrontEnd')));
+
+// ✅ Optional: Serve landingpage.html as the default route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'FrontEnd', 'index.html'));
+});
 
 // Helper functions
 const serveStaticFile = (filePath, contentType, res) => {
