@@ -29,6 +29,27 @@ body {
     border-radius: 8px;
 }
 
+button {
+    height: 100%;
+    padding: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #14FFEC;
+    color: #212121;
+    border-radius: 40px;
+    width: 150px;
+    font-size: 18px;
+    margin: 5px;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+    outline: none;
+  }
+  
+button:hover {
+    background: #13E3D5;
+    transition: .5s ease;
+}
+
 .login-box {
     position: absolute;
     width: 400px;
