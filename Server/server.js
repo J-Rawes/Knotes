@@ -53,7 +53,7 @@ const server = http.createServer((req, res) => {
         serveStaticFile(path.join(__dirname, url), 'text/css', res);
     } else if (ext === '.js') {
         serveStaticFile(path.join(__dirname, url), 'application/javascript', res);
-    }
+    } else if (ext === '.png') {serveStaticFile(path.join(__dirname, url), 'image/png', res);}
 
     // Handle POST request for registration
     else if (req.method === 'POST' && req.url === '/register') { /////////////////////////////////////////////// /register is the "task" in question
