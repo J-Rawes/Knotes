@@ -10,11 +10,12 @@ var displayImg = new Image();
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("innerTxt");
 const imgCtx = imgCanvas.getContext("2d");
+var currentNote = 0;
+var likedNotes;
 
 document.addEventListener("DOMContentLoaded", function () {
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    let username = ca.length > 1 ? ca[1] : "Guest";
+
+    const username = localStorage.getItem("username");
 
     window.onload = function () {
 
@@ -69,11 +70,40 @@ document.addEventListener("DOMContentLoaded", function () {
         function sortNotes(criteria) {
             if (criteria === "title") {
                 filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+                generateButtons(filteredNotes); // Generate buttons for notes
             } else if (criteria === "likes") {
                 filteredNotes.sort((a, b) => b.num_likes - a.num_likes);
-            }
+                generateButtons(filteredNotes); // Generate buttons for notes
+            } else if (criteria === "liked"){
+                const username = localStorage.getItem("username");
+                fetch('/getLikedNotes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        likedNotes = data.likedNotes || [];
+                        likedNotes = data.likedNotes.map(noteID => parseInt(noteID, 10)) || [];
 
-            generateButtons(filteredNotes); // Generate buttons for notes
+                        console.log("Liked Notes:", likedNotes);
+                        console.log("All Notes:", notesArr.noteNames);
+        
+                        // Filter notes for the current course based on liked_notes
+                        const filteredNotes = notesArr.noteNames.filter(note => likedNotes.includes(note.note_id));
+                        console.log("Filtered Notes:", filteredNotes);
+
+                        generateButtons(filteredNotes); // Generate buttons for notes
+                    })
+                    .catch(error => console.error('Error fetching liked notes:', error));
+            }
         }
 
         function filterNotes(searchTerm) {
@@ -93,6 +123,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         async function displayNote(noteID) {
+
+            currentNote = noteID;
+
             document.getElementById("i").style.display = "none"; // Show the arrow buttons
             document.getElementById("t").style.display = "none"; // Show the arrow buttons
             txtCanvas.style.display = "none"; // Hide the canvas if no text is available
@@ -340,6 +373,17 @@ function nextTxt(foward) {
     txtCanvas.innerHTML = txtArray[tArrPointer];
 }
 
-function likeNote() {
-    alert("You liked this note!");
+function likeNote(x) {
+    x.style.color = "red";
+
+    const username = localStorage.getItem("username");
+
+    fetch('/likeNote', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({currentNote, username})
+    })
+        .catch(error => console.error('Error:', error));
   }
