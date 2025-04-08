@@ -680,6 +680,88 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') { //USED TO 
         });
     }
 
+    else if (req.method === 'POST' && req.url === '/likeNote') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { currentNote, username } = JSON.parse(body);
+                console.log(currentNote);
+                console.log(username);
+
+                if (!currentNote) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing note ID' }));
+                    return;
+                }
+
+                // Increment the number of likes for the note
+                const query = `
+                    UPDATE "Notes"
+                    SET num_likes = num_likes + 1
+                    WHERE note_id = $1
+                `;
+
+                const query2 = `
+                    UPDATE "Users"
+                    SET liked_notes = array_append(liked_notes, $1::bigint)
+                    WHERE uname = $2
+                `;
+
+                await client.query(query, [currentNote]);
+                await client.query(query2, [currentNote, username]);
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({message: 'Note liked successfully' }));
+            } catch (error) {
+                console.error('Error liking note:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
+    else if (req.method === 'POST' && req.url === '/getLikedNotes') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username } = JSON.parse(body);
+
+                if (!username) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing username' }));
+                    return;
+                }
+
+                // Get the liked notes for the user
+                const query = `
+                    SELECT liked_notes
+                    FROM "Users"
+                    WHERE uname = $1
+                `;
+
+                const result = await client.query(query, [username]);
+                const likedNotes = result.rows[0]?.liked_notes || [];
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ likedNotes }));
+            } catch (error) {
+                console.error('Error fetching liked notes:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
     // Default 404
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
