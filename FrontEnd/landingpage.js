@@ -83,8 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
         render: {
             sprite: {
                 texture: "KnotesLogo.png",
-                xScale: 0.5,
-                yScale: 0.5
+                xScale: 0.25,
+                yScale: 0.25
             }
         }
     });
