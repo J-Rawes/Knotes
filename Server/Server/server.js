@@ -7,7 +7,7 @@ const vision = require('@google-cloud/vision');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const JWT_SECRET = "ChickenJockey"; // Super secret key
 
 // PostgreSQL client setup
