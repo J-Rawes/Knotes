@@ -82,12 +82,15 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
+                const likedNotes = []; // Initialize liked_notes as an empty array
+                const likedCourses = []; // Initialize liked_courses as an empty array
+
                 // Insert into PostgreSQL (user_id is auto-generated)
                 const user_gen_id = await generateID("Users", "user_id");
                 console.log("User ID: ", user_gen_id); // Log the generated user ID
                 client.query(
-                    'INSERT INTO "Users" (user_id, uname, pword, securityq, securityq_ans) VALUES ($1, $2, $3, $4, $5)',
-                    [user_gen_id, username, password, securityQuestion, securityAnswer],
+                    'INSERT INTO "Users" (user_id, uname, pword, securityq, securityq_ans, liked_notes) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                    [user_gen_id, username, password, securityQuestion, securityAnswer, likedNotes, likedCourses],
                     (err) => {
                         if (err) {
                             console.error('Database insert error:', err);
@@ -97,8 +100,8 @@ const server = http.createServer((req, res) => {
 
                             const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h'}); //GENEREATE JWT HERE
 
-                            res.writeHead(200, { 'Content-Type': 'text/plain' });
-                            res.end('User registered successfully', token);
+                            res.writeHead(200, { 'Content-Type': 'application/json' });
+                            res.end(JSON.stringify({ message: 'User registered successfully', token }));
                         }
                     }
                 );
@@ -689,7 +692,7 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') { //USED TO 
 
         req.on('end', async () => {
             try {
-                const { currentNote, username } = JSON.parse(body);
+                const { currentNote, courseID, username } = JSON.parse(body);
                 console.log(currentNote);
                 console.log(username);
 
@@ -712,8 +715,15 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') { //USED TO 
                     WHERE uname = $2
                 `;
 
+                const query3 = `
+                    UPDATE "Users"
+                    SET liked_courses = array_append(liked_courses, $1::bigint)
+                    WHERE uname = $2
+                `;
+
                 await client.query(query, [currentNote]);
                 await client.query(query2, [currentNote, username]);
+                await client.query(query3, [courseID, username]);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({message: 'Note liked successfully' }));
@@ -756,6 +766,61 @@ else if (req.method === 'POST' && req.url === '/getNoteCountAndID') { //USED TO 
                 res.end(JSON.stringify({ likedNotes }));
             } catch (error) {
                 console.error('Error fetching liked notes:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+        });
+    }
+
+    else if (req.method === 'POST' && req.url === '/getLikedCourses') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const { username } = JSON.parse(body);
+
+                if (!username) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing username' }));
+                    return;
+                }
+
+                // Get the liked courses for the user
+                const query = `
+                    SELECT liked_courses
+                    FROM "Users"
+                    WHERE uname = $1
+                `;
+
+                const result = await client.query(query, [username]);
+                const likedCourses = result.rows[0]?.liked_courses || [];
+
+                const query2 = `
+                    SELECT course_name, course_id
+                    FROM "Courses"
+                    WHERE course_id = ANY($1::bigint[])
+                `;
+
+                result2 = await client.query(query2, [likedCourses]);
+
+                if (result2.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: "No courses found" }));
+                    return;
+                }
+
+                const courseArr = result2.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
+
+                console.log(courseArr);
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ courseArr }));
+            } catch (error) {
+                console.error('Error fetching liked courses:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Server error' }));
             }
