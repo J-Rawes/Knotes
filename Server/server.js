@@ -27,6 +27,11 @@ client.connect()
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'FrontEnd')));
 
+// Serve landingpage.html at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'FrontEnd', 'landingpage.html'));
+});
+
 // Helper functions
 const serveStaticFile = (filePath, contentType, res) => {
     fs.readFile(filePath, (err, data) => {
