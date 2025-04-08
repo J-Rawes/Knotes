@@ -12,11 +12,14 @@ const JWT_SECRET = "ChickenJockey"; // Super secret key
 
 // PostgreSQL client setup
 const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'Knotes',
-    password: 'of7224165',
+    user: 'knotes_user',
+    host: 'dpg-cvqm5fm3jp1c73dro7l0-a.oregon-postgres.render.com',
+    database: 'knotes',
+    password: 'brUbr6qvDRMI3GMgcJLuoPQ86ZxtY6XG',
     port: 5432,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 client.connect()
@@ -590,6 +593,25 @@ app.get('/courses', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+const CREDENTIALS;
+
+const CONFIG = {
+    credentials: {
+        private_key: CREDENTIALS.private_key,
+        client_email: CREDENTIALS.client_email
+    }
+};
+
+async function extract(image) {
+    const client = new vision.ImageAnnotatorClient(CONFIG);
+
+// Read a local image as a text document
+    const [result] = await client.documentTextDetection(image);
+    const fullTextAnnotation = result.fullTextAnnotation;
+    return (fullTextAnnotation.text);
+
+}
 
 async function generateID(idType, columnName) {
     try {
