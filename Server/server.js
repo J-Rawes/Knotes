@@ -5,6 +5,12 @@ const fs = require('fs');
 const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
 const vision = require('@google-cloud/vision');
+const visionClient = new vision.ImageAnnotatorClient({
+  credentials: {
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  }
+});
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -29,10 +35,10 @@ client.connect()
 
 // Middleware
 app.use(bodyParser.json());
-// ✅ Serve static files from ../FrontEnd relative to server.js
+// Serve static files from ../FrontEnd relative to server.js
 app.use(express.static(path.join(__dirname, '..', 'FrontEnd')));
 
-// ✅ Optional: Serve landingpage.html as the default route
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'FrontEnd', 'index.html'));
 });
@@ -601,7 +607,19 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-const CREDENTIALS;
+const CREDENTIALS = {
+  type: process.env.GOOGLE_TYPE,
+  project_id: process.env.GOOGLE_PROJECT_ID,
+  private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
+  private_key: process.env.GOOGLE_PRIVATE_KEY,
+  client_email: process.env.GOOGLE_CLIENT_EMAIL,
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  auth_uri: process.env.GOOGLE_AUTH_URI,
+  token_uri: process.env.GOOGLE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_CERT,
+  client_x509_cert_url: process.env.GOOGLE_CLIENT_CERT_URL,
+  universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
+};
 
 const CONFIG = {
     credentials: {
