@@ -4,6 +4,7 @@ const SHA256 = new Hashes.SHA256();
 
 // Step 1: Verify Username
 document.getElementById("checkUsernameButton").addEventListener("click", async () => {
+    console.log("yippee");
     const username = document.getElementById("username").value.trim();
 
     if (!username) {
