@@ -557,15 +557,15 @@ confirmUpload = async () => {
     const username = localStorage.getItem("username");
 
     // Data to send to the server
-    const data = {
-        course: courseName,
-        title: noteTitle,
-        imageArray: imageArray,
-        txtArray: txtArray,
-        username: username
-    };
+    // const data = {
+    //     course: courseName,
+    //     title: noteTitle,
+    //     imageArray: imageArray,
+    //     txtArray: txtArray,
+    //     username: username
+    // };
 
-    console.log("Data to be sent:", data);
+    //console.log("Data to be sent:", data);
 
     try {
         const response = await fetch('/uploadNote', {
@@ -573,7 +573,11 @@ confirmUpload = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(course: courseName,
+        title: noteTitle,
+        imageArray: imageArray,
+        txtArray: txtArray,
+        username: username)
         });
 
         if (!response.ok) {
