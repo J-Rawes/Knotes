@@ -573,11 +573,7 @@ confirmUpload = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({course: courseName,
-        title: noteTitle,
-        imageArray: imageArray,
-        txtArray: txtArray,
-        username: username
+            body: JSON.stringify({course: courseName, title: noteTitle, imageArray: imageArray, txtArray: txtArray, username: username })
         });
 
         if (!response.ok) {
