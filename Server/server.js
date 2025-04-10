@@ -543,53 +543,37 @@ app.post('/uploadNote', async (req, res) => {
 */
 
 app.post('/verifySecurityAnswer', async (req, res) => {
-    let body = '';
+    try {
+        const { username, securityAnswer } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { username, securityAnswer } = JSON.parse(body);
-
-            if (!username || !securityAnswer) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Missing username or security answer' }));
-                return;
-            }
-
-            // Query to get the stored hashed security answer
-            const query = `
-                SELECT securityq_ans
-                FROM "Users"
-                WHERE uname = $1
-            `;
-
-            const result = await client.query(query, [username]);
-
-            if (result.rows.length === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'User not found' }));
-                return;
-            }
-
-            const storedHashAnswer = result.rows[0].securityq_ans;
-
-            // Compare the stored hash with the provided hash
-            if (storedHashAnswer.trim() === securityAnswer.trim()) {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true, message: 'Security answer verified' }));
-            } else {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: false, message: 'Incorrect security answer' }));
-            }
-        } catch (error) {
-            console.error('Error verifying security answer:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!username || !securityAnswer) {
+            return res.status(400).json({ error: 'Missing username or security answer' });
         }
-    });
+
+        const query = `
+            SELECT securityq_ans
+            FROM "Users"
+            WHERE uname = $1
+        `;
+
+        const result = await client.query(query, [username]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const storedHashAnswer = result.rows[0].securityq_ans;
+
+        if (storedHashAnswer.trim() === securityAnswer.trim()) {
+            return res.status(200).json({ success: true, message: 'Security answer verified' });
+        } else {
+            return res.status(401).json({ success: false, message: 'Incorrect security answer' });
+        }
+
+    } catch (error) {
+        console.error('Error verifying security answer:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 
