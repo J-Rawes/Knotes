@@ -38,10 +38,18 @@
         </div>
     </div>
 
-    <script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("logIn").addEventListener("submit", async (event) => {
+      await login(event); // Call the function from `login.js`
+    });
+  });
+</script>
+    
+<!--     <script>
       //Attach event listener to prevent form submission
       document.getElementById("logIn").addEventListener("submit", login);
-    </script>
+    </script> -->
     
 </body>
 </html>
