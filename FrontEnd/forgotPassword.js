@@ -65,7 +65,7 @@ document.getElementById("checkSecurityAnswerButton").addEventListener("click", a
 
         console.log(data);
 
-        if (data) {
+        if (data.success) {
             // Security answer is correct, display the reset password form
             document.getElementById("securityQuestionForm").style.display = "none";
             document.getElementById("resetPasswordForm").style.display = "block";
