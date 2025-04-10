@@ -35,7 +35,7 @@ client.connect()
     .catch(err => console.error('Connection error', err.stack));
 
 // Middleware
-//app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.json({ limit: '50mb' }));
 //app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -378,15 +378,9 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 app.post('/uploadNote', async (req, res) => {
   console.log("Made it 1");
     let body = '';
-
-  /*
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-*/
     req.on('end', async () => {
       console.log("Made it 2");
-        const {course, title, imageArray, txtArray, username} =JSON.parse(body);
+        const {course, title, imageArray, txtArray, username} =req.body;
 
         console.log("Course:", course);
         console.log("Title:", title);
