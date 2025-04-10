@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
 
 const SHA256 = new Hashes.SHA256();
 
@@ -151,4 +151,4 @@ async function resetPassword(username, newPassword) {
     return response.text();
 }
 
-});
+// });
