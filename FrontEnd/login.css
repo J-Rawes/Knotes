@@ -12,6 +12,10 @@ h3 {
     text-align: center;
 }
 
+.m1 {
+    margin-top: 2em;
+}
+
 body {
     display: flex;
     justify-content: center;
