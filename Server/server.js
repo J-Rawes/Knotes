@@ -10,7 +10,9 @@ const visionClient = new vision.ImageAnnotatorClient({
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   }
 });
-const bodyParser = require('body-parser');
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
