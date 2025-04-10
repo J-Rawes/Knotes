@@ -374,7 +374,60 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
     });
 });
 
+app.post('/uploadNote', async (req, res) => {
+  console.log("Made it 1");
 
+  try {
+    const { course, title, imageArray, txtArray, username } = req.body;
+
+    console.log("Course:", course);
+    console.log("Title:", title);
+    console.log("Image Array:", imageArray);
+    console.log("Text Array:", txtArray);
+    console.log("Username:", username);
+
+    const getCourseID = `SELECT course_id FROM "Courses" WHERE course_name = $1`;
+    const courseIDResult = await client.query(getCourseID, [course]);
+    const courseID = courseIDResult.rows[0]?.course_id;
+
+    if (!courseID) return res.status(400).json({ error: "Invalid course name" });
+
+    const getUserIDQuery = `SELECT user_id FROM "Users" WHERE uname = $1`;
+    const userIDResult = await client.query(getUserIDQuery, [username]);
+    const userID = userIDResult.rows[0]?.user_id;
+
+    if (!userID) return res.status(400).json({ error: "Invalid username" });
+
+    const noteNum = await generateID("Notes", "note_id");
+    const numlikes = 0;
+
+    const insertNoteQuery = `
+      INSERT INTO "Notes" (note_id, title, num_likes, course_id, user_id)  
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+    await client.query(insertNoteQuery, [noteNum, title, numlikes, courseID, userID]);
+
+    for (const text of txtArray) {
+      const textNum = await generateID("Text", "text_id");
+      const insertTextQuery = `INSERT INTO "Text" (text_id, text, note_id) VALUES ($1, $2, $3)`;
+      await client.query(insertTextQuery, [textNum, text, noteNum]);
+    }
+
+    for (const image of imageArray) {
+      const imageNum = await generateID("Images", "image_id");
+      const insertImageQuery = `INSERT INTO "Images" (image_id, image, note_id) VALUES ($1, $2, $3)`;
+      await client.query(insertImageQuery, [imageNum, image, noteNum]);
+    }
+
+    res.status(200).json({ message: "Note uploaded successfully" });
+
+  } catch (error) {
+    console.error("Error uploading note:", error);
+    res.status(500).json({ error: "Server error while uploading note" });
+  }
+});
+
+/*
 app.post('/uploadNote', async (req, res) => {
   console.log("Made it 1");
     let body = '';
@@ -456,7 +509,7 @@ app.post('/uploadNote', async (req, res) => {
         }
     });
 });
-
+*/
 
 app.post('/verifySecurityAnswer', async (req, res) => {
     let body = '';
