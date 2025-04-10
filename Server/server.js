@@ -379,10 +379,11 @@ app.post('/uploadNote', async (req, res) => {
   console.log("Made it 1");
     let body = '';
 
+  /*
     req.on('data', chunk => {
         body += chunk.toString();
     });
-
+*/
     req.on('end', async () => {
       console.log("Made it 2");
         const {course, title, imageArray, txtArray, username} =JSON.parse(body);
