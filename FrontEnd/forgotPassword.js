@@ -1,5 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-
 const SHA256 = new Hashes.SHA256();
 
 // Step 1: Verify Username
@@ -156,5 +154,3 @@ async function resetPassword(username, newPassword) {
     });
     return response.text();
 }
-
-});
