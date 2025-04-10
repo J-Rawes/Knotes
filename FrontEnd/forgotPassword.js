@@ -9,6 +9,7 @@ document.getElementById("checkUsernameButton").addEventListener("click", async (
     
     if (username === "") {
         console.log("oh no");
+        document.getElementById("message").style.display = "block";
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Please enter your username.";
         return;
