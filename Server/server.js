@@ -390,11 +390,15 @@ app.post('/uploadNote', async (req, res) => {
     const courseIDResult = await client.query(getCourseID, [course]);
     const courseID = courseIDResult.rows[0]?.course_id;
 
+    console.log(courseIDResult.rows);
+
     if (!courseID) return res.status(400).json({ error: "Invalid course name" });
 
     const getUserIDQuery = `SELECT user_id FROM "Users" WHERE uname = $1`;
     const userIDResult = await client.query(getUserIDQuery, [username]);
     const userID = userIDResult.rows[0]?.user_id;
+
+    console.log(userIDResult.rows);
 
     if (!userID) return res.status(400).json({ error: "Invalid username" });
 
