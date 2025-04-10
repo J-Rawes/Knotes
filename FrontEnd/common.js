@@ -1,11 +1,5 @@
-function getCookie(name) {
-    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-    const target = cookies.find(cookie => cookie.startsWith(`${name}=`));
-    return target ? target.split('=')[1] : null;
-}
-
 async function validateTokenAndDisplayUser() {
-    const token = getCookie('authtoken');
+    const token = localStorage.getItem('authtoken');
 
     // 👇 Skip check if this is the first time after login/register
     if (sessionStorage.getItem('justLoggedIn')) {
