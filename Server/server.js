@@ -18,8 +18,10 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = "ChickenJockey"; // Super secret key
 
+const { Pool } = require('pg');
+
 // PostgreSQL client setup
-const client = new Client({
+const client = new Pool({
     user: 'knotes_user',
     host: 'dpg-cvqm5fm3jp1c73dro7l0-a.oregon-postgres.render.com',
     database: 'knotes',
