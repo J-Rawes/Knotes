@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetch('/protected', {
-        method: 'POST', // your server expects POST, not GET
+        method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`
         }
