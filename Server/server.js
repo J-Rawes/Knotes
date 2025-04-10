@@ -635,34 +635,26 @@ app.post ('/resetPassword', async (req, res) => {
 });
 
 app.post('/verifyUsername', async (req, res) => {
-    let body = '';
+    try {
+        const { username } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { username } = JSON.parse(body);
-
-            // Check if the username exists in the database
-            const query = 'SELECT securityq FROM "Users" WHERE uname = $1';
-            const result = await client.query(query, [username]);
-
-            if (result.rows.length > 0) {
-                const securityQuestion = result.rows[0].securityq;
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ exists: true, securityQuestion }));
-            } else {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ exists: false }));
-            }
-        } catch (error) {
-            console.error('Error verifying username:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!username) {
+            return res.status(400).json({ error: 'Username is required' });
         }
-    });
+
+        const query = 'SELECT securityq FROM "Users" WHERE uname = $1';
+        const result = await client.query(query, [username]);
+
+        if (result.rows.length > 0) {
+            const securityQuestion = result.rows[0].securityq;
+            return res.status(200).json({ exists: true, securityQuestion });
+        } else {
+            return res.status(200).json({ exists: false });
+        }
+    } catch (error) {
+        console.error('Error verifying username:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 app.post('/deleteNote', async (req, res) => {
