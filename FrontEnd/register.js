@@ -16,7 +16,8 @@ See the final else statement: When a user has all valid inputs for registration,
              "sendToDB", localStorage simply allows the browser to remember login credentials, 
              location.href reroutes the user to the homepage
 */
-
+localStorage.removeItem('authtoken');
+localStorage.removeItem('username');
 const SHA256 = new Hashes.SHA256();
 
 async function register(event) {
