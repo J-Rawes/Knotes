@@ -284,88 +284,61 @@ app.post('/courseSearch', async (req, res) => {
 });
 
 
-app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
-    let body = '';
+app.post('/getNoteCountAndID', async (req, res) => {
+    try {
+        const { courseID } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const {courseID} = JSON.parse(body);
-            
-            if(!courseID){ //No password passed error
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end("Missing course ID");
-                return;
-            }
-
-            // Get note count and IDs for the given course
-            const query = `
-                SELECT ARRAY_AGG(note_id) AS note_ids
-                FROM "Notes"
-                WHERE course_id = $1
-            `;
-
-            const result = await client.query(query, [courseID]); 
-
-            if (result.rows.length === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: "No notes found" }));
-                return;
-            }
-
-            const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
-
-        } catch (error) {
-            console.error('Error hashing password:', error);
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({error: "Error hashing password"}));
+        if (!courseID) {
+            return res.status(400).json({ error: 'Missing course ID' });
         }
-    });
+
+        const query = `
+            SELECT ARRAY_AGG(note_id) AS note_ids
+            FROM "Notes"
+            WHERE course_id = $1
+        `;
+
+        const result = await client.query(query, [courseID]);
+
+        if (!result.rows.length || !result.rows[0].note_ids) {
+            return res.status(404).json({ message: 'No notes found' });
+        }
+
+        const noteIDs = result.rows[0].note_ids;
+
+        res.status(200).json({ noteIDs });
+    } catch (error) {
+        console.error('Error fetching note IDs:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 
 
     //Used in Course Search Page, this is used to determine the amount of buttons
-    app.post ('/getCourseCount', async (req, res) => {
-    let body = '';
+   app.post('/getCourseCount', async (req, res) => {
+    try {
+        const query = `
+            SELECT course_name, course_id
+            FROM "Courses"
+        `;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
+        const result = await client.query(query);
 
-    req.on('end', async () => {
-        try {
-            // Get note count and IDs for the given course
-            const query = `
-                SELECT course_name, course_id
-                FROM "Courses"               
-            `;
-
-            const result = await client.query(query); 
-
-            if (result.rows.length === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: "No courses found" }));
-                return;
-            }
-
-            const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({courseArr})); //Send both the count and note IDs to courseDisplay.js
-
-        } catch (error) {
-            console.error('Error Fetching Courses', error);
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            res.end('Error Fetching Courses');
+        if (!result.rows.length) {
+            return res.status(404).json({ message: "No courses found" });
         }
-    });
+
+        const courseArr = result.rows.map(row => ({
+            course_id: row.course_id,
+            course_name: row.course_name
+        }));
+
+        res.status(200).json({ courseArr });
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        res.status(500).json({ error: 'Error fetching courses' });
+    }
 });
 
 app.post('/uploadNote', async (req, res) => {
@@ -620,35 +593,27 @@ app.post('/verifyUsername', async (req, res) => {
 });
 
 app.post('/deleteNote', async (req, res) => {
-    let body = '';
+    try {
+        const { noteID } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { noteID } = JSON.parse(body);
-            const query = 'DELETE FROM "Notes" WHERE "note_id" = $1';
-            const result = await client.query(query, [noteID]);
-            
-            if (result.rowCount === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Note not found' }));
-                return;
-            }
-            else{
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end("Note Successfully Deleted");
-                return;
-            }
-        } catch (error) {
-            console.error('Error verifying username:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!noteID) {
+            return res.status(400).json({ error: 'Missing note ID' });
         }
-    });
+
+        const query = 'DELETE FROM "Notes" WHERE note_id = $1';
+        const result = await client.query(query, [noteID]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        res.status(200).json({ message: 'Note successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
+
 
 app.get('/protected', async (req, res) => {
     authenticateToken(req, res, () => {
@@ -658,131 +623,88 @@ app.get('/protected', async (req, res) => {
 });
 
 
-app.post('/getNoteTombstoneInfo', async (req, res) => { 
-    let body = '';
+app.post('/getNoteTombstoneInfo', async (req, res) => {
+    try {
+        const { noteID } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try { 7
-            const { noteID } = JSON.parse(body);
-           
-             const query = `
-                SELECT *
-                FROM "Images" 
-                WHERE note_id = $1
-            `;
-
-            const query2 = `
-                SELECT *
-                FROM "Text" 
-                WHERE note_id = $1               
-            `;
-
-            const query3 = `
-                SELECT *
-                FROM "Notes" 
-                WHERE note_id = $1               
-            `;
-
-        
-
-
-            const imageResult = await client.query(query, [noteID]);
-            const textResult = await client.query(query2, [noteID]);
-            const tombstoneResult = await client.query(query3, [noteID]);
-          
-            
-
-            // Extract the data
-            // Convert bytea images to Base64
-            const images = imageResult.rows.map(row => {
-                return row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null;
-            });
-            console.log("Images: ", images);
-            const text = textResult.rows.map(row => row.text); // Array of text
-            const noteInfo = tombstoneResult.rows[0]; // Course info (single object)
-
-            // Query the Users table to get the username
-            const getUsernameQuery = `
-                SELECT uname
-                FROM "Users"
-                WHERE user_id = $1
-            `;
-
-            const userResult = await client.query(getUsernameQuery, [noteInfo.user_id]);
-            const username = userResult.rows[0]?.uname;
-            noteInfo.username = username;
-
-            console.log("Tombstone Info: ", noteInfo);
-            console.log(images);
-            console.log(text);
-
-            // Return the data as a JSON response
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ images, text, noteInfo }));
-        } catch (error) {
-            console.error('Database query error:', error);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Database error');
+        if (!noteID) {
+            return res.status(400).json({ error: 'Missing note ID' });
         }
-    });
+
+        // Query image, text, and note data
+        const imageQuery = 'SELECT * FROM "Images" WHERE note_id = $1';
+        const textQuery = 'SELECT * FROM "Text" WHERE note_id = $1';
+        const noteQuery = 'SELECT * FROM "Notes" WHERE note_id = $1';
+
+        const imageResult = await client.query(imageQuery, [noteID]);
+        const textResult = await client.query(textQuery, [noteID]);
+        const noteResult = await client.query(noteQuery, [noteID]);
+
+        if (noteResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        // Convert images to base64 strings
+        const images = imageResult.rows.map(row =>
+            row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null
+        );
+
+        const text = textResult.rows.map(row => row.text);
+        const noteInfo = noteResult.rows[0];
+
+        // Get the username from the user_id
+        const userResult = await client.query(
+            'SELECT uname FROM "Users" WHERE user_id = $1',
+            [noteInfo.user_id]
+        );
+        noteInfo.username = userResult.rows[0]?.uname || "Unknown";
+
+        // Send JSON response
+        res.status(200).json({ images, text, noteInfo });
+    } catch (error) {
+        console.error('Error retrieving tombstone info:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 
 app.post('/likeNote', async (req, res) => {
-    let body = '';
+    try {
+        const { currentNote, courseID, username } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { currentNote, courseID, username } = JSON.parse(body);
-            console.log(currentNote);
-            console.log(username);
-
-            if (!currentNote) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Missing note ID' }));
-                return;
-            }
-
-            // Increment the number of likes for the note
-            const query = `
-                UPDATE "Notes"
-                SET num_likes = num_likes + 1
-                WHERE note_id = $1
-            `;
-
-            const query2 = `
-                UPDATE "Users"
-                SET liked_notes = array_append(liked_notes, $1::bigint)
-                WHERE uname = $2
-            `;
-
-            const query3 = `
-                UPDATE "Users"
-                SET liked_courses = array_append(liked_courses, $1::bigint)
-                WHERE uname = $2
-            `;
-
-            await client.query(query, [currentNote]);
-            await client.query(query2, [currentNote, username]);
-            await client.query(query3, [courseID, username]);
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({message: 'Note liked successfully' }));
-        } catch (error) {
-            console.error('Error liking note:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!currentNote || !courseID || !username) {
+            return res.status(400).json({ error: 'Missing required fields (note ID, course ID, or username)' });
         }
-    });
+
+        console.log("Liking note:", currentNote);
+        console.log("From user:", username);
+
+        // Update note likes
+        await client.query(
+            `UPDATE "Notes" SET num_likes = num_likes + 1 WHERE note_id = $1`,
+            [currentNote]
+        );
+
+        // Update liked notes for user
+        await client.query(
+            `UPDATE "Users" SET liked_notes = array_append(liked_notes, $1::bigint) WHERE uname = $2`,
+            [currentNote, username]
+        );
+
+        // Update liked courses for user
+        await client.query(
+            `UPDATE "Users" SET liked_courses = array_append(liked_courses, $1::bigint) WHERE uname = $2`,
+            [courseID, username]
+        );
+
+        res.status(200).json({ message: 'Note liked successfully' });
+
+    } catch (error) {
+        console.error('Error liking note:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
+
 
 // Endpoint to get liked notes
 app.post('/getLikedNotes', async (req, res) => {
@@ -820,38 +742,31 @@ app.get('/common.js', (req, res) => {
 });
 
 app.get('/courses', async (req, res) => {
-    let body = '';
+    try {
+        const query = `
+            SELECT course_name, course_id
+            FROM "Courses"
+        `;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
+        const result = await client.query(query);
 
-    req.on('end', async () => {
-        try {
-            const query = `
-                SELECT course_name, course_id
-                FROM "Courses"               
-            `;
-
-            const result = await client.query(query);
-
-            if (result.rows.length === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: "No courses found" }));
-                return;
-            }
-
-            const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ courseArr }));
-        } catch (error) {
-            console.error('Error Fetching Courses', error);
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            res.end('Error Fetching Courses');
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "No courses found" });
         }
-    });
+
+        const courseArr = result.rows.map(row => ({
+            course_id: row.course_id,
+            course_name: row.course_name
+        }));
+
+        res.status(200).json({ courseArr });
+
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
