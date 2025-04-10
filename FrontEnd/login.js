@@ -39,9 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const hashedPassword = SHA256.hex(password);
 
     try {
-      console.log("before");
       const response = await fetch('/login', {
-        console.log("after");
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password: hashedPassword })
