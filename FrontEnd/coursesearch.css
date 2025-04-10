@@ -1,15 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 * {
-    color: #423E37;
-    font-family: Verdana, sans-serif;
-    font-size: 24px;
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-  }
-  
-  html, body {
-    height: 100%;
-  }
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: #212121;
+}
   
   h1 {
     font-size: 32px;
@@ -34,8 +34,15 @@
   #return a {
     display: block;
     float: left;
+    width: 150px;
+    text-align: center;
+    font-size: 18px;
     height: 100%;
     padding: 20px;
+    border: 2px solid #0D7377;
+    border-radius: 40px;
+    margin: 5px;
+    background-color: #212121;
   }
   
   a {
@@ -48,22 +55,14 @@
     outline: none;
   }
   
-  
-  a:hover {
-    background-color: #404463;
-    transform: scale(1.05);
-    transition: 0.2s ease-in-out;
-  }
-  
-  a:active {
-    transition: 0.1s;
-    background-color: #494D6F;
+  #return a:hover {
+    border: 2px solid #14FFEC;
   }
   
   .user {
     width: 100%;
     min-width: 100%;
-    background-color: #383B56;
+    background-color: transparent;
     overflow: hidden;
   }
 
@@ -74,34 +73,68 @@
     text-align: center;
     }
 
-#searchbar {
-    margin: auto;
-    margin-top: 2em;
-    text-align: center;
-}
-
-#searchbar input[type="text"] {
-    width: 50%;
-    padding: 0.5em;
-    padding-left: 1em;
-    border: 2px solid #cacaca;
-    border-radius: 40px;
-    font-size: 24px;
-    margin: auto;
-    -webkit-transition: 0.2s;
-    transition: 0.2s;
-    outline: none;
-}
-
-#searchbar input[type="text"]:focus {
-    border: 2px solid #423E37;
-}
+    #searchbar {
+      justify-content: center; /* Center horizontally */
+      align-items: center;
+      width: 100%; /* Ensure it spans the full width */
+      margin: auto; /* Center the search bar */
+    }
+    #searchbar span {
+      position: absolute;
+      left: 0;
+      width: 32px;
+      height: 6px;
+      background: #212121;
+      border-radius: 8px;
+    }
+    
+    .input-box {
+      justify-content: center;
+      position: relative;
+      width: 40%;
+      margin: auto;
+      margin-bottom: 20px;
+    }
+    .input-box input {
+      width: 100%;
+      height: 50px;
+      background: transparent;
+      border: 2px solid #0d7377;
+      outline: none;
+      border-radius: 40px;
+      font-size: 1em;
+      color: #fff;
+      padding: 0 20px;
+      transition: .5s ease;
+    }
+    .input-box input:focus,
+    .input-box input:valid {
+      border-color: #14FFEC;
+    }
+    .input-box label {
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      font-size: 1em;
+      color: #fff;
+      pointer-events: none;
+      transition: .5s ease;
+    }
+    .input-box input:focus~label,
+    .input-box input:valid~label {
+      top: 1px;
+      font-size: .8em;
+      background: #212121;
+      padding: 0 6px;
+      color: #14FFEC;
+    }
 
 button {
-    background-color: #F7E733;
-    border: none;
-    color: #423E37;
-    border-radius: 12px;
+    background-color: #323232;
+    border: 4px solid #323232;
+    color: #fff;
+    border-radius: 20px;
     font-size: 60px;
     margin: auto;
     margin-bottom: 0.5em;
@@ -113,16 +146,9 @@ button {
 }
   
 button:hover {
-    background-color: #F8EC62;
-    transform: scale(1.05);
-    transition: 0.2s ease-in-out;
-    box-shadow: 0 2px 6px #cacaca; /* Add a subtle drop shadow on hover */
+    border-color: #14FFEC;
   }
   
-button:active {
-    background-color: #F9EE77;
-  }
-
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -247,6 +273,17 @@ button:active {
       margin: 2em 5em 2em 5em;
       padding: 1em;
     }
+
+    button {
+      font-size: 30px;
+      padding: 0.5em;
+      width: 100%;
+    }
+
+    #return a {
+      width: 100px;
+      font-size: 14px;
+    }
   
   }
   
@@ -264,6 +301,12 @@ button:active {
       margin: 2em 5em 2em 5em;
       margin-bottom: 10px;
       padding: 1em;
+    }
+
+    button {
+      font-size: 40px;
+      padding: 0.5em;
+      width: 100%;
     }
   
   }
