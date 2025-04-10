@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Store token + redirect
       
-      localStorage.setItem("authtoken", response.token); // <-- SET TOKEN
+      localStorage.setItem("authtoken", data.token); // <-- SET TOKEN
       sessionStorage.setItem("justLoggedIn", "true"); // <-- SKIP CHECK ON FIRST LOAD
       localStorage.setItem("username", username);
       window.location.href = "homepage.html";
