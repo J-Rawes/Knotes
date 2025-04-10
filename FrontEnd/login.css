@@ -5,6 +5,11 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
+
+h3 {
+    font-size: 1em;
+}
+
 body {
     display: flex;
     justify-content: center;
