@@ -6,7 +6,8 @@ const SHA256 = new Hashes.SHA256();
 document.getElementById("checkUsernameButton").addEventListener("click", async () => {
     console.log("yippee");
     const username = document.getElementById("username").value.trim();
-
+    console.log(username);
+    
     if (!username) {
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Please enter your username.";
