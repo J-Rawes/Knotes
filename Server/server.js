@@ -376,6 +376,7 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 
 
 app.post('/uploadNote', async (req, res) => {
+  console.log("Made it 1");
     let body = '';
 
     req.on('data', chunk => {
@@ -383,6 +384,7 @@ app.post('/uploadNote', async (req, res) => {
     });
 
     req.on('end', async () => {
+      console.log("Made it 2");
         const {course, title, imageArray, txtArray, username} =JSON.parse(body);
 
         console.log("Course:", course);
@@ -404,6 +406,7 @@ app.post('/uploadNote', async (req, res) => {
             const courseIDResult = await client.query(getCourseID, [course]);
             const courseID = courseIDResult.rows[0]?.course_id;
 
+          console.log("Made it 3");
             // Query to get the user_id from the Users table
             const getUserIDQuery = `
                 SELECT user_id
@@ -413,6 +416,7 @@ app.post('/uploadNote', async (req, res) => {
             const userIDResult = await client.query(getUserIDQuery, [username]);
             const userID = userIDResult.rows[0]?.user_id;
 
+          console.log("Made it 4");
            
             const noteNum = await generateID("Notes", "note_id");
             
@@ -424,6 +428,7 @@ app.post('/uploadNote', async (req, res) => {
           const numlikes=0;
             await client.query(query, [noteNum, title, numlikes, courseID, userID]);
 
+          console.log("Made it 5");
             // Insert text entries into the Text table
             for (const text of txtArray) {
                 const textNum = await generateID("Text", "text_id");
@@ -432,6 +437,7 @@ app.post('/uploadNote', async (req, res) => {
                     VALUES($1, $2, $3)
                 `;
                 await client.query(query2, [textNum, text, noteNum]);
+              console.log("Made it 6");
             }
 
             // Insert image entries into the Images table
@@ -442,8 +448,10 @@ app.post('/uploadNote', async (req, res) => {
                     VALUES($1, $2, $3)
                 `;
                 await client.query(query3, [imageNum, image, noteNum]);
+              console.log("Made it 7");
             }
 
+          console.log("Made it 8");
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({message: 'Note uploaded successfully'}));
         } catch (error) {
