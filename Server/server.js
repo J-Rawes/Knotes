@@ -35,7 +35,7 @@ client.connect()
     .catch(err => console.error('Connection error', err.stack));
 
 // Middleware
-app.use(express.json());
+//app.use(express.json());
 app.use(express.json({ limit: '50mb' }));
 //app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
