@@ -7,6 +7,12 @@ function getCookie(name) {
 async function validateTokenAndDisplayUser() {
     const token = getCookie('authtoken');
 
+    // 👇 Skip check if this is the first time after login/register
+    if (sessionStorage.getItem('justLoggedIn')) {
+        sessionStorage.removeItem('justLoggedIn'); // only skip once
+        return;
+    }
+
     if (!token) {
         console.log('No token found. User is not logged in.');
         return;
