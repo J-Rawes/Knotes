@@ -201,6 +201,7 @@ function uploadNote() {
             drawCanvasWithBadge(); // Draw the canvas with the badge after the image is loaded
         };
         if (txtArray.length > 0) {
+            txtCanvas.style.display = "block";
             drawTextCanvasWithBadge();
             if (txtArray.length > 1) {document.getElementById("t").style.display = "block";}
         }
@@ -212,6 +213,7 @@ function uploadNote() {
         imgCanvas.style.display = "none"; // Hide the canvas if no images are available
         document.getElementById("i").style.display = "none";
         if (txtArray.length > 0) {
+            txtCanvas.style.display = "block";
             drawTextCanvasWithBadge();
             if (txtArray.length > 1) {document.getElementById("t").style.display = "block";}
         } else {
