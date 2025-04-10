@@ -4,17 +4,18 @@ const SHA256 = new Hashes.SHA256();
 
 // Step 1: Verify Username
 document.getElementById("checkUsernameButton").addEventListener("click", async () => {
-    console.log("yippee");
     const username = document.getElementById("username").value.trim();
     console.log(username);
     
     if (username === "") {
+        console.log("oh no");
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Please enter your username.";
         return;
     }
 
     try {
+        console.log("2");
         const response = await fetch('/verifyUsername', {
             method: 'POST',
             headers: {
