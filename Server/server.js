@@ -78,37 +78,44 @@ const authenticateToken = (req, res, next) => {
 app.post('/register', async (req, res) => {
     try {
         const { username, password, securityQuestion, securityAnswer } = req.body;
-
         if (!username || !password || !securityQuestion || !securityAnswer) {
-            res.status(400).send('A required field is missing');
-            return;
+            return res.status(400).send('A required field is missing');
         }
 
+        // Check if username already exists
         const checkQuery = 'SELECT uname FROM "Users" WHERE uname = $1';
         const checkResult = await client.query(checkQuery, [username]);
-
         if (checkResult.rows.length > 0) {
-            res.status(409).send('Username already exists');
-            return;
+            return res.status(409).send('Username already exists');
         }
 
-        const likedNotes = [];
-        const likedCourses = [];
+        // Generate user ID
         const user_gen_id = await generateID("Users", "user_id");
-        console.log("User ID: ", user_gen_id);
 
-        await client.query(
-            'INSERT INTO "Users" (user_id, uname, pword, securityq, securityq_ans, liked_notes, liked_courses) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [user_gen_id, username, password, securityQuestion, securityAnswer, likedNotes, likedCourses]
-        );
+        // Insert new user within a transaction
+        await client.query('BEGIN');
+        const insertQuery = `
+            INSERT INTO "Users" (user_id, uname, pword, securityq, securityq_ans, liked_notes, liked_courses)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *;
+        `;
+        const insertValues = [user_gen_id, username, password, securityQuestion, securityAnswer, [], []];
+        const insertResult = await client.query(insertQuery, insertValues);
+        await client.query('COMMIT');
 
-        const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ message: 'User registered successfully', token });
-    } catch (error) {
-        console.error('Error registering user:', error);
+        if (insertResult.rows.length > 0) {
+            const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+            return res.status(200).json({ message: 'User registered successfully', token });
+        } else {
+            throw new Error('User registration failed');
+        }
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Register error:', err);
         res.status(500).send('Database error');
     }
 });
+
 
 // Submit text endpoint
 app.post('/submitText', async (req, res) => {
