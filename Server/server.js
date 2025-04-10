@@ -237,59 +237,51 @@ app.post('/courseSearch', async (req, res) => {
 });
 
     //Used in Course Display Page, this is used to determine the amount of buttons and info fields about the course
-    app.post('/getCourseNoteInfo', async (req, res) => {
-        let body = '';
+   app.post('/getCourseNoteInfo', async (req, res) => {
+    try {
+        const { courseID } = req.body;
 
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
+        if (!courseID) {
+            return res.status(400).json({ message: "Missing course ID" });
+        }
 
-        req.on('end', async () => {
+        const query = `
+            SELECT title, note_id, num_likes
+            FROM "Notes"
+            WHERE course_id = $1
+        `;
 
-            const { courseID } = JSON.parse(body);
+        const query2 = `
+            SELECT *
+            FROM "Courses"
+            WHERE course_id = $1
+        `;
 
-            try {
-                // Get note count and IDs for the given course
-                const query = `
-                    SELECT title, note_id, num_likes
-                    FROM "Notes"
-                    WHERE course_id = $1               
-                `;
+        const result = await client.query(query, [courseID]);
+        const result2 = await client.query(query2, [courseID]);
 
-                const query2 = `
-                    SELECT *
-                    FROM "Courses"  
-                    WHERE course_id = $1              
-                `;
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "No notes found" });
+        }
 
-                const result = await client.query(query, [courseID]); 
-                const result2 = await client.query(query2, [courseID]); 
+        if (result2.rows.length === 0) {
+            return res.status(404).json({ message: "No course found" });
+        }
 
-                if (result.rows.length === 0) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "No notes found" }));
-                    return;
-                }
-        
-                if (result2.rows.length === 0) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "No course found" }));
-                    return;
-                }
-        
-                const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id, num_likes: row.num_likes }));
-                const courseInfo = result2.rows[0];
+        const noteNames = result.rows.map(row => ({
+            title: row.title,
+            note_id: row.note_id,
+            num_likes: row.num_likes
+        }));
 
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({noteNames, courseInfo})); //Send both the count and note IDs to courseDisplay.js
+        const courseInfo = result2.rows[0];
 
-            } catch (error) {
-                console.error('Error Fetching Courses', error);
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end('Error Fetching Courses');
-            }
-        });
-    });
+        res.status(200).json({ noteNames, courseInfo });
+    } catch (error) {
+        console.error('Error fetching course note info:', error);
+        res.status(500).json({ message: 'Server error fetching course info' });
+    }
+});
 
 
 app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
@@ -577,45 +569,31 @@ app.post('/verifySecurityAnswer', async (req, res) => {
 });
 
 
-app.post ('/resetPassword', async (req, res) => {
-    let body = '';
+app.post('/resetPassword', async (req, res) => {
+    try {
+        const { username, newPassword } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { username, newPassword } = JSON.parse(body);
-
-            if (!username || !newPassword) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Missing required fields' }));
-                return;
-            }
-
-            if (newPassword.length < 8) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Password must be at least 8 characters long' }));
-                return;
-            }
-
-            const query = `
-                UPDATE "Users"
-                SET pword = $1
-                WHERE uname = $2
-            `;
-
-            await client.query(query, [newPassword, username]);
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, message: 'Password reset successfully' }));
-        } catch (error) {
-            console.error('Error resetting password:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!username || !newPassword) {
+            return res.status(400).json({ error: 'Missing required fields' });
         }
-    });
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+        }
+
+        const query = `
+            UPDATE "Users"
+            SET pword = $1
+            WHERE uname = $2
+        `;
+
+        await client.query(query, [newPassword, username]);
+
+        res.status(200).json({ success: true, message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 app.post('/verifyUsername', async (req, res) => {
