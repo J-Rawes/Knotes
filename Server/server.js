@@ -383,7 +383,7 @@ app.post('/uploadNote', async (req, res) => {
     });
 
     req.on('end', async () => {
-        const {course, title, imageArray, txtArray, username} = JSON.parse(body);
+        const {course, title, imageArray, txtArray, username} = req.body;
 
         console.log("Course:", course);
         console.log("Title:", title);
@@ -398,6 +398,8 @@ app.post('/uploadNote', async (req, res) => {
                 FROM "Courses"
                 WHERE course_name = $1
             `;
+
+          
 
             const courseIDResult = await client.query(getCourseID, [course]);
             const courseID = courseIDResult.rows[0]?.course_id;
