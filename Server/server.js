@@ -383,7 +383,7 @@ app.post('/uploadNote', async (req, res) => {
     });
 
     req.on('end', async () => {
-        const {course, title, imageArray, txtArray, username} = req.body;
+        const {course, title, imageArray, txtArray, username} =JSON.parse(body);
 
         console.log("Course:", course);
         console.log("Title:", title);
@@ -421,7 +421,8 @@ app.post('/uploadNote', async (req, res) => {
                 INSERT INTO "Notes" (note_id, title, num_likes, course_id, user_id)  
                 VALUES($1, $2, $3, $4, $5)
             `;
-            await client.query(query, [noteNum, title, numlikes=0, courseID, userID]);
+          const numlikes=0;
+            await client.query(query, [noteNum, title, numlikes, courseID, userID]);
 
             // Insert text entries into the Text table
             for (const text of txtArray) {
