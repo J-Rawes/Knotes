@@ -4,6 +4,7 @@ const fs = require('fs');
 const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
 const vision = require('@google-cloud/vision');
+const bodyParser = require('body-parser');
 const visionClient = new vision.ImageAnnotatorClient({
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
