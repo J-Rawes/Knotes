@@ -78,6 +78,7 @@ if (username.length > 16) {
   } else if (response.message === "User registered successfully") {
     document.cookie = `authtoken=${response.token}; path=/; secure; SameSite=Strict`;
     localStorage.setItem("username", username);
+    sessionStorage.setItem('justLoggedIn', 'true'); /////////////////////COOKIE HERE
     location.href = "homepage.html"; // Redirect to homepage
   } else {
     messagefield.style.color = "#f56476";
