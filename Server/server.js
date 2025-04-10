@@ -11,10 +11,12 @@ const visionClient = new vision.ImageAnnotatorClient({
   }
 });
 
+
+
+const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-const app = express();
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = "ChickenJockey"; // Super secret key
 
