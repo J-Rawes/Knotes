@@ -100,13 +100,10 @@ app.post('/register', async (req, res) => {
             RETURNING *;
         `;
 
-      await client.query(insertQuery, [user_gen_id, username, password, securityQuestion, securityAnswer, likedNotes, likedCourses])
-  .then(() => console.log("✅ User inserted successfully"))
-  .catch(err => {
-    console.error("Error inserting user:", err);
-    throw err;
-  });
+  
         const insertValues = [user_gen_id, username, password, securityQuestion, securityAnswer, [], []];
+
+      console.log(user_gen_id + " " + username + " " + password + " " + securityQuestion + " " + securityAnswer)
         const insertResult = await client.query(insertQuery, insertValues);
         await client.query('COMMIT');
 
