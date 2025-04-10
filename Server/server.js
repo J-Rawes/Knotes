@@ -139,6 +139,7 @@ app.post('/login', async (req, res) => {
         const result = await client.query(query, [username]);
         const storedHashPass = result.rows[0]?.pword;
 
+        console.log(storedHashPass + " " + password);
         if (storedHashPass && storedHashPass.trim() === password.trim()) {
             const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
             res.status(200).json({ exists: true, token, message: "Login successful" });
