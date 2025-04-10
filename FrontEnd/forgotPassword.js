@@ -25,6 +25,8 @@ document.getElementById("checkUsernameButton").addEventListener("click", async (
             body: JSON.stringify({ username })
         });
 
+        console.log("3");
+
         const data = await response.json();
 
         if (data.exists) {
