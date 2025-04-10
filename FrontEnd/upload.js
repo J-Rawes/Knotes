@@ -577,7 +577,7 @@ confirmUpload = async () => {
         title: noteTitle,
         imageArray: imageArray,
         txtArray: txtArray,
-        username: username)
+        username: username
         });
 
         if (!response.ok) {
