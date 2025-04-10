@@ -15,7 +15,8 @@
     "pg": "^8.10.0",
     "jsonwebtoken": "^9.0.0",
     "jshashes": "^1.0.8",
-    "@google-cloud/vision": "^2.4.0"
+    "@google-cloud/vision": "^2.4.0",
+    "body-parser": "^1.20.2"
   },
   "engines": {
     "node": ">=18.0.0 <21.0.0"
