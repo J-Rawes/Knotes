@@ -1,7 +1,8 @@
 async function validateTokenAndDisplayUser() {
+    console.log("Made it here")
     const token = localStorage.getItem('authtoken');
 
-    // 👇 Skip check if this is the first time after login/register
+    // Skip check if this is the first time after login/register
     if (sessionStorage.getItem('justLoggedIn')) {
         sessionStorage.removeItem('justLoggedIn'); // only skip once
         return;
