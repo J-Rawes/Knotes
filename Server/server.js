@@ -35,9 +35,9 @@ client.connect()
     .catch(err => console.error('Connection error', err.stack));
 
 // Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+//app.use(bodyParser.json());
+app.use(express.json({ limit: '50mb' }));
+//app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files from ../FrontEnd relative to server.js
 app.use(express.static(path.join(__dirname, '..', 'FrontEnd')));
