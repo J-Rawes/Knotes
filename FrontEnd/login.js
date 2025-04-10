@@ -52,7 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Store token + redirect
-      document.cookie = `authtoken=${data.token}; path=/; secure; SameSite=Strict`;
+      
+      localStorage.setItem("authtoken", response.token); // <-- SET TOKEN
+      sessionStorage.setItem("justLoggedIn", "true"); // <-- SKIP CHECK ON FIRST LOAD
       localStorage.setItem("username", username);
       window.location.href = "homepage.html";
     } catch (err) {
