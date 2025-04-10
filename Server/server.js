@@ -589,7 +589,7 @@ app.post('/deleteNote', async (req, res) => {
     });
 });
 
-app.post('/protected', async (req, res) => {
+app.get('/protected', async (req, res) => {
     authenticateToken(req, res, () => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'This is a protected route', user: req.user }));
