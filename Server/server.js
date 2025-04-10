@@ -126,12 +126,13 @@ app.post('/submitText', async (req, res) => {
 
 // Login endpoint
 app.post('/login', async (req, res) => {
+    console.log("Login route hit!");
     try {
         const { username, password } = req.body;
 
         if (!username || !password) {
             res.status(400).json({ error: "Missing username or password" });
-            return;
+           // return;
         }
 
         const query = 'SELECT pword FROM "Users" WHERE uname = $1';
