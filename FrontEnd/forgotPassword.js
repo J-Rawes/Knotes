@@ -29,6 +29,7 @@ document.getElementById("checkUsernameButton").addEventListener("click", async (
 
         if (data.exists) {
             // Username found, display the security question
+            document.getElementById("message").style.display = "none";
             document.getElementById("usernameForm").style.display = "none";
             document.getElementById("securityQuestionForm").style.display = "block";
             document.getElementById("securityQuestionLabel").innerText = data.securityQuestion;
@@ -49,6 +50,7 @@ document.getElementById("checkSecurityAnswerButton").addEventListener("click", a
     const securityAnswer = document.getElementById("securityAnswer").value.trim();
 
     if (!securityAnswer) {
+        document.getElementById("message").style.display = "block";
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Please enter your security answer.";
         return;
@@ -71,6 +73,7 @@ document.getElementById("checkSecurityAnswerButton").addEventListener("click", a
 
         if (data.success) {
             // Security answer is correct, display the reset password form
+            document.getElementById("message").style.display = "none";
             document.getElementById("securityQuestionForm").style.display = "none";
             document.getElementById("resetPasswordForm").style.display = "block";
         } else {
@@ -91,18 +94,21 @@ document.getElementById("resetPasswordButton").addEventListener("click", async (
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     if (!newPassword || !confirmPassword) {
+        document.getElementById("message").style.display = "block";
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Please fill in all password fields.";
         return;
     }
 
     if (newPassword !== confirmPassword) {
+        document.getElementById("message").style.display = "block";
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Passwords do not match.";
         return;
     }
 
     if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+        document.getElementById("message").style.display = "block";
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "Password must be at least 8 characters long and include at least one capital letter and one number.";
         return;
@@ -121,16 +127,19 @@ document.getElementById("resetPasswordButton").addEventListener("click", async (
         const data = await response.json();
 
         if (data.success) {
+            document.getElementById("message").style.display = "block";
             document.getElementById("message").style.color = "green";
             document.getElementById("message").innerText = "Password reset successful! Redirecting to login...";
             setTimeout(() => {
                 window.location.href = "login.html"; // Redirect to login page
             }, 2000);
         } else {
+            document.getElementById("message").style.display = "block";
             document.getElementById("message").style.color = "#f56476";
             document.getElementById("message").innerText = "Failed to reset password. Please try again.";
         }
     } catch (error) {
+        document.getElementById("message").style.display = "block";
         console.error("Error resetting password:", error);
         document.getElementById("message").style.color = "#f56476";
         document.getElementById("message").innerText = "An error occurred. Please try again.";
