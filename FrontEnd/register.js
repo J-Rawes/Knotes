@@ -91,6 +91,7 @@ if (username.length > 16) {
 
 async function sendToDB(uname, pword, securityq, securityq_ans) { // Whatever the user inputs
   try {
+    console.log("made it to reg.js call");
     let response = await fetch('/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
