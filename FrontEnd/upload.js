@@ -118,11 +118,11 @@ async function addScreenshot(event) {
     const imgButtonPressed = document.getElementById("imgSelect").checked;
 
     if (imgButtonPressed) {
-        const croppedImageDataURL = croppedCanvas.toDataURL();
+        const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         imageArray.push(croppedImageDataURL);
     } else {
         // Open the modal window for text editing
-        const croppedImageDataURL = croppedCanvas.toDataURL();
+        const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         const returnText = await sendTextToServer(croppedImageDataURL);
         if (returnText) {
             openModal(returnText);  // Replace this with actual extracted text
@@ -136,14 +136,14 @@ async function addScreenshot(event) {
 }
 
 function addScreenshot2() {
-    const imageDataURL = selectionCanvas.toDataURL();
+    const imageDataURL = selectionCanvas.toDataURL("image/jpeg", 0.6);
     imageArray.push(imageDataURL);
     document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 async function addScreenshot3() {
-    const croppedImageDataURL = croppedCanvas.toDataURL();
+    const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6);
     const returnText = await sendTextToServer(croppedImageDataURL);
     if (returnText) {
         openModal(returnText);  
