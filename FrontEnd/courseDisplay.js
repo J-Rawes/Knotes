@@ -388,3 +388,11 @@ function likeNote(x) {
     })
         .catch(error => console.error('Error:', error));
   }
+
+function downloadNote(){
+    const image = displayImg.src;
+    const downloadLink = document.getElementById('downloadBtn');
+
+    downloadLink.href = image.src;
+    downloadLink.download = document.getElementById("noteTitle");
+}
