@@ -10,11 +10,6 @@ var textPointer = 0; // Pointer for cycling through text
 var currentNoteID = null; // Track the currently displayed note
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Retrieve the logged-in user identifier (via cookie, token, etc.)
-  //let decodedCookie = decodeURIComponent(document.cookie);
-  //let ca = decodedCookie.split(';');
-  //let username = ca.length > 1 ? ca[1].trim() : "Guest";
-
   // Set up event listeners for sort and search
   document.getElementById("sort-button").addEventListener("click", function () {
     const sortOption = document.getElementById("sort-options").value;
@@ -26,8 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
     filterNotes(searchTerm);
   });
 
-  // Fetch the user's uploaded notes on load
-  getUserUploadedNotes();
+  // Fetch the user's uploaded notes on load and generate buttons
+  getUserUploadedNotes().then(notes => {
+    notesArr = notes;
+    filteredNotes = notes.slice();
+    generateButtons(filteredNotes);
+  });
 
   // Function to generate note buttons
   function generateButtons(notesArr) {
@@ -77,7 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to display a specific note
   async function displayNote(noteID) {
     try {
-      // Fetch note details from the server
       const response = await fetch('/getNoteDetails', {
         method: 'POST',
         headers: {
@@ -93,32 +91,25 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Track the current note ID
       currentNoteID = noteID;
-
-      // Reset pointers for cycling
       imagePointer = 0;
       textPointer = 0;
 
-      // Display the first image and text
       displayImage(selectedNote);
       displayText(selectedNote);
 
-      // Show or hide the arrows based on the number of images and texts
       const totalImages = selectedNote.images ? selectedNote.images.length : 0;
       const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
 
       document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
       document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
 
-      // Show the modal
       document.getElementById("noteModal").style.display = "block";
     } catch (error) {
       console.error("Error fetching note details:", error);
     }
   }
 
-  // Function to display the current image
   function displayImage(selectedNote) {
     if (selectedNote.images && selectedNote.images.length > imagePointer) {
       displayImg.src = selectedNote.images[imagePointer];
@@ -128,11 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         imgCtx.drawImage(displayImg, 0, 0);
       };
     } else {
-      imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear canvas if no image
+      imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
     }
   }
 
-  // Function to display the current text
   function displayText(selectedNote) {
     if (selectedNote.texts && selectedNote.texts.length > textPointer) {
       txtCanvas.innerHTML = selectedNote.texts[textPointer];
@@ -142,31 +132,36 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Function to fetch the user's uploaded notes from the server
-  function getUserUploadedNotes() {
-    // Assume you have the username or token stored somewhere.
-    const username = localStorage.getItem("username"); // Replace with actual user identifier
-    
-    fetch('/getUserUploadedNotes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username }) // sending the identifier for the logged-in user
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Assume that the server responds with an array of notes
-      notesArr = data.notes; 
-      // Copy them for filtering/sorting use
-      filteredNotes = notesArr.slice();
-      generateButtons(filteredNotes);
-    })
-    .catch(error => {
+  async function getUserUploadedNotes() {
+    const username = localStorage.getItem("username");
+  
+    try {
+      const response = await fetch('/getUserUploadedNotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+      
+      const text = await response.text();
+      console.log("Raw response:", text);
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+        console.log("Parsed notes:", data);
+      } catch (err) {
+        console.error("Failed to parse JSON:", err);
+        return [];
+      }
+  
+      return data.notes || [];
+  
+    } catch (error) {
       console.error("Error fetching user's notes:", error);
-    });
+      return [];
+    }
   }
   
-
   // Back link functionality
   document.getElementById("back-link").addEventListener("click", function (event) {
     event.preventDefault();
@@ -188,7 +183,7 @@ async function deleteNote(noteID) {
       body: JSON.stringify({ noteID: noteID })
     });
 
-    let data = await response.json(); // Convert response to JSON
+    let data = await response.json();
     return data;
   } catch (error) {
     console.error("Fetch Error:", error);
