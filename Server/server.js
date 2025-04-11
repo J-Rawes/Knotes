@@ -780,31 +780,34 @@ app.post('/getLikedNotes', async (req, res) => {
 app.post('/getUserUploadedNotes', async (req, res) => {
     try {
       const { username } = req.body;
+  
       if (!username) {
         return res.status(400).json({ error: 'Username is required' });
       }
   
-      // First, retrieve the user's id based on the username
+      // Get user_id
       const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
       const userResult = await client.query(userQuery, [username]);
-      
+  
       if (userResult.rows.length === 0) {
         return res.status(404).json({ error: 'User not found' });
       }
-      
+  
       const user_id = userResult.rows[0].user_id;
-      
-      // Next, retrieve notes uploaded by this user
+  
+      // Get notes by user
       const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
       const notesResult = await client.query(notesQuery, [user_id]);
   
-      return res.status(200).json(notesResult.rows);
+      // ✅ This sends proper JSON
+      return res.status(200).json({ notes: notesResult.rows });
+  
     } catch (error) {
       console.error('Error fetching user uploaded notes:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
-  });  
-
+  });
+  
 // Default 404 handler
 app.use((req, res) => {
     res.status(404).send('Not Found');
