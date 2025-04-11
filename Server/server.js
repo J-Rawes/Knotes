@@ -785,7 +785,6 @@ app.post('/getUserUploadedNotes', async (req, res) => {
         return res.status(400).json({ error: 'Username is required' });
       }
   
-      // Get user_id
       const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
       const userResult = await client.query(userQuery, [username]);
   
@@ -795,18 +794,16 @@ app.post('/getUserUploadedNotes', async (req, res) => {
   
       const user_id = userResult.rows[0].user_id;
   
-      // Get notes by user
       const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
       const notesResult = await client.query(notesQuery, [user_id]);
   
-      // ✅ This sends proper JSON
       return res.status(200).json({ notes: notesResult.rows });
-  
     } catch (error) {
       console.error('Error fetching user uploaded notes:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   });
+  
   
 // Default 404 handler
 app.use((req, res) => {
