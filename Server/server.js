@@ -771,7 +771,7 @@ app.get('/courses', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-/*
+
 const CREDENTIALS = {
   type: process.env.GOOGLE_TYPE,
   project_id: process.env.GOOGLE_PROJECT_ID,
@@ -785,21 +785,6 @@ const CREDENTIALS = {
   client_x509_cert_url: process.env.GOOGLE_CLIENT_CERT_URL,
   universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
 };
-*/
-
-const CREDENTIALS = JSON.parse(JSON.stringify({
-    "type": "service_account",
-    "project_id": "crucial-media-449421-c2",
-    "private_key_id": "27c27db6d85862780693c92de92d5d954c277b98",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDOPQSPkr/xK9UB\nFCjot4GSfAJFk9MsfjQwhcIztBYQYh2sS/PLfNO5sF2SNWOYuuTEUm5Xqo0nFoZl\nbEjQZEQoYAyympgfq6t2ey9AUAY47iPtC9q8jGsnggmq1cpHwig9neo6lb5kIJF6\nDOql7u9RgvextYFOWyiN4XNwuhgt1skljlvcagafhMtbjC9idHCvkdIxH2nJamK8\n/i0cEANg5Y/G+UwDgEFlVjf+GQ8zhtv0aWnE/aIH+lVq9X+85nwaPCO9hYv5HgUf\nDtzolUp4/BPXidR0PrehJgKkeHJijewFJIs+oITT1gfa85d2UhemquRZrlzSgD18\n/ANmcVbrAgMBAAECggEACFcgCRexMB/1VD7WzK/Ry0pn48fE9tFVFk/tI57OdEko\n1AqaSF9lnJEiUkMFzRZkdqqyuv7dsyKjur70pDYkf3wq50ooiWythB7FMWpLEMr9\n+Zx3cxU7/B6zz2HSoAZHuajaNmukhci/ZAUuXsQuj3L8G1wGElTOFgweWVpdQfU8\nDbIdg/dtJT/ICb9ivL7Ys65EACHtB/WJm3t45/F4uW2Z5Y0i5prIuMHVD+WKr7IA\njUjxKbGIcHn6mn9DP0QivlamZIDsyfL20/a9mvPnJc9Te9+fEzLyjEzRKXigKzHN\nXvw8ZOOByFMTd0/Tb46oks8Lp48UDmryS8rACjIRcQKBgQD3hN8IzCr16M8+mogE\n28nnEl7obHqSrik2x8cj36fErTYHJ5h+qqjm4zo2I/ITAKRjA+zsYH27WMcChpLE\nGkVQHieC77uLMSQHlQHhTp8eMVaXsWIFf8WfnDPI8yleDcjXIvRbcVvXlP6Dy6WT\nWR8EqGi8wQL4BgcoIz68MKQO2QKBgQDVTgzu/JRYSYkXBaboipHtiRQp1ZY0+PEb\nX9gtg6fFGkyHMPBC7I9s+Ce+lg+utZpsYw+F/gNZd209JS3sCn40aCDr1zlxCGUR\nULeKdTUsVv2tS358/4v0ILJ2Y4I+TSySuxMLNrlDLAUo1v7ukb6KNN6WnkwxCsY5\nLdmgwX7BYwKBgFK4FwmLoffYvBoB7t8gzNLqcsleJ4CJr8Bc95JnllvGPz4Y33/F\nbPjsi3G4hZgQKN/mWfGNNbe8rZWMf9QFq5Bg43eAwr57x7y48Y3ohojCmFvNriKE\nVvlGbJAFo5eJJ8uuJNfChJ0BcCV/k3Aw4ord9VLPdjyJVy70yGyAHPPRAoGBAIWi\nv6GepsXlVDkTNm2sGx7JadOH1/JaIJw44PQq7pojDt0IAQ68rGLl2eiilTKs3hGX\nwmr9KFYN52eOeoXOUSE+N5nqHje9vawqeMMLCYQ8//NpP9bKN4F8VrKrRzcHHKzU\n/WpiH5GA676Za+BFeS2XT/jnNe7nxCagnh8D+wjnAoGAMWVlZyHDDYTTtOnnlgBh\napOHkpsYKo66PEBfKNLXPQcZfH1mydzZDImN01/beSo5Ujuus9GmAKFb8CNNzVzL\nPT6eFWm8cZfC8QN4EaSSzQtkMbMDfyqZQ4a6+x9x6AXEmWelDy3g3F+A2sYYsMjx\nP12XnD1zKYrPFfmTseMA2hQ=\n-----END PRIVATE KEY-----\n",
-    "client_email": "service-account@crucial-media-449421-c2.iam.gserviceaccount.com",
-    "client_id": "109194977158438675284",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account%40crucial-media-449421-c2.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
-}));
 
 const CONFIG = {
     credentials: {
