@@ -18,10 +18,8 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = "ChickenJockey"; // Super secret key
 
-const { Pool } = require('pg');
-
 // PostgreSQL client setup
-const client = new Pool({
+const client = new Client({
     user: 'knotes_user',
     host: 'dpg-cvqm5fm3jp1c73dro7l0-a.oregon-postgres.render.com',
     database: 'knotes',
@@ -37,7 +35,7 @@ client.connect()
     .catch(err => console.error('Connection error', err.stack));
 
 // Middleware
-//app.use(express.json());
+//app.use(bodyParser.json());
 app.use(express.json({ limit: '50mb' }));
 //app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -237,199 +235,157 @@ app.post('/courseSearch', async (req, res) => {
 });
 
     //Used in Course Display Page, this is used to determine the amount of buttons and info fields about the course
-   app.post('/getCourseNoteInfo', async (req, res) => {
-    try {
-        const { courseID } = req.body;
+    app.post('/getCourseNoteInfo', async (req, res) => {
+        let body = '';
 
-        if (!courseID) {
-            return res.status(400).json({ message: "Missing course ID" });
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+
+            const { courseID } = JSON.parse(body);
+
+            try {
+                // Get note count and IDs for the given course
+                const query = `
+                    SELECT title, note_id, num_likes
+                    FROM "Notes"
+                    WHERE course_id = $1               
+                `;
+
+                const query2 = `
+                    SELECT *
+                    FROM "Courses"  
+                    WHERE course_id = $1              
+                `;
+
+                const result = await client.query(query, [courseID]); 
+                const result2 = await client.query(query2, [courseID]); 
+
+                if (result.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: "No notes found" }));
+                    return;
+                }
+        
+                if (result2.rows.length === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: "No course found" }));
+                    return;
+                }
+        
+                const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id, num_likes: row.num_likes }));
+                const courseInfo = result2.rows[0];
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({noteNames, courseInfo})); //Send both the count and note IDs to courseDisplay.js
+
+            } catch (error) {
+                console.error('Error Fetching Courses', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error Fetching Courses');
+            }
+        });
+    });
+
+
+app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
+    let body = '';
+
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const {courseID} = JSON.parse(body);
+            
+            if(!courseID){ //No password passed error
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end("Missing course ID");
+                return;
+            }
+
+            // Get note count and IDs for the given course
+            const query = `
+                SELECT ARRAY_AGG(note_id) AS note_ids
+                FROM "Notes"
+                WHERE course_id = $1
+            `;
+
+            const result = await client.query(query, [courseID]); 
+
+            if (result.rows.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "No notes found" }));
+                return;
+            }
+
+            const noteIDs = result.rows[0].note_ids || []; //funky syntax basically prevents null return errors
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({noteIDs})); //Send both the count and note IDs to courseDisplay.js
+
+        } catch (error) {
+            console.error('Error hashing password:', error);
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({error: "Error hashing password"}));
         }
-
-        const query = `
-            SELECT title, note_id, num_likes
-            FROM "Notes"
-            WHERE course_id = $1
-        `;
-
-        const query2 = `
-            SELECT *
-            FROM "Courses"
-            WHERE course_id = $1
-        `;
-
-        const result = await client.query(query, [courseID]);
-        const result2 = await client.query(query2, [courseID]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "No notes found" });
-        }
-
-        if (result2.rows.length === 0) {
-            return res.status(404).json({ message: "No course found" });
-        }
-
-        const noteNames = result.rows.map(row => ({
-            title: row.title,
-            note_id: row.note_id,
-            num_likes: row.num_likes
-        }));
-
-        const courseInfo = result2.rows[0];
-
-        res.status(200).json({ noteNames, courseInfo });
-    } catch (error) {
-        console.error('Error fetching course note info:', error);
-        res.status(500).json({ message: 'Server error fetching course info' });
-    }
-});
-
-
-app.post('/getNoteCountAndID', async (req, res) => {
-    try {
-        const { courseID } = req.body;
-
-        if (!courseID) {
-            return res.status(400).json({ error: 'Missing course ID' });
-        }
-
-        const query = `
-            SELECT ARRAY_AGG(note_id) AS note_ids
-            FROM "Notes"
-            WHERE course_id = $1
-        `;
-
-        const result = await client.query(query, [courseID]);
-
-        if (!result.rows.length || !result.rows[0].note_ids) {
-            return res.status(404).json({ message: 'No notes found' });
-        }
-
-        const noteIDs = result.rows[0].note_ids;
-
-        res.status(200).json({ noteIDs });
-    } catch (error) {
-        console.error('Error fetching note IDs:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
 
 
 
     //Used in Course Search Page, this is used to determine the amount of buttons
-   app.post('/getCourseCount', async (req, res) => {
-    try {
-        const query = `
-            SELECT course_name, course_id
-            FROM "Courses"
-        `;
+    app.post ('/getCourseCount', async (req, res) => {
+    let body = '';
 
-        const result = await client.query(query);
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
 
-        if (!result.rows.length) {
-            return res.status(404).json({ message: "No courses found" });
+    req.on('end', async () => {
+        try {
+            // Get note count and IDs for the given course
+            const query = `
+                SELECT course_name, course_id
+                FROM "Courses"               
+            `;
+
+            const result = await client.query(query); 
+
+            if (result.rows.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "No courses found" }));
+                return;
+            }
+
+            const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({courseArr})); //Send both the count and note IDs to courseDisplay.js
+
+        } catch (error) {
+            console.error('Error Fetching Courses', error);
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Error Fetching Courses');
         }
-
-        const courseArr = result.rows.map(row => ({
-            course_id: row.course_id,
-            course_name: row.course_name
-        }));
-
-        res.status(200).json({ courseArr });
-    } catch (error) {
-        console.error('Error fetching courses:', error);
-        res.status(500).json({ error: 'Error fetching courses' });
-    }
-});
-
-app.post('/uploadNote', async (req, res) => {
-  console.log("Upload request received");
-
-  const clientConnection = await client.connect(); // use a dedicated client for transaction
-
-  try {
-    const { course, title, imageArray, txtArray, username } = req.body;
-
-    if (!course || !title || !username) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    await clientConnection.query('BEGIN'); // start transaction
-
-    // Get course_id
-    const courseResult = await clientConnection.query(
-      `SELECT course_id FROM "Courses" WHERE course_name = $1`,
-      [course]
-    );
-    const courseID = courseResult.rows[0]?.course_id;
-    if (!courseID) {
-      await clientConnection.query('ROLLBACK');
-      return res.status(400).json({ error: "Invalid course name" });
-    }
-
-    // Get user_id
-    const userResult = await clientConnection.query(
-      `SELECT user_id FROM "Users" WHERE uname = $1`,
-      [username]
-    );
-    const userID = userResult.rows[0]?.user_id;
-    if (!userID) {
-      await clientConnection.query('ROLLBACK');
-      return res.status(400).json({ error: "Invalid username" });
-    }
-
-    // Generate note ID
-    const noteID = await generateID("Notes", "note_id");
-
-    // Insert into Notes
-    await clientConnection.query(
-      `INSERT INTO "Notes" (note_id, title, num_likes, course_id, user_id) 
-       VALUES ($1, $2, $3, $4, $5)`,
-      [noteID, title, 0, courseID, userID]
-    );
-
-    // Prepare text inserts
-    const textInserts = txtArray.map(async (text) => {
-      const textID = await generateID("Text", "text_id");
-      return clientConnection.query(
-        `INSERT INTO "Text" (text_id, text, note_id) VALUES ($1, $2, $3)`,
-        [textID, text, noteID]
-      );
     });
-
-    // Prepare image inserts
-    const imageInserts = imageArray.map(async (image) => {
-      const imageID = await generateID("Images", "image_id");
-      return clientConnection.query(
-        `INSERT INTO "Images" (image_id, image, note_id) VALUES ($1, $2, $3)`,
-        [imageID, image, noteID]
-      );
-    });
-
-    // Execute all inserts in parallel
-    await Promise.all([...textInserts, ...imageInserts]);
-
-    await clientConnection.query('COMMIT'); // commit transaction
-
-    console.log("✅ Note uploaded:", { title, course, username });
-    res.status(200).json({ message: "Note uploaded successfully" });
-
-  } catch (error) {
-    await clientConnection.query('ROLLBACK');
-    console.error("❌ Error uploading note:", error);
-    res.status(500).json({ error: "Server error while uploading note" });
-  } finally {
-    clientConnection.release(); // release the connection back to the pool
-  }
 });
 
 
-/*
 app.post('/uploadNote', async (req, res) => {
   console.log("Made it 1");
     let body = '';
+
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
     req.on('end', async () => {
       console.log("Made it 2");
-        const {course, title, imageArray, txtArray, username} =req.body;
+        const {course, title, imageArray, txtArray, username} =JSON.parse(body);
 
         console.log("Course:", course);
         console.log("Title:", title);
@@ -505,115 +461,161 @@ app.post('/uploadNote', async (req, res) => {
         }
     });
 });
-*/
+
 
 app.post('/verifySecurityAnswer', async (req, res) => {
-    try {
-        const { username, securityAnswer } = req.body;
+    let body = '';
 
-        if (!username || !securityAnswer) {
-            return res.status(400).json({ error: 'Missing username or security answer' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const { username, securityAnswer } = JSON.parse(body);
+
+            if (!username || !securityAnswer) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Missing username or security answer' }));
+                return;
+            }
+
+            // Query to get the stored hashed security answer
+            const query = `
+                SELECT securityq_ans
+                FROM "Users"
+                WHERE uname = $1
+            `;
+
+            const result = await client.query(query, [username]);
+
+            if (result.rows.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User not found' }));
+                return;
+            }
+
+            const storedHashAnswer = result.rows[0].securityq_ans;
+
+            // Compare the stored hash with the provided hash
+            if (storedHashAnswer.trim() === securityAnswer.trim()) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, message: 'Security answer verified' }));
+            } else {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'Incorrect security answer' }));
+            }
+        } catch (error) {
+            console.error('Error verifying security answer:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
-
-        const query = `
-            SELECT securityq_ans
-            FROM "Users"
-            WHERE uname = $1
-        `;
-
-        const result = await client.query(query, [username]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const storedHashAnswer = result.rows[0].securityq_ans;
-
-        if (storedHashAnswer.trim() === securityAnswer.trim()) {
-            return res.status(200).json({ success: true, message: 'Security answer verified' });
-        } else {
-            return res.status(401).json({ success: false, message: 'Incorrect security answer' });
-        }
-
-    } catch (error) {
-        console.error('Error verifying security answer:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
 
 
-app.post('/resetPassword', async (req, res) => {
-    try {
-        const { username, newPassword } = req.body;
+app.post ('/resetPassword', async (req, res) => {
+    let body = '';
 
-        if (!username || !newPassword) {
-            return res.status(400).json({ error: 'Missing required fields' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const { username, newPassword } = JSON.parse(body);
+
+            if (!username || !newPassword) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Missing required fields' }));
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Password must be at least 8 characters long' }));
+                return;
+            }
+
+            const query = `
+                UPDATE "Users"
+                SET pword = $1
+                WHERE uname = $2
+            `;
+
+            await client.query(query, [newPassword, username]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Password reset successfully' }));
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
-
-        if (newPassword.length < 8) {
-            return res.status(400).json({ error: 'Password must be at least 8 characters long' });
-        }
-
-        const query = `
-            UPDATE "Users"
-            SET pword = $1
-            WHERE uname = $2
-        `;
-
-        await client.query(query, [newPassword, username]);
-
-        res.status(200).json({ success: true, message: 'Password reset successfully' });
-    } catch (error) {
-        console.error('Error resetting password:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
 
 app.post('/verifyUsername', async (req, res) => {
-    try {
-        const { username } = req.body;
+    let body = '';
 
-        if (!username) {
-            return res.status(400).json({ error: 'Username is required' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const { username } = JSON.parse(body);
+
+            // Check if the username exists in the database
+            const query = 'SELECT securityq FROM "Users" WHERE uname = $1';
+            const result = await client.query(query, [username]);
+
+            if (result.rows.length > 0) {
+                const securityQuestion = result.rows[0].securityq;
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ exists: true, securityQuestion }));
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ exists: false }));
+            }
+        } catch (error) {
+            console.error('Error verifying username:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
-
-        const query = 'SELECT securityq FROM "Users" WHERE uname = $1';
-        const result = await client.query(query, [username]);
-
-        if (result.rows.length > 0) {
-            const securityQuestion = result.rows[0].securityq;
-            return res.status(200).json({ exists: true, securityQuestion });
-        } else {
-            return res.status(200).json({ exists: false });
-        }
-    } catch (error) {
-        console.error('Error verifying username:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
 
 app.post('/deleteNote', async (req, res) => {
-    try {
-        const { noteID } = req.body;
+    let body = '';
 
-        if (!noteID) {
-            return res.status(400).json({ error: 'Missing note ID' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const { noteID } = JSON.parse(body);
+            const query = 'DELETE FROM "Notes" WHERE "note_id" = $1';
+            const result = await client.query(query, [noteID]);
+            
+            if (result.rowCount === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Note not found' }));
+                return;
+            }
+            else{
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end("Note Successfully Deleted");
+                return;
+            }
+        } catch (error) {
+            console.error('Error verifying username:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
-
-        const query = 'DELETE FROM "Notes" WHERE note_id = $1';
-        const result = await client.query(query, [noteID]);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: 'Note not found' });
-        }
-
-        res.status(200).json({ message: 'Note successfully deleted' });
-    } catch (error) {
-        console.error('Error deleting note:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
-
 
 app.get('/protected', async (req, res) => {
     authenticateToken(req, res, () => {
@@ -623,88 +625,131 @@ app.get('/protected', async (req, res) => {
 });
 
 
-app.post('/getNoteTombstoneInfo', async (req, res) => {
-    try {
-        const { noteID } = req.body;
+app.post('/getNoteTombstoneInfo', async (req, res) => { 
+    let body = '';
 
-        if (!noteID) {
-            return res.status(400).json({ error: 'Missing note ID' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try { 7
+            const { noteID } = JSON.parse(body);
+           
+             const query = `
+                SELECT *
+                FROM "Images" 
+                WHERE note_id = $1
+            `;
+
+            const query2 = `
+                SELECT *
+                FROM "Text" 
+                WHERE note_id = $1               
+            `;
+
+            const query3 = `
+                SELECT *
+                FROM "Notes" 
+                WHERE note_id = $1               
+            `;
+
+        
+
+
+            const imageResult = await client.query(query, [noteID]);
+            const textResult = await client.query(query2, [noteID]);
+            const tombstoneResult = await client.query(query3, [noteID]);
+          
+            
+
+            // Extract the data
+            // Convert bytea images to Base64
+            const images = imageResult.rows.map(row => {
+                return row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null;
+            });
+            console.log("Images: ", images);
+            const text = textResult.rows.map(row => row.text); // Array of text
+            const noteInfo = tombstoneResult.rows[0]; // Course info (single object)
+
+            // Query the Users table to get the username
+            const getUsernameQuery = `
+                SELECT uname
+                FROM "Users"
+                WHERE user_id = $1
+            `;
+
+            const userResult = await client.query(getUsernameQuery, [noteInfo.user_id]);
+            const username = userResult.rows[0]?.uname;
+            noteInfo.username = username;
+
+            console.log("Tombstone Info: ", noteInfo);
+            console.log(images);
+            console.log(text);
+
+            // Return the data as a JSON response
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ images, text, noteInfo }));
+        } catch (error) {
+            console.error('Database query error:', error);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Database error');
         }
-
-        // Query image, text, and note data
-        const imageQuery = 'SELECT * FROM "Images" WHERE note_id = $1';
-        const textQuery = 'SELECT * FROM "Text" WHERE note_id = $1';
-        const noteQuery = 'SELECT * FROM "Notes" WHERE note_id = $1';
-
-        const imageResult = await client.query(imageQuery, [noteID]);
-        const textResult = await client.query(textQuery, [noteID]);
-        const noteResult = await client.query(noteQuery, [noteID]);
-
-        if (noteResult.rows.length === 0) {
-            return res.status(404).json({ error: 'Note not found' });
-        }
-
-        // Convert images to base64 strings
-        const images = imageResult.rows.map(row =>
-            row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null
-        );
-
-        const text = textResult.rows.map(row => row.text);
-        const noteInfo = noteResult.rows[0];
-
-        // Get the username from the user_id
-        const userResult = await client.query(
-            'SELECT uname FROM "Users" WHERE user_id = $1',
-            [noteInfo.user_id]
-        );
-        noteInfo.username = userResult.rows[0]?.uname || "Unknown";
-
-        // Send JSON response
-        res.status(200).json({ images, text, noteInfo });
-    } catch (error) {
-        console.error('Error retrieving tombstone info:', error);
-        res.status(500).json({ error: 'Database error' });
-    }
+    });
 });
 
 
 app.post('/likeNote', async (req, res) => {
-    try {
-        const { currentNote, courseID, username } = req.body;
+    let body = '';
 
-        if (!currentNote || !courseID || !username) {
-            return res.status(400).json({ error: 'Missing required fields (note ID, course ID, or username)' });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const { currentNote, courseID, username } = JSON.parse(body);
+            console.log(currentNote);
+            console.log(username);
+
+            if (!currentNote) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Missing note ID' }));
+                return;
+            }
+
+            // Increment the number of likes for the note
+            const query = `
+                UPDATE "Notes"
+                SET num_likes = num_likes + 1
+                WHERE note_id = $1
+            `;
+
+            const query2 = `
+                UPDATE "Users"
+                SET liked_notes = array_append(liked_notes, $1::bigint)
+                WHERE uname = $2
+            `;
+
+            const query3 = `
+                UPDATE "Users"
+                SET liked_courses = array_append(liked_courses, $1::bigint)
+                WHERE uname = $2
+            `;
+
+            await client.query(query, [currentNote]);
+            await client.query(query2, [currentNote, username]);
+            await client.query(query3, [courseID, username]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({message: 'Note liked successfully' }));
+        } catch (error) {
+            console.error('Error liking note:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
-
-        console.log("Liking note:", currentNote);
-        console.log("From user:", username);
-
-        // Update note likes
-        await client.query(
-            `UPDATE "Notes" SET num_likes = num_likes + 1 WHERE note_id = $1`,
-            [currentNote]
-        );
-
-        // Update liked notes for user
-        await client.query(
-            `UPDATE "Users" SET liked_notes = array_append(liked_notes, $1::bigint) WHERE uname = $2`,
-            [currentNote, username]
-        );
-
-        // Update liked courses for user
-        await client.query(
-            `UPDATE "Users" SET liked_courses = array_append(liked_courses, $1::bigint) WHERE uname = $2`,
-            [courseID, username]
-        );
-
-        res.status(200).json({ message: 'Note liked successfully' });
-
-    } catch (error) {
-        console.error('Error liking note:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
-
 
 // Endpoint to get liked notes
 app.post('/getLikedNotes', async (req, res) => {
@@ -732,6 +777,115 @@ app.post('/getLikedNotes', async (req, res) => {
     }
 });
 
+app.post('/getUserUploadedNotes', async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
+    const userResult = await client.query(userQuery, [username]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user_id = userResult.rows[0].user_id;
+
+    const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
+    const notesResult = await client.query(notesQuery, [user_id]);
+
+    res.status(200).json({ notes: notesResult.rows }); // <-- Must return JSON
+  } catch (error) {
+    console.error('Error fetching user uploaded notes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/getUserUploadedNotes', async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
+    const userResult = await client.query(userQuery, [username]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user_id = userResult.rows[0].user_id;
+
+    const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
+    const notesResult = await client.query(notesQuery, [user_id]);
+
+    res.status(200).json({ notes: notesResult.rows }); // <-- Must return JSON
+  } catch (error) {
+    console.error('Error fetching user uploaded notes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/getUserUploadedNotes', async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
+    const userResult = await client.query(userQuery, [username]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user_id = userResult.rows[0].user_id;
+
+    const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
+    const notesResult = await client.query(notesQuery, [user_id]);
+
+    res.status(200).json({ notes: notesResult.rows }); // <-- Must return JSON
+  } catch (error) {
+    console.error('Error fetching user uploaded notes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/getUserUploadedNotes', async (req, res) => {
+    try {
+      const { username } = req.body;
+  
+      if (!username) {
+        return res.status(400).json({ error: 'Username is required' });
+      }
+  
+      const userQuery = 'SELECT user_id FROM "Users" WHERE uname = $1';
+      const userResult = await client.query(userQuery, [username]);
+  
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const user_id = userResult.rows[0].user_id;
+  
+      const notesQuery = 'SELECT note_id, title, num_likes FROM "Notes" WHERE user_id = $1';
+      const notesResult = await client.query(notesQuery, [user_id]);
+  
+      res.status(200).json({ notes: notesResult.rows }); // <-- Must return JSON
+    } catch (error) {
+      console.error('Error fetching user uploaded notes:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  
+  
+  
 // Default 404 handler
 app.use((req, res) => {
     res.status(404).send('Not Found');
@@ -742,36 +896,43 @@ app.get('/common.js', (req, res) => {
 });
 
 app.get('/courses', async (req, res) => {
-    try {
-        const query = `
-            SELECT course_name, course_id
-            FROM "Courses"
-        `;
+    let body = '';
 
-        const result = await client.query(query);
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "No courses found" });
+    req.on('end', async () => {
+        try {
+            const query = `
+                SELECT course_name, course_id
+                FROM "Courses"               
+            `;
+
+            const result = await client.query(query);
+
+            if (result.rows.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "No courses found" }));
+                return;
+            }
+
+            const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ courseArr }));
+        } catch (error) {
+            console.error('Error Fetching Courses', error);
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Error Fetching Courses');
         }
-
-        const courseArr = result.rows.map(row => ({
-            course_id: row.course_id,
-            course_name: row.course_name
-        }));
-
-        res.status(200).json({ courseArr });
-
-    } catch (error) {
-        console.error('Error fetching courses:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+    });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
+/*
 const CREDENTIALS = {
   type: process.env.GOOGLE_TYPE,
   project_id: process.env.GOOGLE_PROJECT_ID,
@@ -785,6 +946,21 @@ const CREDENTIALS = {
   client_x509_cert_url: process.env.GOOGLE_CLIENT_CERT_URL,
   universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
 };
+*/
+
+const CREDENTIALS = JSON.parse(JSON.stringify({
+    "type": "service_account",
+    "project_id": "crucial-media-449421-c2",
+    "private_key_id": "27c27db6d85862780693c92de92d5d954c277b98",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDOPQSPkr/xK9UB\nFCjot4GSfAJFk9MsfjQwhcIztBYQYh2sS/PLfNO5sF2SNWOYuuTEUm5Xqo0nFoZl\nbEjQZEQoYAyympgfq6t2ey9AUAY47iPtC9q8jGsnggmq1cpHwig9neo6lb5kIJF6\nDOql7u9RgvextYFOWyiN4XNwuhgt1skljlvcagafhMtbjC9idHCvkdIxH2nJamK8\n/i0cEANg5Y/G+UwDgEFlVjf+GQ8zhtv0aWnE/aIH+lVq9X+85nwaPCO9hYv5HgUf\nDtzolUp4/BPXidR0PrehJgKkeHJijewFJIs+oITT1gfa85d2UhemquRZrlzSgD18\n/ANmcVbrAgMBAAECggEACFcgCRexMB/1VD7WzK/Ry0pn48fE9tFVFk/tI57OdEko\n1AqaSF9lnJEiUkMFzRZkdqqyuv7dsyKjur70pDYkf3wq50ooiWythB7FMWpLEMr9\n+Zx3cxU7/B6zz2HSoAZHuajaNmukhci/ZAUuXsQuj3L8G1wGElTOFgweWVpdQfU8\nDbIdg/dtJT/ICb9ivL7Ys65EACHtB/WJm3t45/F4uW2Z5Y0i5prIuMHVD+WKr7IA\njUjxKbGIcHn6mn9DP0QivlamZIDsyfL20/a9mvPnJc9Te9+fEzLyjEzRKXigKzHN\nXvw8ZOOByFMTd0/Tb46oks8Lp48UDmryS8rACjIRcQKBgQD3hN8IzCr16M8+mogE\n28nnEl7obHqSrik2x8cj36fErTYHJ5h+qqjm4zo2I/ITAKRjA+zsYH27WMcChpLE\nGkVQHieC77uLMSQHlQHhTp8eMVaXsWIFf8WfnDPI8yleDcjXIvRbcVvXlP6Dy6WT\nWR8EqGi8wQL4BgcoIz68MKQO2QKBgQDVTgzu/JRYSYkXBaboipHtiRQp1ZY0+PEb\nX9gtg6fFGkyHMPBC7I9s+Ce+lg+utZpsYw+F/gNZd209JS3sCn40aCDr1zlxCGUR\nULeKdTUsVv2tS358/4v0ILJ2Y4I+TSySuxMLNrlDLAUo1v7ukb6KNN6WnkwxCsY5\nLdmgwX7BYwKBgFK4FwmLoffYvBoB7t8gzNLqcsleJ4CJr8Bc95JnllvGPz4Y33/F\nbPjsi3G4hZgQKN/mWfGNNbe8rZWMf9QFq5Bg43eAwr57x7y48Y3ohojCmFvNriKE\nVvlGbJAFo5eJJ8uuJNfChJ0BcCV/k3Aw4ord9VLPdjyJVy70yGyAHPPRAoGBAIWi\nv6GepsXlVDkTNm2sGx7JadOH1/JaIJw44PQq7pojDt0IAQ68rGLl2eiilTKs3hGX\nwmr9KFYN52eOeoXOUSE+N5nqHje9vawqeMMLCYQ8//NpP9bKN4F8VrKrRzcHHKzU\n/WpiH5GA676Za+BFeS2XT/jnNe7nxCagnh8D+wjnAoGAMWVlZyHDDYTTtOnnlgBh\napOHkpsYKo66PEBfKNLXPQcZfH1mydzZDImN01/beSo5Ujuus9GmAKFb8CNNzVzL\nPT6eFWm8cZfC8QN4EaSSzQtkMbMDfyqZQ4a6+x9x6AXEmWelDy3g3F+A2sYYsMjx\nP12XnD1zKYrPFfmTseMA2hQ=\n-----END PRIVATE KEY-----\n",
+    "client_email": "service-account@crucial-media-449421-c2.iam.gserviceaccount.com",
+    "client_id": "109194977158438675284",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account%40crucial-media-449421-c2.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}));
 
 const CONFIG = {
     credentials: {
