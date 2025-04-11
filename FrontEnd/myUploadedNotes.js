@@ -143,15 +143,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to fetch the user's uploaded notes from the server
   function getUserUploadedNotes() {
-    // For now, use dummy data:
-    notesArr = [
-      { noteID: 1, title: "My First Note", num_likes: 15 },
-      { noteID: 2, title: "Vacation Plan", num_likes: 23 },
-      { noteID: 3, title: "Project Ideas", num_likes: 9 }
-    ];
-    filteredNotes = notesArr.slice();
-    generateButtons(filteredNotes);
+    // Assume you have the username or token stored somewhere.
+    const username = localStorage.getItem("username"); // Replace with actual user identifier
+    
+    fetch('/getUserUploadedNotes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username }) // sending the identifier for the logged-in user
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Assume that the server responds with an array of notes
+      notesArr = data.notes; 
+      // Copy them for filtering/sorting use
+      filteredNotes = notesArr.slice();
+      generateButtons(filteredNotes);
+    })
+    .catch(error => {
+      console.error("Error fetching user's notes:", error);
+    });
   }
+  
 
   // Back link functionality
   document.getElementById("back-link").addEventListener("click", function (event) {
