@@ -138,7 +138,7 @@ app.post('/submitText', async (req, res) => {
         const textImg = dataUrlToBuffer(content);
         const extractedText = await extract(textImg);
 
-        res.status(200).json({ extractedText });
+        res.status(200).json({ extractedText: extractedText });
     } catch (error) {
         console.error('Error processing text:', error);
         res.status(400).json({ error: 'Invalid request format' });
