@@ -8,7 +8,7 @@ document.getElementById("checkUsernameButton").addEventListener("click", async (
     if (username === "") {
         console.log("oh no");
         document.getElementById("message").style.display = "block";
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "Please enter your username.";
         return;
     }
@@ -34,12 +34,12 @@ document.getElementById("checkUsernameButton").addEventListener("click", async (
             document.getElementById("securityQuestionForm").style.display = "block";
             document.getElementById("securityQuestionLabel").innerText = data.securityQuestion;
         } else {
-            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").style.color = "#ff1744";
             document.getElementById("message").innerText = "Username not found.";
         }
     } catch (error) {
         console.error("Error verifying username:", error);
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "An error occurred. Please try again.";
     }
 });
@@ -51,7 +51,7 @@ document.getElementById("checkSecurityAnswerButton").addEventListener("click", a
 
     if (!securityAnswer) {
         document.getElementById("message").style.display = "block";
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "Please enter your security answer.";
         return;
     }
@@ -77,12 +77,12 @@ document.getElementById("checkSecurityAnswerButton").addEventListener("click", a
             document.getElementById("securityQuestionForm").style.display = "none";
             document.getElementById("resetPasswordForm").style.display = "block";
         } else {
-            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").style.color = "#ff1744";
             document.getElementById("message").innerText = "Incorrect security answer.";
         }
     } catch (error) {
         console.error("Error verifying security answer:", error);
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "An error occurred. Please try again.";
     }
 });
@@ -95,21 +95,21 @@ document.getElementById("resetPasswordButton").addEventListener("click", async (
 
     if (!newPassword || !confirmPassword) {
         document.getElementById("message").style.display = "block";
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "Please fill in all password fields.";
         return;
     }
 
     if (newPassword !== confirmPassword) {
         document.getElementById("message").style.display = "block";
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "Passwords do not match.";
         return;
     }
 
     if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
         document.getElementById("message").style.display = "block";
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "Password must be at least 8 characters long and include at least one capital letter and one number.";
         return;
     }
@@ -135,13 +135,13 @@ document.getElementById("resetPasswordButton").addEventListener("click", async (
             }, 2000);
         } else {
             document.getElementById("message").style.display = "block";
-            document.getElementById("message").style.color = "#f56476";
+            document.getElementById("message").style.color = "#ff1744";
             document.getElementById("message").innerText = "Failed to reset password. Please try again.";
         }
     } catch (error) {
         document.getElementById("message").style.display = "block";
         console.error("Error resetting password:", error);
-        document.getElementById("message").style.color = "#f56476";
+        document.getElementById("message").style.color = "#ff1744";
         document.getElementById("message").innerText = "An error occurred. Please try again.";
     }
 });
