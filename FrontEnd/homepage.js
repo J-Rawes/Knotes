@@ -6,6 +6,26 @@ window.onload = function () {
    .catch(error => console.error('Error:', error));
 }
 
+    // JavaScript to handle dropdown functionality
+    const dropdownToggle = document.getElementById('dropdownToggle');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    dropdownToggle.addEventListener('click', () => {
+      // Toggle the visibility of the dropdown menu
+      if (dropdownMenu.style.display === 'block') {
+        dropdownMenu.style.display = 'none';
+      } else {
+        dropdownMenu.style.display = 'block';
+      }
+    });
+
+    // Optional: Close the dropdown menu when clicking outside
+    window.addEventListener('click', (event) => {
+      if (!dropdownToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.style.display = 'none';
+      }
+    });
+
 function generateButtons(coursesArr) { 
 
    console.log(coursesArr);
