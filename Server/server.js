@@ -337,7 +337,7 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 
 
 
-    app.get('/courseCount', async (req, res) => {
+    app.get('/getCourseCount', async (req, res) => {
     try {
         const query = `
             SELECT course_name, course_id
