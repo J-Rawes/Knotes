@@ -337,41 +337,33 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 
 
 
-    //Used in Course Search Page, this is used to determine the amount of buttons
-    app.post ('/getCourseCount', async (req, res) => {
-    let body = '';
+    app.get('/getCourseCount', async (req, res) => {
+    try {
+        const query = `
+            SELECT course_name, course_id
+            FROM "Courses"
+        `;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
+        const result = await client.query(query);
 
-    req.on('end', async () => {
-        try {
-            // Get note count and IDs for the given course
-            const query = `
-                SELECT course_name, course_id
-                FROM "Courses"               
-            `;
-
-            const result = await client.query(query); 
-
-            if (result.rows.length === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: "No courses found" }));
-                return;
-            }
-
-            const courseArr = result.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({courseArr})); //Send both the count and note IDs to courseDisplay.js
-
-        } catch (error) {
-            console.error('Error Fetching Courses', error);
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            res.end('Error Fetching Courses');
+        if (result.rows.length === 0) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: "No courses found" }));
+            return;
         }
-    });
+
+        const courseArr = result.rows.map(row => ({
+            course_id: row.course_id,
+            course_name: row.course_name
+        }));
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ result: courseArr }));
+    } catch (error) {
+        console.error('Error Fetching Courses', error);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Error Fetching Courses');
+    }
 });
 
 
