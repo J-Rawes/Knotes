@@ -25,7 +25,7 @@ async function getCourses() {
             throw new Error("Throw yourself NOW");
         }
 
-        return data.courseArr;
+        return data.result;
 
     } catch (error) {
         console.error("I cant even error right... :(", error); 
