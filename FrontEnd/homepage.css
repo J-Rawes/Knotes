@@ -151,6 +151,7 @@ a {
       border: none;
       font-size: 24px;
       cursor: pointer;
+        margin: 15px;
     }
 
     .dropdown-menu {
