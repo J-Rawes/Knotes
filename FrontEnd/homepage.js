@@ -11,6 +11,7 @@ window.onload = function () {
     const dropdownMenu = document.getElementById('dropdownMenu');
 
     dropdownToggle.addEventListener('click', () => {
+       console.log("Hello");
       // Toggle the visibility of the dropdown menu
       if (dropdownMenu.style.display === 'block') {
         dropdownMenu.style.display = 'none';
