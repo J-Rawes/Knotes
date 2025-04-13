@@ -3,12 +3,6 @@ window.onload = function () {
     const dropdownToggle = document.getElementById('dropdownToggle');
     const dropdownMenu = document.getElementById('dropdownMenu');
 
-   const courses = getCourses().then(courses => {
-       generateButtons(courses); // Change this number to set the default number of buttons 
-   })
-   .catch(error => console.error('Error:', error));
-}
-
     dropdownToggle.addEventListener('click', () => {
        console.log("Hello");
       // Toggle the visibility of the dropdown menu
@@ -18,6 +12,13 @@ window.onload = function () {
         dropdownMenu.style.display = 'block';
       }
     });
+
+   const courses = getCourses().then(courses => {
+       generateButtons(courses); // Change this number to set the default number of buttons 
+   })
+   .catch(error => console.error('Error:', error));
+}
+
 
     // Optional: Close the dropdown menu when clicking outside
     window.addEventListener('click', (event) => {
