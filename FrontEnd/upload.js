@@ -125,7 +125,7 @@ async function addScreenshot(event) {
         const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         const returnText = await sendTextToServer(croppedImageDataURL);
         if (returnText) {
-            openModal(returnText);  // Replace this with actual extracted text
+            openModal(returnText.returnText);  // Replace this with actual extracted text
         } else {
             console.error('Failed to get text from server');
         }
