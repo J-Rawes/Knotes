@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function showMessage(text) {
-    message.style.color = "#f56476";
+    message.style.color = "#ff1744";
     message.style.margin = "auto";
     message.textContent = text;
   }
