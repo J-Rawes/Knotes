@@ -125,7 +125,7 @@ async function addScreenshot(event) {
         const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         const returnText = await sendTextToServer(croppedImageDataURL);
         if (returnText) {
-            openModal(returnText.returnText);  // Replace this with actual extracted text
+            openModal(returnText.extractedText);  // Replace this with actual extracted text
         } else {
             console.error('Failed to get text from server');
         }
@@ -146,7 +146,7 @@ async function addScreenshot3() {
     const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6);
     const returnText = await sendTextToServer(croppedImageDataURL);
     if (returnText) {
-        openModal(returnText);  
+        openModal(returnText.extractedText);  
     } else {
         console.error('Failed to get text from server');
     }
@@ -250,7 +250,7 @@ async function sendTextToServer(text) { // Whatever the user inputs
             body: JSON.stringify({ content: text })
         });
 
-        const data = await response.text();
+        const data = await response.json();
         console.log("Server response:", data);
         return data;
     } catch (error) {
