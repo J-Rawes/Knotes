@@ -235,59 +235,53 @@ app.post('/courseSearch', async (req, res) => {
 });
 
     //Used in Course Display Page, this is used to determine the amount of buttons and info fields about the course
-    app.post('/getCourseNoteInfo', async (req, res) => {
-        let body = '';
+   app.post('/getCourseNoteInfo', async (req, res) => {
+    const { courseID } = req.body;
 
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
+    try {
+        if (!courseID) {
+            return res.status(400).json({ error: "Missing courseID" });
+        }
 
-        req.on('end', async () => {
+        const noteQuery = `
+            SELECT title, note_id, num_likes
+            FROM "Notes"
+            WHERE course_id = $1
+        `;
 
-            const { courseID } = JSON.parse(body);
+        const courseQuery = `
+            SELECT *
+            FROM "Courses"
+            WHERE course_id = $1
+        `;
 
-            try {
-                // Get note count and IDs for the given course
-                const query = `
-                    SELECT title, note_id, num_likes
-                    FROM "Notes"
-                    WHERE course_id = $1               
-                `;
+        const noteResult = await client.query(noteQuery, [courseID]);
+        const courseResult = await client.query(courseQuery, [courseID]);
 
-                const query2 = `
-                    SELECT *
-                    FROM "Courses"  
-                    WHERE course_id = $1              
-                `;
+        if (noteResult.rows.length === 0) {
+            return res.status(404).json({ message: "No notes found" });
+        }
 
-                const result = await client.query(query, [courseID]); 
-                const result2 = await client.query(query2, [courseID]); 
+        if (courseResult.rows.length === 0) {
+            return res.status(404).json({ message: "No course found" });
+        }
 
-                if (result.rows.length === 0) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "No notes found" }));
-                    return;
-                }
-        
-                if (result2.rows.length === 0) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "No course found" }));
-                    return;
-                }
-        
-                const noteNames = result.rows.map(row => ({ title: row.title, note_id: row.note_id, num_likes: row.num_likes }));
-                const courseInfo = result2.rows[0];
+        const noteNames = noteResult.rows.map(row => ({
+            title: row.title,
+            note_id: row.note_id,
+            num_likes: row.num_likes
+        }));
 
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({noteNames, courseInfo})); //Send both the count and note IDs to courseDisplay.js
+        const courseInfo = courseResult.rows[0];
 
-            } catch (error) {
-                console.error('Error Fetching Courses', error);
-                res.writeHead(400, { 'Content-Type': 'text/plain' });
-                res.end('Error Fetching Courses');
-            }
-        });
-    });
+        res.status(200).json({ noteNames: noteNames, courseInfo: courseInfo });
+
+    } catch (error) {
+        console.error('Error Fetching Course Note Info:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 
 app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
