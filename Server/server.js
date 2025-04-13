@@ -130,13 +130,18 @@ app.post('/register', async (req, res) => {
 app.post('/submitText', async (req, res) => {
     try {
         const { content } = req.body;
+
+        if (!content || typeof content !== 'string') {
+            return res.status(400).json({ error: 'Missing or invalid image content' });
+        }
+
         const textImg = dataUrlToBuffer(content);
         const extractedText = await extract(textImg);
 
-        res.status(200).send(extractedText);
+        res.status(200).json({ extractedText });
     } catch (error) {
         console.error('Error processing text:', error);
-        res.status(400).send('Invalid request format');
+        res.status(400).json({ error: 'Invalid request format' });
     }
 });
 
@@ -198,7 +203,7 @@ app.post('/getLikedCourses', async (req, res) => {
         }
 
         const courseArr = result2.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
-        res.status(200).json({ courseArr });
+        res.status(200).json({ courseArr: courseArr });
     } catch (error) {
         console.error('Error fetching liked courses:', error);
         res.status(500).json({ error: 'Server error' });
@@ -331,7 +336,7 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 
 
 
-    app.get('/getCourseCount', async (req, res) => {
+    app.get('/ourseCount', async (req, res) => {
     try {
         const query = `
             SELECT course_name, course_id
