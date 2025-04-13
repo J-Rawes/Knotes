@@ -13,8 +13,17 @@
 <body>
   <div class="user">
     <div id="return">
+        <div class="links-container">
+           <a id="courseSearch" href="coursesearch.html">Course Search</a><a id="upload" href="upload.html">Upload</a><a id="myNotes" href="myUploadedNotes.html">My Notes</a>
+        </div>
+        <button class="dropdown-button" id="dropdownToggle">☰</button>
+        <ul class="dropdown-menu" id="dropdownMenu">
+          <li><a id="courseSearch" href="coursesearch.html">Course Search</a></li>
+          <li><a id="upload" href="upload.html">Upload</a></li>
+          <li><a id="myNotes" href="myUploadedNotes.html">My Notes</a></li>
+        </ul>
        <a id="courseSearch" href="coursesearch.html">Course Search</a><a id="upload" href="upload.html">Upload</a><a id="myNotes" href="myUploadedNotes.html">My Notes</a>
-      <div style="clear:both;"></div>
+      
     </div>
     <h1 id="user-display"></h1>
   </div>
@@ -34,6 +43,25 @@
 </body>
 <script type="text/javascript" src="common.js"></script>
 <script type="text/javascript" src="homepage.js">
+    // JavaScript to handle dropdown functionality
+    const dropdownToggle = document.getElementById('dropdownToggle');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    dropdownToggle.addEventListener('click', () => {
+      // Toggle the visibility of the dropdown menu
+      if (dropdownMenu.style.display === 'block') {
+        dropdownMenu.style.display = 'none';
+      } else {
+        dropdownMenu.style.display = 'block';
+      }
+    });
+
+    // Optional: Close the dropdown menu when clicking outside
+    window.addEventListener('click', (event) => {
+      if (!dropdownToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.style.display = 'none';
+      }
+    });
 </script>
 
 </html>
