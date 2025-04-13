@@ -184,6 +184,11 @@ a {
     padding: 1em;
   }
 
+#return a {
+      width: 100px;
+      font-size: 14px;
+    }
+
   #button-container {
     grid-template-columns: 1fr; /* 1 column */
   }
@@ -207,6 +212,11 @@ a {
   h1 {
     font-size: 20px;
   }
+
+#return a {
+      width: 120px;
+      font-size: 16px;
+    }
 
   #button-container {
     grid-template-columns: repeat(2, 1fr); /* 2 columns */
