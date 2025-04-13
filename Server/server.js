@@ -136,7 +136,8 @@ app.post('/submitText', async (req, res) => {
         }
 
         const textImg = dataUrlToBuffer(content);
-        const extractedText = await extract(textImg);
+        const extractedText = await extract(textImg); 
+        console.log(extractedText);
 
         res.status(200).json({ extractedText: extractedText });
     } catch (error) {
@@ -336,7 +337,7 @@ app.post('/getNoteCountAndID', async (req, res) =>{ //USED TO CREATE BUTTONS
 
 
 
-    app.get('/ourseCount', async (req, res) => {
+    app.get('/courseCount', async (req, res) => {
     try {
         const query = `
             SELECT course_name, course_id
