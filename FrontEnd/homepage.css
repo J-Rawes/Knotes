@@ -164,7 +164,7 @@ a {
     }
 
     .dropdown-menu a {
-      display: block;
+      display: none;
       padding: 5px 10px;
       text-decoration: none;
       color: black;
@@ -200,6 +200,10 @@ a {
       .dropdown-button {
         display: block;
       }
+
+        .dropdown-menu a {
+      display: block;
+    }
 
 }
 
