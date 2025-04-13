@@ -33,37 +33,37 @@ async function register(event) {
   var conditions = ["\\", "<", ">", "|", "/", "=", "&", "#"];
 
 if (username.length > 16) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Username cannot exceed 16 characters";
 } else if (conditions.some(el => username.includes(el))) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Username cannot contain special characters: /\\|<>=&#";
 } else if (password.length > 16) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Password cannot exceed 16 characters";
 } else if (conditions.some(el => password.includes(el))) {
   messagefield.style.color = "red";
   messagefield.innerHTML = "Password cannot contain special characters: /\\|<>=&#";
 } else if (password !== password2) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Passwords do not match";
 } else if (username.length === 0 || password.length === 0) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Please fill in all fields";
 } else if (securityQuestion === "default") {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Please select a security question";
 } else if (securityQuestion === "") {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Please select a security question";
 } else if (securityAnswer.length === 0) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Please provide an answer to the security question";
 } else if (conditions.some(el => securityAnswer.includes(el))) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Security answer cannot contain special characters: /\\|<>=&#";
 } else if (password.length < 8 || /[A-Z]/.test(password) == false || /\d/.test(password) == false) {
-  messagefield.style.color = "#f56476";
+  messagefield.style.color = "#ff1744";
   messagefield.innerHTML = "Password must be at least 8 characters long and must include at least one capital letter and one number";
 } else { // User accepted
   let hashedPassword = SHA256.hex(password); // ACTUALLY HASH PASSWORD
@@ -71,10 +71,10 @@ if (username.length > 16) {
   const response = await sendToDB(username, hashedPassword, securityQuestion, hashedSecurityAnswer); // ACTUALLY SEND TO DB
    
   if (response.message === "Username already exists") {
-    messagefield.style.color = "#f56476";
+    messagefield.style.color = "#ff1744";
     messagefield.innerHTML = "Username already exists. Please choose another.";
   } else if (response.message === "A required field is missing") {
-    messagefield.style.color = "#f56476";
+    messagefield.style.color = "#ff1744";
     messagefield.innerHTML = "A required field is missing. Please ensure all fields are filled.";
   } else if (response.message === "User registered successfully") {
     localStorage.setItem("authtoken", response.token);
@@ -82,7 +82,7 @@ if (username.length > 16) {
     sessionStorage.setItem('justLoggedIn', 'true'); /////////////////////COOKIE HERE
     location.href = "homepage.html"; // Redirect to homepage
   } else {
-    messagefield.style.color = "#f56476";
+    messagefield.style.color = "#ff1744";
     messagefield.innerHTML = "An error occurred. Please try again.";
   }
 }
