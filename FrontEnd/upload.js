@@ -158,6 +158,11 @@ function openModal(defaultText) {
     const modal = document.getElementById("textModal");
     const textInput = document.getElementById("textInput");
 
+    if (typeof defaultText !== 'string') {
+        console.error("openModal received non-string:", defaultText);
+        defaultText = "No text extracted.";
+    }
+
     defaultText = defaultText.replace(/[\n\r]+/g, ' ');
 
     textInput.value = defaultText;  // Set default or extracted text
