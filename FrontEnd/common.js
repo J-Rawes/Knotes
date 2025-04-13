@@ -32,7 +32,7 @@ async function validateTokenAndDisplayUser() {
         if (username) {
             const userDisplay = document.getElementById('user-display');
             if (userDisplay) {
-                userDisplay.textContent = `Welcome, ${username}`;
+                userDisplay.textContent = `${username}`;
             } else {
                 console.warn('Element with id "user-display" not found.');
             }
