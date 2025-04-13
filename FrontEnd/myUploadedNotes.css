@@ -16,6 +16,12 @@ html, body {
   float: left;
 }
 
+#user-display {
+  float: right;
+  margin: 15px;
+  color: #14FFEC;
+}
+
 #return a {
   display: block;
   float: left;
