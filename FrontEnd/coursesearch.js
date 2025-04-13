@@ -21,7 +21,7 @@ async function getCourses() {
 
         const data = await response.json();
 
-        if (!data.courseArr) {
+        if (!data.result) {
             throw new Error("Throw yourself NOW");
         }
 
