@@ -1,10 +1,3 @@
-window.onload = function () {
-
-   const courses = getCourses().then(courses => {
-       generateButtons(courses); // Change this number to set the default number of buttons 
-   })
-   .catch(error => console.error('Error:', error));
-}
 
     // JavaScript to handle dropdown functionality
     const dropdownToggle = document.getElementById('dropdownToggle');
@@ -26,6 +19,14 @@ window.onload = function () {
         dropdownMenu.style.display = 'none';
       }
     });
+
+window.onload = function () {
+
+   const courses = getCourses().then(courses => {
+       generateButtons(courses); // Change this number to set the default number of buttons 
+   })
+   .catch(error => console.error('Error:', error));
+}
 
 function generateButtons(coursesArr) { 
 
