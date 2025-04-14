@@ -38,7 +38,6 @@ html, body {
     width: 150px; /* Adjust the size of the elephant image */
     height: auto;
     margin: auto;
-    margin-bottom: 5px;
 }
 
 #welcome-section h1 {
