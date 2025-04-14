@@ -104,17 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
     World.add(world, mouseConstraint);
 
     // Create and style the logo
-    const logoElement = document.createElement("img");
+    const logoElement = document.getElementById("kLogo");
     logoElement.src = "KnotesLogo.png";
     logoElement.alt = "Knotes Logo";
     logoElement.style.position = "absolute";
-    logoElement.style.top = "30%";
-    logoElement.style.left = "50%";
-    logoElement.style.transform = "translateX(-50%)";
-    logoElement.style.zIndex = "10";
-    logoElement.style.width = "150px"; // Initial width
-    logoElement.style.height = "auto"; // Maintain aspect ratio
-    document.body.appendChild(logoElement);
 
     // Keep canvas and logo responsive
     window.addEventListener("resize", () => {
