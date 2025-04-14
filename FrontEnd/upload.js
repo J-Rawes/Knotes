@@ -43,7 +43,7 @@ sourceImage.onload = () => {
     selectionCanvas.width = sourceImage.naturalWidth;
     selectionCanvas.height = sourceImage.naturalHeight;
     selectionCtx.drawImage(sourceImage, 0, 0, selectionCanvas.width, selectionCanvas.height);
-    imgOriginal = selectionCanvas.toDataURL();
+    imgOriginal = selectionCanvas.toDataURL("image/jpeg", 0.6);
 };
 
 // Get the correct mouse position relative to the canvas
@@ -141,15 +141,15 @@ async function addScreenshot(event) {
 }
 
 function addScreenshot2() {
-    const imageDataURL = imgOriginal.toDataURL("image/jpeg", 0.6);
+    const imageDataURL = imgOriginal;
     imageArray.push(imageDataURL);
     document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 async function addScreenshot3() {
-    const croppedImageDataURL = imgOriginal.toDataURL("image/jpeg", 0.6);
-    const returnText = await sendTextToServer(croppedImageDataURL);
+    const imageDataURL = imgOriginal;
+    const returnText = await sendTextToServer(imageDataURL);
     if (returnText) {
         openModal(returnText.extractedText);  
     } else {
