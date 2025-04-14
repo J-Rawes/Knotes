@@ -6,11 +6,14 @@ const jwt = require('jsonwebtoken');
 const vision = require('@google-cloud/vision');
 const bodyParser = require('body-parser');
 const visionClient = new vision.ImageAnnotatorClient({
+
+  
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   }
 });
+
 
 
 
@@ -831,7 +834,7 @@ app.get('/courses', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
+/*
 const CREDENTIALS = {
   type: process.env.GOOGLE_TYPE,
   project_id: process.env.GOOGLE_PROJECT_ID,
@@ -853,14 +856,11 @@ const CONFIG = {
         client_email: CREDENTIALS.client_email
     }
 };
-
+*/
 async function extract(image) {
-    const client = new vision.ImageAnnotatorClient(CONFIG);
-
-// Read a local image as a text document
-    const [result] = await client.documentTextDetection(image);
+    const [result] = await visionClient.documentTextDetection(image);
     const fullTextAnnotation = result.fullTextAnnotation;
-    return (fullTextAnnotation.text);
+    return fullTextAnnotation?.text || "";
 
 }
 
