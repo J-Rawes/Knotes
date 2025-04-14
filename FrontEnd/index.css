@@ -37,6 +37,8 @@ html, body {
 #welcome-section img {
     width: 150px; /* Adjust the size of the elephant image */
     height: auto;
+    margin: auto;
+    margin-bottom: 20px;
 }
 
 #welcome-section h1 {
