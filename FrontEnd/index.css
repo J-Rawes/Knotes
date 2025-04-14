@@ -32,6 +32,7 @@ html, body {
     color: #14FFEC; /* Text color matching the theme */
     max-width: 100%;
     max-height: 80%;
+    pointer-events: none; /* Makes this section non-interactable */
 }
 
 #welcome-section img {
