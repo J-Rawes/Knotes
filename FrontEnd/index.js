@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoElement = document.getElementById("kLogo");
     logoElement.src = "KnotesLogo.png";
     logoElement.alt = "Knotes Logo";
-    logoElement.style.position = "absolute";
 
     // Keep canvas and logo responsive
     window.addEventListener("resize", () => {
@@ -119,9 +118,5 @@ document.addEventListener("DOMContentLoaded", () => {
         Matter.Body.setPosition(boundaries[1], { x: window.innerWidth / 2, y: window.innerHeight + 10 });
         Matter.Body.setPosition(boundaries[2], { x: -10, y: window.innerHeight / 2 });
         Matter.Body.setPosition(boundaries[3], { x: window.innerWidth + 10, y: window.innerHeight / 2 });
-
-        // Dynamically adjust the logo size
-        const logoWidth = Math.max(100, window.innerWidth * 0.1); // Adjust width proportionally
-        logoElement.style.width = `${logoWidth}px`;
     });
 });
