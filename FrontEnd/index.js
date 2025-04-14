@@ -38,13 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const circleRadius = 15; // Smaller size for circles
     const numCircles = 50; // Increase the number of circles
 
-    const logoArea = {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2 - 140,
-        width: 200,
-        height: 100
-    };
-
     const welcomeArea = {
         x: window.innerWidth / 2,
         y: window.innerHeight / 2,
@@ -55,15 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < numCircles; i++) {
         let x, y;
 
-        // Ensure circles do not spawn in the logo or welcome message areas
+        // Ensure circles do not spawn in the welcome message area
         do {
             x = Math.random() * window.innerWidth;
             y = Math.random() * window.innerHeight;
         } while (
-            x > logoArea.x - logoArea.width / 2 &&
-            x < logoArea.x + logoArea.width / 2 &&
-            y > logoArea.y - logoArea.height / 2 &&
-            y < logoArea.y + logoArea.height / 2
+            x > welcomeArea.x - welcomeArea.width / 2 &&
+            x < welcomeArea.x + welcomeArea.width / 2 &&
+            y > welcomeArea.y - welcomeArea.height / 2 &&
+            y < welcomeArea.y + welcomeArea.height / 2
         );
 
         const circle = Bodies.circle(x, y, circleRadius, {
@@ -78,18 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         shapes.push(circle);
     }
 
-    const logo = Bodies.rectangle(window.innerWidth / 2, window.innerHeight / 2 - 140, 150, 50, {
-        isStatic: true, // Make the logo static
-        render: {
-            sprite: {
-                texture: "KnotesLogo.png",
-                xScale: 0.5,
-                yScale: 0.5
-            }
-        }
-    });
-
-    World.add(world, [...shapes, logo]);
+    World.add(world, shapes);
 
     // Cap the velocity of shapes
     const maxVelocity = 5; // Maximum allowed velocity
@@ -121,7 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     World.add(world, mouseConstraint);
 
-    // Keep canvas responsive
+    // Create and style the logo
+    const logoElement = document.createElement("img");
+    logoElement.src = "KnotesLogo.png";
+    logoElement.alt = "Knotes Logo";
+    logoElement.style.position = "absolute";
+    logoElement.style.top = "10px";
+    logoElement.style.left = "50%";
+    logoElement.style.transform = "translateX(-50%)";
+    logoElement.style.zIndex = "10";
+    logoElement.style.width = "150px"; // Initial width
+    logoElement.style.height = "auto"; // Maintain aspect ratio
+    document.body.appendChild(logoElement);
+
+    // Keep canvas and logo responsive
     window.addEventListener("resize", () => {
         render.canvas.width = window.innerWidth;
         render.canvas.height = window.innerHeight;
@@ -131,5 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
         Matter.Body.setPosition(boundaries[1], { x: window.innerWidth / 2, y: window.innerHeight + 10 });
         Matter.Body.setPosition(boundaries[2], { x: -10, y: window.innerHeight / 2 });
         Matter.Body.setPosition(boundaries[3], { x: window.innerWidth + 10, y: window.innerHeight / 2 });
+
+        // Dynamically adjust the logo size
+        const logoWidth = Math.max(100, window.innerWidth * 0.1); // Adjust width proportionally
+        logoElement.style.width = `${logoWidth}px`;
     });
 });
