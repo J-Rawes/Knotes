@@ -116,11 +116,12 @@ selectionCanvas.addEventListener("mouseup", () => {
 async function addScreenshot(event) {
     event.preventDefault();
     const imgButtonPressed = document.getElementById("imgSelect").checked;
+    const txtButtonPressed = document.getElementById("txtSelect").checked;
 
     if (imgButtonPressed) {
         const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         imageArray.push(croppedImageDataURL);
-    } else {
+    } else if (txtButtonPressed) {
         // Open the modal window for text editing
         const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6); // reduce quality/size
         const returnText = await sendTextToServer(croppedImageDataURL);
@@ -129,6 +130,10 @@ async function addScreenshot(event) {
         } else {
             console.error('Failed to get text from server');
         }
+    }
+
+    else {
+        alert("Please select to process your selection as either an image or as text.");
     }
 
     document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
