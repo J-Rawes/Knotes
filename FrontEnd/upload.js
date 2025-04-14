@@ -143,7 +143,7 @@ function addScreenshot2() {
 }
 
 async function addScreenshot3() {
-    const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg", 0.6);
+    const croppedImageDataURL = selectionCanvas.toDataURL("image/jpeg", 0.6);
     const returnText = await sendTextToServer(croppedImageDataURL);
     if (returnText) {
         openModal(returnText.extractedText);  
