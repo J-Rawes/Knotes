@@ -131,6 +131,8 @@ app.post('/submitText', async (req, res) => {
     try {
         const { content } = req.body;
 
+      console.log(content);
+
         if (!content || typeof content !== 'string') {
             return res.status(400).json({ error: 'Missing or invalid image content' });
         }
