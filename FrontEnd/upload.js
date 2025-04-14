@@ -141,14 +141,14 @@ async function addScreenshot(event) {
 }
 
 function addScreenshot2() {
-    const imageDataURL = sourceImage.toDataURL("image/jpeg", 0.6);
+    const imageDataURL = imgOriginal.toDataURL("image/jpeg", 0.6);
     imageArray.push(imageDataURL);
     document.getElementById("count").innerHTML = imageArray.length + txtArray.length;
     return false;
 }
 
 async function addScreenshot3() {
-    const croppedImageDataURL = sourceImage.toDataURL("image/jpeg", 0.6);
+    const croppedImageDataURL = imgOriginal.toDataURL("image/jpeg", 0.6);
     const returnText = await sendTextToServer(croppedImageDataURL);
     if (returnText) {
         openModal(returnText.extractedText);  
