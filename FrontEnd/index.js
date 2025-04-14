@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoElement.src = "KnotesLogo.png";
     logoElement.alt = "Knotes Logo";
     logoElement.style.position = "absolute";
+    logoElement.style.top = "30%";
     logoElement.style.left = "50%";
     logoElement.style.transform = "translateX(-50%)";
     logoElement.style.zIndex = "10";
