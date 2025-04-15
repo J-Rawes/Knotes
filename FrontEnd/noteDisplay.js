@@ -154,7 +154,7 @@ function generateComments(commentsArray) {
 
         // Create an h2 for the comment author
         let authorHeading = document.createElement("h2");
-        authorHeading.textContent = comment.author; // Assuming `comment.author` contains the author's name
+        authorHeading.textContent = comment.author +":"; // Assuming `comment.author` contains the author's name
         authorHeading.className = "comment-author";
 
         // Create a p for the comment text
