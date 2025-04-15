@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
       button.appendChild(likeCount);
   
       // Onclick: display the note's details (images/text)
-      button.addEventListener("click", () => displayNote(note.noteID));
+      button.addEventListener("click", () => displayNote(note.title, note.noteID));
   
       container.appendChild(button);
     });
@@ -74,41 +74,41 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Function to display a specific note
-  async function displayNote(noteID) {
-    try {
-      const response = await fetch('/getNoteDetails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ noteID })
-      });
+  // async function displayNote(noteID) {
+  //   try {
+  //     const response = await fetch('/getNoteDetails', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({ noteID })
+  //     });
 
-      const selectedNote = await response.json();
+  //     const selectedNote = await response.json();
 
-      if (!selectedNote || response.status !== 200) {
-        console.error("Note not found or error fetching note details!");
-        return;
-      }
+  //     if (!selectedNote || response.status !== 200) {
+  //       console.error("Note not found or error fetching note details!");
+  //       return;
+  //     }
 
-      currentNoteID = noteID;
-      imagePointer = 0;
-      textPointer = 0;
+  //     currentNoteID = noteID;
+  //     imagePointer = 0;
+  //     textPointer = 0;
 
-      displayImage(selectedNote);
-      displayText(selectedNote);
+  //     displayImage(selectedNote);
+  //     displayText(selectedNote);
 
-      const totalImages = selectedNote.images ? selectedNote.images.length : 0;
-      const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
+  //     const totalImages = selectedNote.images ? selectedNote.images.length : 0;
+  //     const totalTexts = selectedNote.texts ? selectedNote.texts.length : 0;
 
-      document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
-      document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
+  //     document.getElementById("image-arrows").style.display = totalImages > 1 ? "flex" : "none";
+  //     document.getElementById("text-arrows").style.display = totalTexts > 1 ? "flex" : "none";
 
-      document.getElementById("noteModal").style.display = "block";
-    } catch (error) {
-      console.error("Error fetching note details:", error);
-    }
-  }
+  //     document.getElementById("noteModal").style.display = "block";
+  //   } catch (error) {
+  //     console.error("Error fetching note details:", error);
+  //   }
+  // }
 
   function displayImage(selectedNote) {
     if (selectedNote.images && selectedNote.images.length > imagePointer) {
@@ -194,4 +194,10 @@ async function deleteNote(noteID) {
 
 function getNoteID(){
   return this.currentNoteID;
+}
+
+function displayNote(noteName, noteID) {
+    localStorage.setItem("noteName", noteName);
+    localStorage.setItem("noteID", noteID);
+    window.location.href = `noteDisplay.html`;    
 }
