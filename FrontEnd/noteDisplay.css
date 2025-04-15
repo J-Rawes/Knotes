@@ -4,6 +4,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    color: #fff;
 }
 
 html, body {
@@ -26,6 +27,15 @@ html, body {
     padding: 2em;
     text-align: center;
   }
+
+textarea {
+  width: 90%;
+  text-align: left;
+  margin: auto;
+  font-size: 16px;
+  border: 2px solid #13E3D5;
+  resize: vertical;
+}
   
   #return{
     height: 100%;
