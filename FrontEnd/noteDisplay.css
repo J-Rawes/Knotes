@@ -171,6 +171,13 @@ button:hover, #downloadBtn:hover {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
   }
+
+#gridT {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
   
   #imgCanvas {
     grid-row: 1/2;
