@@ -74,39 +74,50 @@ function filterNotes(searchTerm) {
 }
 
 async function displayNote(noteID) {
-    currentNote = noteID;
+       try {
+        currentNote = noteID;
 
-    document.getElementById("i").style.display = "none";
-    document.getElementById("t").style.display = "none";
-    txtCanvas.style.display = "none";
-    imgCanvas.style.display = "none";
+        document.getElementById("i").style.display = "none";
+        document.getElementById("t").style.display = "none";
+        txtCanvas.style.display = "none";
+        imgCanvas.style.display = "none";
 
-    const response = await populateNote(noteID);
-    imageArray = response.images || [];
-    txtArray = response.text || [];
+        const response = await populateNote(noteID);
 
-    const noteTombstone = response.noteInfo;
-    document.getElementById("noteTitle").innerHTML = noteTombstone.title;
-    document.getElementById("noteAuthor").innerHTML = noteTombstone.username;
+        if (!response || !response.noteInfo) {
+            console.error("Invalid response for noteID:", noteID, response);
+            return;
+        }
 
-    if (imageArray.length > 0) {
-        imgCanvas.style.display = "block";
-        if (imageArray.length > 1) document.getElementById("i").style.display = "block";
-        displayImg.src = imageArray[0];
-        displayImg.onload = () => {
-            imgCanvas.width = displayImg.naturalWidth;
-            imgCanvas.height = displayImg.naturalHeight;
-            imgCtx.drawImage(displayImg, 0, 0);
-        };
+        imageArray = response.images || [];
+        txtArray = response.text || [];
+
+        const noteTombstone = response.noteInfo;
+        document.getElementById("noteTitle").textContent = noteTombstone.title;
+        document.getElementById("noteAuthor").textContent = `By: ${noteTombstone.username}`;
+
+        if (imageArray.length > 0) {
+            imgCanvas.style.display = "block";
+            if (imageArray.length > 1) document.getElementById("i").style.display = "block";
+            displayImg.src = imageArray[0];
+            displayImg.onload = () => {
+                imgCanvas.width = displayImg.naturalWidth;
+                imgCanvas.height = displayImg.naturalHeight;
+                imgCtx.drawImage(displayImg, 0, 0);
+            };
+        }
+
+        if (txtArray.length > 0) {
+            txtCanvas.innerHTML = txtArray[0];
+            txtCanvas.style.display = "block";
+            if (txtArray.length > 1) document.getElementById("t").style.display = "block";
+        }
+
+        // SHOW THE MODAL
+        document.getElementById("noteModal").style.display = "block";
+    } catch (err) {
+        console.error("Error displaying note:", err);
     }
-
-    if (txtArray.length > 0) {
-        txtCanvas.innerHTML = txtArray[0];
-        txtCanvas.style.display = "block";
-        if (txtArray.length > 1) document.getElementById("t").style.display = "block";
-    }
-
-    document.getElementById("noteModal").style.display = "block";
 }
 
 async function getCourseNoteInfo(courseID) {
