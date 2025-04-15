@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html lang ="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Note</title>
+
+  <link rel="stylesheet" href="noteDisplay.css">
+
+</head>
+
+<body>
+
+    <div class="user">
+        <div id="return">
+          <a href="homepage.html">Back</a>
+        </div>
+    </div>
+
+    <button id="like-button" onclick="likeNote()">&#x2665; Like</button>
+    <div id="details">
+        <h1 id="noteTitle">Example Title</h1>
+        <h2 id="noteAuthor">By: Example Author</h2>
+    </div>
+    <a id="downloadBtn" onclick = downloadNote() href="" download="knote.png"> <!-- DOWNLOAD BUTTON -->
+    Download
+    </a>
+    <div id="grid">
+      <canvas id="imgCanvas"></canvas>
+      <div id="txtCanvas"><p id="innerTxt"></p></div>
+    </div>
+    <div id="arrows">
+      <div id="i">
+        <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+        <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+      </div>
+      <div id="t">
+        <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+        <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+      </div>
+    </div>
+
+
+</body>
+
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript" src="noteDisplay.js">
+</script>
+
+</html>
