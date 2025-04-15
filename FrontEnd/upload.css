@@ -193,6 +193,7 @@ position: relative;
 }
 
 .loader {
+    display: none;
   position: absolute;
   top: 10px; /* Align with the close button */
   left: 10px;
