@@ -535,6 +535,7 @@ txtCanvas.addEventListener("click", (event) => {
 });
 
 confirmUpload = async () => {
+    document.getElementById("wheel").style.display = "block";
     const courseName = document.getElementById("course").value;
     console.log("The course name is: " + courseName);
     const noteTitle = document.getElementById("title").value;
@@ -598,4 +599,5 @@ confirmUpload = async () => {
         console.error('Error:', error);
         alert("Failed to upload note. Please try again.");
     }
+    document.getElementById("wheel").style.display = "none";
 };
