@@ -250,6 +250,25 @@ position: relative;
     grid-column: 2/3;
   }
 
+.modalB {
+  margin: 5px;
+  border: 2px solid #0D7377;
+  background-color: #212121;
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.modalB:hover {
+  border-color: #14FFEC;
+}
+
+#cancel:hover {
+  border-color: #ff1744;
+}
+
   
   @media screen and (max-width: 600px) {
   
