@@ -27,8 +27,11 @@
     Download
     </a>
     <div id="grid">
-      <canvas id="imgCanvas"></canvas>
-      <div id="txtCanvas"><p id="innerTxt"></p></div>
+      <canvas id="imgCanvas" width=640px height=480px></canvas>
+            <div id="txtCanvas" style="position: relative; width: 80%; padding: 10px; overflow: hidden; display: none;">
+              <p id="innerTxt" style="margin: 0; padding-right: 40px; overflow-wrap: break-word;"></p>
+              <!-- Trash badge will be dynamically added here -->
+            </div>
     </div>
     <div id="arrows">
       <div id="i">
