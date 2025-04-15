@@ -19,6 +19,12 @@ const imgCtx = imgCanvas.getContext("2d");
 const displayImg = new Image(); // Our image loader
 const innerTxt = document.getElementById("innerTxt");
 
+const comments = [
+    { author: "Alice", text: "This is a great note!" },
+    { author: "Bob", text: "Thanks for sharing!" },
+    { author: "Charlie", text: "Very insightful!" }
+];
+
 // Function to display a note
 async function displayNote(noteID) {
     try {
@@ -137,6 +143,34 @@ function downloadNote() {
     downloadLink.download = document.getElementById("noteTitle").textContent; // Name the file after the note title
 }
 
+function generateComments(commentsArray) {
+    const container = document.getElementById("comments");
+    container.innerHTML = ""; // Clear existing content
+
+    commentsArray.forEach((comment) => {
+        // Create a div for each comment
+        let commentDiv = document.createElement("div");
+        commentDiv.className = "comment-div";
+
+        // Create an h2 for the comment author
+        let authorHeading = document.createElement("h2");
+        authorHeading.textContent = comment.author; // Assuming `comment.author` contains the author's name
+        authorHeading.className = "comment-author";
+
+        // Create a p for the comment text
+        let commentText = document.createElement("p");
+        commentText.textContent = comment.text; // Assuming `comment.text` contains the comment text
+        commentText.className = "comment-text";
+
+        // Append the author and text to the comment div
+        commentDiv.appendChild(authorHeading);
+        commentDiv.appendChild(commentText);
+
+        // Append the comment div to the container
+        container.appendChild(commentDiv);
+    });
+}
+
 /*
 // Go back to previous page
 const backLink = document.getElementById('back-link');
@@ -176,6 +210,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     await getNoteInfo(noteID);
     await displayNote(noteID);
+    generateComments(comments);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
