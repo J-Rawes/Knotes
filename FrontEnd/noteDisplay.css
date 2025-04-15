@@ -178,6 +178,11 @@ button:hover, #downloadBtn:hover {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
   }
+
+#downloadBtn {
+    grid-row: 1/2;
+    grid-column: 1/2;
+}
   
   #imgCanvas {
     grid-row: 1/2;
