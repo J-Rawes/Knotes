@@ -149,6 +149,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     await getNoteInfo(noteID);
+    await displayNote(noteID);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
