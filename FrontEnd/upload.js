@@ -594,7 +594,7 @@ confirmUpload = async () => {
         const responseData = await response.json();
         console.log("Server response:", responseData);
         alert("Note uploaded successfully!");
-        window.location.replace("/");
+        window.location.replace("homepage.html");
     } catch (error) {
         console.error('Error:', error);
         alert("Failed to upload note. Please try again.");
