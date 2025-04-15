@@ -199,5 +199,5 @@ function getNoteID(){
 function displayNote(noteName, noteID) {
     localStorage.setItem("noteName", noteName);
     localStorage.setItem("noteID", noteID);
-    window.location.href = `noteDisplay.html`;    
+    window.location.href = `userNoteDisplay.html`;    
 }
