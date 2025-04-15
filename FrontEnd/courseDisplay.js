@@ -38,7 +38,7 @@ function generateButtons(notesArr) {
 
         button.appendChild(title);
         button.appendChild(likeCount);
-        button.onclick = () => displayNote(note.note_id);
+        button.onclick = () => displayNote(note.title, note.note_id);
 
         container.appendChild(button);
     });
@@ -73,52 +73,52 @@ function filterNotes(searchTerm) {
     generateButtons(filteredNotes);
 }
 
-async function displayNote(noteID) {
-       try {
-        currentNote = noteID;
+// async function displayNote(noteID) {
+//        try {
+//         currentNote = noteID;
 
-        document.getElementById("i").style.display = "none";
-        document.getElementById("t").style.display = "none";
-        txtCanvas.style.display = "none";
-        imgCanvas.style.display = "none";
+//         document.getElementById("i").style.display = "none";
+//         document.getElementById("t").style.display = "none";
+//         txtCanvas.style.display = "none";
+//         imgCanvas.style.display = "none";
 
-        const response = await populateNote(noteID);
+//         const response = await populateNote(noteID);
 
-        if (!response || !response.noteInfo) {
-            console.error("Invalid response for noteID:", noteID, response);
-            return;
-        }
+//         if (!response || !response.noteInfo) {
+//             console.error("Invalid response for noteID:", noteID, response);
+//             return;
+//         }
 
-        imageArray = response.images || [];
-        txtArray = response.text || [];
+//         imageArray = response.images || [];
+//         txtArray = response.text || [];
 
-        const noteTombstone = response.noteInfo;
-        document.getElementById("noteTitle").textContent = noteTombstone.title;
-        document.getElementById("noteAuthor").textContent = `By: ${noteTombstone.username}`;
+//         const noteTombstone = response.noteInfo;
+//         document.getElementById("noteTitle").textContent = noteTombstone.title;
+//         document.getElementById("noteAuthor").textContent = `By: ${noteTombstone.username}`;
 
-        if (imageArray.length > 0) {
-            imgCanvas.style.display = "block";
-            if (imageArray.length > 1) document.getElementById("i").style.display = "block";
-            displayImg.src = imageArray[0];
-            displayImg.onload = () => {
-                imgCanvas.width = displayImg.naturalWidth;
-                imgCanvas.height = displayImg.naturalHeight;
-                imgCtx.drawImage(displayImg, 0, 0);
-            };
-        }
+//         if (imageArray.length > 0) {
+//             imgCanvas.style.display = "block";
+//             if (imageArray.length > 1) document.getElementById("i").style.display = "block";
+//             displayImg.src = imageArray[0];
+//             displayImg.onload = () => {
+//                 imgCanvas.width = displayImg.naturalWidth;
+//                 imgCanvas.height = displayImg.naturalHeight;
+//                 imgCtx.drawImage(displayImg, 0, 0);
+//             };
+//         }
 
-        if (txtArray.length > 0) {
-            txtCanvas.innerHTML = txtArray[0];
-            txtCanvas.style.display = "block";
-            if (txtArray.length > 1) document.getElementById("t").style.display = "block";
-        }
+//         if (txtArray.length > 0) {
+//             txtCanvas.innerHTML = txtArray[0];
+//             txtCanvas.style.display = "block";
+//             if (txtArray.length > 1) document.getElementById("t").style.display = "block";
+//         }
 
-        // SHOW THE MODAL
-        document.getElementById("noteModal").style.display = "block";
-    } catch (err) {
-        console.error("Error displaying note:", err);
-    }
-}
+//         // SHOW THE MODAL
+//         document.getElementById("noteModal").style.display = "block";
+//     } catch (err) {
+//         console.error("Error displaying note:", err);
+//     }
+// }
 
 async function getCourseNoteInfo(courseID) {
     try {
@@ -179,12 +179,12 @@ function likeNote(buttonEl) {
     }).catch(err => console.error('Error liking note:', err));
 }
 
-function downloadNote() {
-    const image = displayImg.src;
-    const downloadLink = document.getElementById('downloadBtn');
-    downloadLink.href = image;
-    downloadLink.download = document.getElementById("noteTitle").textContent;
-}
+// function downloadNote() {
+//     const image = displayImg.src;
+//     const downloadLink = document.getElementById('downloadBtn');
+//     downloadLink.href = image;
+//     downloadLink.download = document.getElementById("noteTitle").textContent;
+// }
 
 // Go back to previous page
 const backLink = document.getElementById('back-link');
@@ -224,3 +224,9 @@ window.addEventListener("DOMContentLoaded", () => {
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
 });
+
+function displayNote(courseName, courseID) {
+    localStorage.setItem("noteName", noteName);
+    localStorage.setItem("noteID", noteID);
+    window.location.href = `noteDisplay.html`;    
+}
