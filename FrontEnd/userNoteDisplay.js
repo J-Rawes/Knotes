@@ -149,33 +149,25 @@ function generateComments(commentsArray) {
     });
 }
 
-/*
-// Go back to previous page
-const backLink = document.getElementById('back-link');
-if (backLink) {
-    backLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (document.referrer) {
-            window.location.href = document.referrer;
-        } else {
-            window.history.back();
-        }
+async function deleteNote(noteID) {
+  try {
+    let response = await fetch('/deleteNote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ noteID: noteID })
     });
+
+    let data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    document.getElementById("message").innerText = "Error connecting to server.";
+    return "Error";
+  }
 }
 
-// Go back to previous page
-const backLink = document.getElementById('back-link');
- backLink.addEventListener('click', () => {
-      // Toggle the visibility of the dropdown menu
-      if (dropdownMenu.style.display === 'block') {
-        dropdownMenu.style.display = 'none';
-      } else {
-        dropdownMenu.style.display = 'block';
-      }
-    });
-
-*/
-// Start it all
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
     const noteID = localStorage.getItem("noteID");
