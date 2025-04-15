@@ -149,14 +149,14 @@ function generateComments(commentsArray) {
     });
 }
 
-async function deleteNote(noteID) {
+async function deleteNote() {
   try {
     let response = await fetch('/deleteNote', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ noteID: noteID })
+      body: JSON.stringify({ noteID: currentNote })
     });
 
     let data = await response.json();
@@ -172,6 +172,7 @@ async function deleteNote(noteID) {
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
     const noteID = localStorage.getItem("noteID");
+    currentNote = noteID;
     const username = localStorage.getItem("username");
 
     console.log(noteID);
