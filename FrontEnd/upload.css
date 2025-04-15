@@ -359,6 +359,7 @@ input[type="file"] {
 }
 
 .browse {
+background-color: transparent;
   border: none;
   display: inline-block;
   color: #13E3D5;
