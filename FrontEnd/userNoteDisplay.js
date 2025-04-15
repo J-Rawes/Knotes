@@ -80,8 +80,6 @@ async function displayNote(noteID) {
     }
 }
 
-
-
 // Fetch note info
 async function getNoteInfo(noteID) {
     const response = await fetch('/getNoteTombstoneInfo', {
@@ -122,26 +120,6 @@ function closeModal(modalType) {
 function nextTxt(forward) {
     tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length; // Move the pointer.
     txtCanvas.innerHTML = txtArray[tArrPointer]; // Update the text
-}
-
-// Function to like a note. Because everyone loves a little validation.
-function likeNote(buttonEl) {
-    buttonEl.style.color = "red"; 
-    const username = localStorage.getItem("username");
-
-    fetch('/likeNote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentNote, courseID, username }) // Send the love to the server.
-    }).catch(err => console.error('Error liking note:', err)); // If it fails, no love lost.
-}
-
-// Function to download the current note
-function downloadNote() {
-    const image = displayImg.src;
-    const downloadLink = document.getElementById('downloadBtn');
-    downloadLink.href = image; // Set the download link to the image source.
-    downloadLink.download = document.getElementById("noteTitle").textContent; // Name the file after the note title
 }
 
 function generateComments(commentsArray) {
