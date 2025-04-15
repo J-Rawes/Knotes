@@ -609,78 +609,48 @@ app.get('/protected', async (req, res) => {
 });
 
 
-app.post('/getNoteTombstoneInfo', async (req, res) => { 
-    let body = '';
+app.post('/getNoteTombstoneInfo', async (req, res) => {
+    try {
+        const { noteID } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try { 7
-            const { noteID } = JSON.parse(body);
-           
-             const query = `
-                SELECT *
-                FROM "Images" 
-                WHERE note_id = $1
-            `;
-
-            const query2 = `
-                SELECT *
-                FROM "Text" 
-                WHERE note_id = $1               
-            `;
-
-            const query3 = `
-                SELECT *
-                FROM "Notes" 
-                WHERE note_id = $1               
-            `;
-
-        
-
-
-            const imageResult = await client.query(query, [noteID]);
-            const textResult = await client.query(query2, [noteID]);
-            const tombstoneResult = await client.query(query3, [noteID]);
-          
-            
-
-            // Extract the data
-            // Convert bytea images to Base64
-            const images = imageResult.rows.map(row => {
-                return row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null;
-            });
-            console.log("Images: ", images);
-            const text = textResult.rows.map(row => row.text); // Array of text
-            const noteInfo = tombstoneResult.rows[0]; // Course info (single object)
-
-            // Query the Users table to get the username
-            const getUsernameQuery = `
-                SELECT uname
-                FROM "Users"
-                WHERE user_id = $1
-            `;
-
-            const userResult = await client.query(getUsernameQuery, [noteInfo.user_id]);
-            const username = userResult.rows[0]?.uname;
-            noteInfo.username = username;
-
-            console.log("Tombstone Info: ", noteInfo);
-            console.log(images);
-            console.log(text);
-
-            // Return the data as a JSON response
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ images, text, noteInfo }));
-        } catch (error) {
-            console.error('Database query error:', error);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Database error');
+        if (!noteID) {
+            return res.status(400).json({ error: "Missing note ID" });
         }
-    });
+
+        const imageQuery = `SELECT * FROM "Images" WHERE note_id = $1`;
+        const textQuery = `SELECT * FROM "Text" WHERE note_id = $1`;
+        const noteQuery = `SELECT * FROM "Notes" WHERE note_id = $1`;
+
+        const [imageResult, textResult, tombstoneResult] = await Promise.all([
+            client.query(imageQuery, [noteID]),
+            client.query(textQuery, [noteID]),
+            client.query(noteQuery, [noteID])
+        ]);
+
+        if (tombstoneResult.rows.length === 0) {
+            return res.status(404).json({ error: "Note not found" });
+        }
+
+        const images = imageResult.rows.map(row =>
+            row.image ? `data:image/png;base64,${row.image.toString('base64')}` : null
+        );
+
+        const text = textResult.rows.map(row => row.text);
+        const noteInfo = tombstoneResult.rows[0];
+
+        const userQuery = `SELECT uname FROM "Users" WHERE user_id = $1`;
+        const userResult = await client.query(userQuery, [noteInfo.user_id]);
+        noteInfo.username = userResult.rows[0]?.uname || "Unknown";
+
+        console.log("Tombstone Info:", noteInfo);
+        res.status(200).json({ images: images, text: text, noteInfo: noteInfo });
+
+    } catch (error) {
+        console.error('Database query error:', error);
+        res.status(500).send('Database error');
+    }
 });
+
 
 app.post('/getUserUploadedNotes', async (req, res) => {
     try {
