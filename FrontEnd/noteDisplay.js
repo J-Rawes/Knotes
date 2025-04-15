@@ -124,6 +124,7 @@ function downloadNote() {
     downloadLink.download = document.getElementById("noteTitle").textContent; // Name the file after the note title
 }
 
+/*
 // Go back to previous page
 const backLink = document.getElementById('back-link');
 if (backLink) {
@@ -137,6 +138,18 @@ if (backLink) {
     });
 }
 
+// Go back to previous page
+const backLink = document.getElementById('back-link');
+ backLink.addEventListener('click', () => {
+      // Toggle the visibility of the dropdown menu
+      if (dropdownMenu.style.display === 'block') {
+        dropdownMenu.style.display = 'none';
+      } else {
+        dropdownMenu.style.display = 'block';
+      }
+    });
+
+*/
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
