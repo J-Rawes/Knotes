@@ -85,25 +85,6 @@ async function getNoteInfo(noteID) {
     return await response.json(); // Return the parsed response
 }
 
-
-async function getCourseNoteInfo(courseID) {
-    try {
-        const response = await fetch('/getCourseNoteInfo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID })
-        });
-
-        const data = await response.json();
-        notesArr = data.noteNames;
-        filteredNotes = [...notesArr];
-        generateButtons(filteredNotes);
-        displayCourseInfo(data.courseInfo);
-    } catch (error) {
-        console.error('Error fetching course info:', error);
-    }
-}
-
 // Function to go to the next or previous image
 function nextImg(forward) {
     if (imageArray.length === 0) return; // No images?
@@ -158,8 +139,8 @@ if (backLink) {
 
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
-    const courseName = localStorage.getItem("courseName");
-    courseID = localStorage.getItem("courseID");
+    const noteName = localStorage.getItem("noteName");
+    const noteID = localStorage.getItem("noteID");
     const username = localStorage.getItem("username");
 
     if (!username) {
@@ -167,7 +148,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         return (window.location.href = "login.html");
     }
 
-    await getCourseNoteInfo(courseID);
+    await getNoteInfo(noteID);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
