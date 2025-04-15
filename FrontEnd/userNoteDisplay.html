@@ -1,1 +1,68 @@
 
+<!DOCTYPE html>
+
+<html lang ="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Note</title>
+
+  <link rel="stylesheet" href="noteDisplay.css">
+
+</head>
+
+<body>
+
+    <div class="user">
+        <div id="return">
+          <a onclick="history.back()">Back</a>
+        </div>
+    </div>
+
+    <button id="like-button" onclick="likeNote()">&#x2665; Like</button>
+    <div id="details">
+        <h1 id="noteTitle">Example Title</h1>
+        <h2 id="noteAuthor">By: Example Author</h2>
+    </div>
+    <a id="downloadBtn" onclick = downloadNote() href="" download="knote.png"> <!-- DOWNLOAD BUTTON -->
+    Download
+    </a>
+    <div id="grid">
+      <canvas id="imgCanvas" width=640px height=480px></canvas>
+            <div id="txtCanvas" style="position: relative; width: 80%; padding: 10px; overflow: hidden; display: none;">
+              <p id="innerTxt" style="margin: 0; padding-right: 40px; overflow-wrap: break-word;"></p>
+              <!-- Trash badge will be dynamically added here -->
+            </div>
+    </div>
+    <div id="arrows">
+      <div id="i">
+        <input type="button" onclick="nextImg(false)" value="ᐊ" class="browse">
+        <input type="button" onclick="nextImg(true)" value="ᐅ" class="browse">
+      </div>
+      <div id="t">
+        <input type="button" onclick="nextTxt(false)" value="ᐊ" class="browse">
+        <input type="button" onclick="nextTxt(true)" value="ᐅ" class="browse">
+      </div>
+    </div>
+
+  <button id="uComment" onclick="openModal()">Add Comment</button>
+
+  <div id="textModal" class="modal">
+          <div class="modal-content">
+              <h3>Edit Text</h3>
+              <textarea id="textInput" rows="8" cols="50" placeholder="Enter your comment here..."></textarea><br>
+              <button class="modalB" id="saveText" onclick="sendComment()">Submit</button>
+              <button class="modalB" id="cancel" onclick="closeModal('textModal')">Cancel</button>
+          </div>
+  </div>
+
+  <div id="comments"></div>
+
+</body>
+
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript" src="noteDisplay.js">
+</script>
+
+</html>
+
