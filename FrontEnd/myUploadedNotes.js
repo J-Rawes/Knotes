@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
       button.appendChild(likeCount);
   
       // Onclick: display the note's details (images/text)
-      button.addEventListener("click", () => displayNote(note.title, note.noteID));
+      button.addEventListener("click", () => displayNote(note.title, note.note_id));
   
       container.appendChild(button);
     });
