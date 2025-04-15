@@ -160,6 +160,7 @@ async function deleteNote(noteID) {
     });
 
     let data = await response.json();
+    window.location.href = `myUploadedNotes.html`;   
     return data;
   } catch (error) {
     console.error("Fetch Error:", error);
