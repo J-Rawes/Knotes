@@ -225,7 +225,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.nextTxt = nextTxt;
 });
 
-function displayNote(courseName, courseID) {
+function displayNote(noteName, noteID) {
     localStorage.setItem("noteName", noteName);
     localStorage.setItem("noteID", noteID);
     window.location.href = `noteDisplay.html`;    
