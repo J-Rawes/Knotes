@@ -14,9 +14,10 @@ let likedNotes; // This variable is feeling a bit "unliked" since it's not used 
 
 // Grab the canvas elements and their contexts. Time to "draw" some conclusions!
 const imgCanvas = document.getElementById("imgCanvas");
-const txtCanvas = document.getElementById("innerTxt");
+const txtCanvas = document.getElementById("txtCanvas");
 const imgCtx = imgCanvas.getContext("2d");
 const displayImg = new Image(); // Our image loader
+const innerTxt = document.getElementById("innerTxt");
 
 // Function to display a note
 async function displayNote(noteID) {
@@ -62,7 +63,7 @@ async function displayNote(noteID) {
 
         // If there's text, show the first chunk
         if (txtArray.length > 0) {
-            txtCanvas.innerHTML = txtArray[0];
+            innerTxt.innerHTML = txtArray[0];
             txtCanvas.style.display = "block";
             if (txtArray.length > 1) document.getElementById("t").style.display = "block"; // Show the "next" button if needed.
         }
