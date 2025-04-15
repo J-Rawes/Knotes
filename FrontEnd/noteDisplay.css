@@ -280,6 +280,19 @@ position: relative;
   border-color: #ff1744;
 }
 
+#comments {
+    display: flex;
+    flex-direction: column; /* Stack comments vertically */
+    align-items: center;    /* Center-align the comments */
+    margin: 20px auto;
+    width: 90%; /* Adjust width as needed */
+}
+
+.comment-div {
+    border: 2px solid #13E3D5;
+    border-radius: 10px;
+}
+
   
   @media screen and (max-width: 600px) {
   
