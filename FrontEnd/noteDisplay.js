@@ -99,6 +99,18 @@ function nextImg(forward) {
     };
 }
 
+function openModal(defaultText) {
+    const modal = document.getElementById("textModal");
+    const textInput = document.getElementById("textInput");
+    modal.style.display = "block";  // Show the modal
+}
+
+// Close Modal Function
+function closeModal(modalType) {
+    const modal = document.getElementById(String(modalType));
+    modal.style.display = "none";  // Hide the modal
+}
+
 // Function to go to the next or previous text chunk
 function nextTxt(forward) {
     tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length; // Move the pointer.
