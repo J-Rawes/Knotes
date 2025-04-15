@@ -99,7 +99,7 @@ function nextImg(forward) {
     };
 }
 
-function openModal(defaultText) {
+function openModal() {
     const modal = document.getElementById("textModal");
     const textInput = document.getElementById("textInput");
     modal.style.display = "block";  // Show the modal
