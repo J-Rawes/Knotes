@@ -193,7 +193,9 @@ position: relative;
 }
 
 .loader {
-  margin-right: 5px;
+  position: absolute;
+  top: 10px; /* Align with the close button */
+  left: 10px;
   border: 8px solid #fff;
   border-radius: 50%;
   border-top: 8px solid #14FFEC;
@@ -217,13 +219,14 @@ position: relative;
 /* Close Button */
 .close-button {
   color: #fff;
-  float: right;
+  position: absolute;
+  top: 10px; /* Align with the close button */
+  right: 10px;
   font-size: 50px;
   font-weight: bold;
   cursor: pointer;
   -webkit-transition: 0.2s;
   transition: 0.2s;
-  margin-right: 5px;
 }
 
 .close-button:hover,
