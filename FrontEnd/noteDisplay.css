@@ -146,7 +146,7 @@ button:hover, #downloadBtn:hover {
   }
 
 
-#like-button, #downloadBtn {
+#like-button, #downloadBtn, #uComment {
     display: flex; /* Enable flexbox */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically (optional) */
