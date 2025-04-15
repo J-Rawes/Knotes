@@ -291,6 +291,8 @@ position: relative;
 .comment-div {
     border: 2px solid #13E3D5;
     border-radius: 10px;
+    width: 60%;
+    padding: 10px;
 }
 
   
