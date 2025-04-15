@@ -11,7 +11,6 @@ let txtArray = [];
 // Current note and course info. 
 let currentNote = 0;
 let courseID;
-let likedNotes; // This variable is feeling a bit "unliked" since it's not used anywhere.
 
 // Grab the canvas elements and their contexts. Time to "draw" some conclusions!
 const imgCanvas = document.getElementById("imgCanvas");
@@ -181,6 +180,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
     const noteID = localStorage.getItem("noteID");
     const username = localStorage.getItem("username");
+
+    console.log(noteID);
 
     if (!username) {
         alert("Please log in first");
