@@ -173,25 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-async function deleteNote(noteID) {
-  try {
-    let response = await fetch('/deleteNote', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ noteID: noteID })
-    });
-
-    let data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    document.getElementById("message").innerText = "Error connecting to server.";
-    return "Error";
-  }
-}
-
 function getNoteID(){
   return this.currentNoteID;
 }
