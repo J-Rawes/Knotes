@@ -244,7 +244,7 @@ window.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.json())
     .then(data => {
-        const saved = data.isLiked;
+        var saved = data.isLiked;
         console.log("Saved course status:", saved);
         if (saved) {
             document.getElementById("save").style.backgroundColor = "#14FFEC";
