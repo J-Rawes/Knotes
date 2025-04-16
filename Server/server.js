@@ -681,15 +681,8 @@ app.post('/getUserUploadedNotes', async (req, res) => {
   
 
 app.post('/likeNote', async (req, res) => {
-    let body = '';
-
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
         try {
-            const { currentNote, courseID, username } = JSON.parse(body);
+            const { currentNote, courseID, username } = req.body;
             console.log(currentNote);
             console.log(username);
 
@@ -729,7 +722,7 @@ app.post('/likeNote', async (req, res) => {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Server error' }));
         }
-    });
+   
 });
 
 // Endpoint to get liked notes
