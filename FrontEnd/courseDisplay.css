@@ -48,6 +48,12 @@ html, body {
     border-color: #14FFEC;
   }
 
+#save-button{
+    text-align: center;
+    align-items: center;
+    margin: auto;
+}
+
 a {
   text-decoration: none;
   padding: 10px;
