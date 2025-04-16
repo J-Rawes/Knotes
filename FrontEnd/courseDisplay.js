@@ -8,6 +8,7 @@ let imageArray = [];
 let txtArray = [];
 let currentNote = 0;
 let courseID;
+let username;
 let likedNotes;
 let saved;
 
