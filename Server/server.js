@@ -757,6 +757,7 @@ app.use((req, res) => {
 });
 
 app.get('/common.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
     res.sendFile(path.join(__dirname, 'common.js'));
 });
 
