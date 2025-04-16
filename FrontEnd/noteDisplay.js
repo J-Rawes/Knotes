@@ -124,8 +124,8 @@ function nextTxt(forward) {
 }
 
 // Function to like a note. Because everyone loves a little validation.
-function likeNote(buttonEl) {
-    document.getElementById(buttonEl).style.color = "red"; 
+function likeNote() {
+    document.getElementById("like-button").style.color = "#14FFEC"; 
     const username = localStorage.getItem("username");
 
     fetch('/likeNote', {
