@@ -75,7 +75,7 @@ function filterNotes(searchTerm) {
     generateButtons(filteredNotes);
 }
 
-function saveCourse() {
+async function saveCourse() {
     if (saved) {
         //unsaves the course
         fetch('/unlikeCourse', {
