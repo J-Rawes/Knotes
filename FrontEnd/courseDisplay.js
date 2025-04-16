@@ -9,6 +9,7 @@ let txtArray = [];
 let currentNote = 0;
 let courseID;
 let likedNotes;
+let saved;
 
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("innerTxt");
@@ -244,7 +245,7 @@ window.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.json())
     .then(data => {
-        var saved = data.isLiked;
+        saved = data.isLiked;
         console.log("Saved course status:", saved);
         if (saved) {
             document.getElementById("save").style.backgroundColor = "#14FFEC";
