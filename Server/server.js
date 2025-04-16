@@ -682,7 +682,7 @@ app.post('/getUserUploadedNotes', async (req, res) => {
 
 app.post('/likeNote', async (req, res) => {
         try {
-            const { currentNote, courseID, username } = req.body;
+            const { currentNote, username } = req.body;
             console.log(currentNote);
             console.log(username);
 
@@ -705,15 +705,8 @@ app.post('/likeNote', async (req, res) => {
                 WHERE uname = $2
             `;
 
-            const query3 = `
-                UPDATE "Users"
-                SET liked_courses = array_append(liked_courses, $1::bigint)
-                WHERE uname = $2
-            `;
-
             await client.query(query, [currentNote]);
             await client.query(query2, [currentNote, username]);
-            await client.query(query3, [courseID, username]);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({message: 'Note liked successfully' }));
@@ -723,6 +716,88 @@ app.post('/likeNote', async (req, res) => {
             res.end(JSON.stringify({ error: 'Server error' }));
         }
    
+});
+
+
+// Endpoint to unlike note
+app.post('/unlikeNote', async (req, res) => {
+    try {
+        const { currentNote, username } = req.body;
+        if (!currentNote) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Missing note ID' }));
+            return;
+        }
+        // Decrement the number of likes for the note
+        const query = `
+            UPDATE "Notes"
+            SET num_likes = num_likes - 1
+            WHERE note_id = $1
+        `;
+        const query2 = `
+            UPDATE "Users"
+            SET liked_notes = array_remove(liked_notes, $1::bigint)
+            WHERE uname = $2
+        `;
+        await client.query(query, [currentNote]);
+        await client.query(query2, [currentNote, username]);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Note unliked successfully' }));
+    } catch (error) {
+        console.error('Error unliking note:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Server error' }));
+    }
+});
+
+// Endpoint to like course
+app.post('/likeCourse', async (req, res) => {
+    try {
+        const { courseID, username } = req.body;
+
+        if (!courseID || !username) {
+            res.status(400).json({ error: 'Missing course ID or username' });
+            return;
+        }
+
+        const query = `
+            UPDATE "Users"
+            SET liked_courses = array_append(liked_courses, $1::bigint)
+            WHERE uname = $2
+        `;
+
+        await client.query(query, [courseID, username]);
+
+        res.status(200).json({ message: 'Course liked successfully' });
+    } catch (error) {
+        console.error('Error liking course:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Endpoint to remove a like from a course
+app.post('/unlikeCourse', async (req, res) => {
+    try {
+        const { courseID, username } = req.body;
+
+        if (!courseID || !username) {
+            res.status(400).json({ error: 'Missing course ID or username' });
+            return;
+        }
+
+        const query = `
+            UPDATE "Users"
+            SET liked_courses = array_remove(liked_courses, $1::bigint)
+            WHERE uname = $2
+        `;
+
+        await client.query(query, [courseID, username]);
+
+        res.status(200).json({ message: 'Course unliked successfully' });
+    } catch (error) {
+        console.error('Error liking course:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Endpoint to get liked notes
@@ -747,6 +822,105 @@ app.post('/getLikedNotes', async (req, res) => {
         res.status(200).json({ likedNotes });
     } catch (error) {
         console.error('Error fetching liked notes:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Endpoint to get liked courses
+app.post('/getLikedCourses', async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        if (!username) {
+            res.status(400).json({ error: 'Missing username' });
+            return;
+        }
+
+        const query = `
+            SELECT liked_courses
+            FROM "Users"
+            WHERE uname = $1
+        `;
+
+        const result = await client.query(query, [username]);
+        const likedCourses = result.rows[0]?.liked_courses || [];
+
+        res.status(200).json({ likedCourses });
+    } catch (error) {
+        console.error('Error fetching liked courses:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// See if the user has already liked a course
+app.post('/isNoteLiked', async (req, res) => {
+    try {
+        const { username, noteID } = req.body;
+
+        if (!username || !noteID) {
+            res.status(400).json({ error: 'Missing username or noteID' });
+            return;
+        }
+
+        const query = `
+            SELECT liked_notes
+            FROM "Users"
+            WHERE uname = $1
+        `;
+
+        const result = await client.query(query, [username]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const likedNotes = result.rows[0]?.liked_notes || [];
+        const isLiked = likedNotes.includes(Number(noteID)); // Convert noteID to a number for comparison
+
+        if (isLiked) {
+            res.status(200).json({ isLiked: true });
+        }
+        else {
+            res.status(200).json({ isLiked: false });
+        }
+
+        
+    } catch (error) {
+        console.error('Error fetching liked notes:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Endpoint to see if a user has already liked a course
+app.get('/isCourseLiked', async (req, res) => {
+    try {
+        const { username, courseID } = req.body;
+
+        if (!username || !courseID) {
+            res.status(400).json({ error: 'Missing username or courseID' });
+            return;
+        }
+
+        const query = `
+            SELECT liked_courses
+            FROM "Users"
+            WHERE uname = $1
+        `;
+
+        const result = await client.query(query, [username]);
+        const likedCourses = result.rows[0]?.liked_courses || [];
+
+        // Check if the courseID is in the likedCourses array
+        const isLiked = likedCourses.includes(courseID);
+        
+        if (isLiked) {
+            res.status(200).json({ isLiked: true });
+        }
+        else {
+            res.status(200).json({ isLiked: false });
+        }
+    } catch (error) {
+        console.error('Error fetching liked courses:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -850,4 +1024,3 @@ function dataUrlToBuffer(dataUrl) {
     }
     return Buffer.from(matches[2], 'base64');
 }
-
