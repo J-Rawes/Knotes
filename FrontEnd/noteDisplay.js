@@ -197,7 +197,7 @@ async function seeIfNoteIsLiked() {
 function setLikeButton() {
     if (liked) {
         //unsaves the course
-        fetch('/unsaveNote', {
+        fetch('/unlikeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseID })
@@ -211,7 +211,7 @@ function setLikeButton() {
         document.getElementById("like-button").style.color = "#fff";
     } else {
         //saves the course
-        fetch('/saveNote', {
+        fetch('/likeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseID })
