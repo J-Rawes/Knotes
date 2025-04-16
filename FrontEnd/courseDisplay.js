@@ -77,7 +77,7 @@ function filterNotes(searchTerm) {
 function saveCourse() {
     if (saved) {
         //unsaves the course
-        fetch('/unsaveCourse', {
+        fetch('/unlikeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseID })
@@ -91,7 +91,7 @@ function saveCourse() {
         document.getElementById("save").style.color = "#fff";
     } else {
         //saves the course
-        fetch('/saveCourse', {
+        fetch('/likeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseID })
