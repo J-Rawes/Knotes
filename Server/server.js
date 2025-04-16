@@ -892,7 +892,7 @@ app.post('/isNoteLiked', async (req, res) => {
 });
 
 // Endpoint to see if a user has already liked a course
-app.get('/isCourseLiked', async (req, res) => {
+app.post('/isCourseLiked', async (req, res) => {
     try {
         const { username, courseID } = req.body;
 
@@ -935,7 +935,7 @@ app.get('/common.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'common.js'));
 });
 
-app.get('/courses', async (req, res) => {
+app.post('/courses', async (req, res) => {
     let body = '';
 
     req.on('data', chunk => {
