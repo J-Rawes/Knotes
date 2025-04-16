@@ -200,7 +200,7 @@ function setLikeButton() {
         fetch('/unlikeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID })
+            body: JSON.stringify({courseID: courseID, username: username })
         })
         .then(() => {
             liked = false;
@@ -214,7 +214,7 @@ function setLikeButton() {
         fetch('/likeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID })
+            body: JSON.stringify({ courseID: courseID, username: username  })
         })
         .then(() => {
             like = true;
