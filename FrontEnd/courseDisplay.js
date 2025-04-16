@@ -80,7 +80,7 @@ function saveCourse() {
         fetch('/unlikeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID })
+            body: JSON.stringify({ courseID: courseID, username: username })
         })
         .then(() => {
             saved = false;
@@ -94,7 +94,7 @@ function saveCourse() {
         fetch('/likeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID })
+            body: JSON.stringify({courseID: courseID, username: username  })
         })
         .then(() => {
             saved = true;
