@@ -205,8 +205,12 @@ button:active {
 
 #course-info p {
   font-size: 16px;
-  text-align: justify;
   margin: 0.5em;
+color: #fff;
+}
+
+#course-info b {
+  color: #fff;
 }
 
 #course-info h1, b, p {
