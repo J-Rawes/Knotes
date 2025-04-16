@@ -32,7 +32,7 @@ html, body {
 
 #save {
     color:#fff;
-    width: 120px;
+    width: 200px;
     text-align: center;
     font-size: 18px;
     padding: 20px;
@@ -41,6 +41,7 @@ html, body {
     margin: auto;
     margin: 5px;
     background-color: #212121;
+    align-items: center;
 }
   
 #save:hover {
