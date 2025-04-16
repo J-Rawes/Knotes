@@ -172,37 +172,83 @@ function generateComments(commentsArray) {
     });
 }
 
-/*
-// Go back to previous page
-const backLink = document.getElementById('back-link');
-if (backLink) {
-    backLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (document.referrer) {
-            window.location.href = document.referrer;
-        } else {
-            window.history.back();
+
+async function seeIfNoteIsLiked() {
+    try {
+        const response = await fetch('/isNoteLiked', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, noteID: noteID })
+        });
+
+        if (!response.ok) {
+            console.error('Error checking if note is liked:', response.statusText);
+            return false;
         }
-    });
+
+        const data = await response.json();
+        return data.isLiked || false; // Assuming the server returns an `isLiked` boolean
+    } catch (error) {
+        console.error('Error checking if note is liked:', error);
+        return false;
+    }
 }
 
-// Go back to previous page
-const backLink = document.getElementById('back-link');
- backLink.addEventListener('click', () => {
-      // Toggle the visibility of the dropdown menu
-      if (dropdownMenu.style.display === 'block') {
-        dropdownMenu.style.display = 'none';
-      } else {
-        dropdownMenu.style.display = 'block';
-      }
-    });
+function setLikeButton() {
+    if (liked) {
+        //unsaves the course
+        fetch('/unsaveNote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID })
+        })
+        .then(() => {
+            liked = false;
+            document.getElementById("like-button").textContent = "Like ♥";
+        })
 
-*/
+        document.getElementById("like-button").style.backgroundColor = "#212121";
+        document.getElementById("like-button").style.color = "#fff";
+    } else {
+        //saves the course
+        fetch('/saveNote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID })
+        })
+        .then(() => {
+            like = true;
+            document.getElementById("like-button").textContent = "Unlike ♥";
+        })
+
+        document.getElementById("like-button").style.backgroundColor = "#14FFEC";
+        document.getElementById("like-button").style.color = "#212121";
+    }
+}
+
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
     const noteID = localStorage.getItem("noteID");
     const username = localStorage.getItem("username");
+    fetch('/isNoteLiked', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ noteID, username })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const liked = data.isLiked;
+        console.log("Liked note status:", liked);
+        if (liked) {
+            document.getElementById("like-button").style.backgroundColor = "#14FFEC";
+            document.getElementById("like-button").style.color = "#212121";
+        } else {
+            document.getElementById("like-button").style.backgroundColor = "#212121";
+            document.getElementById("like-button").style.color = "#fff";
+        }
+    })
+    .catch(error => console.error('Error checking saved course:', error));
 
     if (!username) {
         alert("Please log in first");
@@ -211,6 +257,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     await getNoteInfo(noteID);
     await displayNote(noteID);
+    await setLikeButton();
     generateComments(comments);
 
     window.nextImg = nextImg;

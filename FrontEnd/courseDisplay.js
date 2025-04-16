@@ -73,6 +73,38 @@ function filterNotes(searchTerm) {
     generateButtons(filteredNotes);
 }
 
+function saveCourse() {
+    if (saved) {
+        //unsaves the course
+        fetch('/unsaveCourse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID })
+        })
+        .then(() => {
+            saved = false;
+            document.getElementById("save").textContent = "Save Course";
+        })
+
+        document.getElementById("save").style.backgroundColor = "#212121";
+        document.getElementById("save").style.color = "#fff";
+    } else {
+        //saves the course
+        fetch('/saveCourse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID })
+        })
+        .then(() => {
+            saved = true;
+            document.getElementById("save").textContent = "Unsave Course";
+        })
+
+        document.getElementById("save").style.backgroundColor = "#14FFEC";
+        document.getElementById("save").style.color = "#212121";
+    }
+}
+
 // async function displayNote(noteID) {
 //        try {
 //         currentNote = noteID;
@@ -204,6 +236,26 @@ window.addEventListener("DOMContentLoaded", () => {
     const courseName = localStorage.getItem("courseName");
     courseID = localStorage.getItem("courseID");
     const username = localStorage.getItem("username");
+    // Check to see if the user has already saved the course
+    fetch('/isCourseLiked', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseID, username })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const saved = data.isLiked;
+        console.log("Saved course status:", saved);
+        if (saved) {
+            document.getElementById("save").style.backgroundColor = "#14FFEC";
+            document.getElementById("save").style.color = "#212121";
+        } else {
+            document.getElementById("save").style.backgroundColor = "#212121";
+            document.getElementById("save").style.color = "#fff";
+        }
+    })
+    .catch(error => console.error('Error checking saved course:', error));
+
 
     if (!username) {
         alert("Please log in first");
@@ -220,6 +272,14 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("search").addEventListener("input", (e) => {
         filterNotes(e.target.value.toLowerCase());
     });
+
+    if (saved) {
+        document.getElementById("save").style.backgroundColor = "#14FFEC";
+        document.getElementById("save").style.color = "#212121";
+    } else {
+        document.getElementById("save").style.backgroundColor = "#212121";
+        document.getElementById("save").style.color = "#fff";
+    }
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
