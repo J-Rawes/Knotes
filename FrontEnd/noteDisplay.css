@@ -130,8 +130,8 @@ canvas {
     }
 
 button, #downloadBtn {
-    color:#14FFEC;
-    width: 200px;
+    color:#fff;
+    width: 120px;
     text-align: center;
     font-size: 18px;
     padding: 20px;
