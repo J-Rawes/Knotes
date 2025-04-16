@@ -763,10 +763,10 @@ app.post('/likeCourse', async (req, res) => {
         const query = `
             UPDATE "Users"
             SET liked_courses = array_append(liked_courses, $1::bigint)
-            WHERE uname = $2
+            WHERE uname = $1
         `;
 
-        await client.query(query, [courseID, username]);
+        await client.query(query, [username]);
 
         res.status(200).json({ message: 'Course liked successfully' });
     } catch (error) {
