@@ -50,6 +50,7 @@ function displayCourse(courseName, courseID) {
 }
 
 async function getCourses() {
+     console.log("THE USERNAME IS: " + username); 
 
     const username = localStorage.getItem("username");
 
@@ -58,9 +59,7 @@ async function getCourses() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
-
-            console.log("THE USERNAME IS: " + username); 
+            },        
 
             body: JSON.stringify({username: username})
         });
