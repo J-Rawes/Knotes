@@ -61,7 +61,7 @@ async function getCourses() {
                'Content-Type': 'application/json'
            },
 
-           body: JSON.stringify({username})
+           body: JSON.stringify({username: username})
        });
 
        if (!response.ok) {
