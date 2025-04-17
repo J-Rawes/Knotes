@@ -187,17 +187,24 @@ app.post('/getLikedCourses', async (req, res) => {
         const { username } = req.body;
 
         if (!username) {
-            res.status(400).json({ error: 'Missing username' });
-            return;
+            return res.status(400).json({ error: 'Missing username' });
         }
 
-      console.log("Username is: " + username);
+        console.log("Username is: " + username);
 
         const query = 'SELECT liked_courses FROM "Users" WHERE uname = $1';
         const result = await client.query(query, [username]);
-        const likedCourses = result.rows[0]?.liked_courses || [];
 
-      console.log("Liked courses: " + likedCourses);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const likedCourses = result.rows[0].liked_courses || [];
+
+        if (likedCourses.length === 0) {
+            // ✅ No liked courses yet — not an error
+            return res.status(200).json({ courseArr: [] });
+        }
 
         const query2 = `
             SELECT course_name, course_id
@@ -207,14 +214,13 @@ app.post('/getLikedCourses', async (req, res) => {
 
         const result2 = await client.query(query2, [likedCourses]);
 
-        if (result2.rows.length === 0) {
-            res.status(404).json({ message: "No courses found" });
-            return;
-        }
+        const courseArr = result2.rows.map(row => ({
+            course_id: row.course_id,
+            course_name: row.course_name
+        }));
 
-        const courseArr = result2.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
-      console.log("Course arr: " + courseArr);
-        res.status(200).json({ courseArr: courseArr });
+        return res.status(200).json({ courseArr });
+
     } catch (error) {
         console.error('Error fetching liked courses:', error);
         res.status(500).json({ error: 'Server error' });
