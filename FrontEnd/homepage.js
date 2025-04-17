@@ -60,6 +60,8 @@ async function getCourses() {
                 'Content-Type': 'application/json'
             },
 
+            console.log("THE USERNAME IS: " + username); 
+
             body: JSON.stringify({username: username})
         });
 
