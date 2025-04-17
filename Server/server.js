@@ -838,30 +838,30 @@ app.post('/getLikedNotes', async (req, res) => {
 });
 
 // Endpoint to get liked courses
-app.post('/getLikedCourses', async (req, res) => {
-    try {
-        const { username } = req.body;
+// app.post('/getLikedCourses', async (req, res) => {
+//     try {
+//         const { username } = req.body;
 
-        if (!username) {
-            res.status(400).json({ error: 'Missing username' });
-            return;
-        }
+//         if (!username) {
+//             res.status(400).json({ error: 'Missing username' });
+//             return;
+//         }
 
-        const query = `
-            SELECT liked_courses
-            FROM "Users"
-            WHERE uname = $1
-        `;
+//         const query = `
+//             SELECT liked_courses
+//             FROM "Users"
+//             WHERE uname = $1
+//         `;
 
-        const result = await client.query(query, [username]);
-        const likedCourses = result.rows[0]?.liked_courses || [];
+//         const result = await client.query(query, [username]);
+//         const likedCourses = result.rows[0]?.liked_courses || [];
 
-        res.status(200).json({ likedCourses });
-    } catch (error) {
-        console.error('Error fetching liked courses:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
+//         res.status(200).json({ likedCourses });
+//     } catch (error) {
+//         console.error('Error fetching liked courses:', error);
+//         res.status(500).json({ error: 'Server error' });
+//     }
+// });
 
 // See if the user has already liked a course
 app.post('/isNoteLiked', async (req, res) => {
@@ -886,7 +886,7 @@ app.post('/isNoteLiked', async (req, res) => {
         }
 
         const likedNotes = result.rows[0]?.liked_notes || [];
-        const isLiked = likedNotes.includes(Number(noteID)); // Convert noteID to a number for comparison
+        const isLiked = likedNotes.includes(BigInt(noteID)); // Convert noteID to a number for comparison
 
         if (isLiked) {
             res.status(200).json({ isLiked: true });
