@@ -220,7 +220,7 @@ function likeNote() {
             body: JSON.stringify({ noteID: noteID, username: username  })
         })
         .then(() => {
-            like = true;
+            liked = true;
             document.getElementById("like-button").textContent = "Unlike ♥";
         })
 
