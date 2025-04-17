@@ -783,6 +783,7 @@ app.post('/likeCourse', async (req, res) => {
         console.error('Error liking course:', error);
         res.status(500).json({ error: 'Server error' });
     }
+});
 
 // Endpoint to remove a like from a course
 app.post('/unlikeCourse', async (req, res) => {
