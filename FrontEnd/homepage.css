@@ -17,30 +17,33 @@ h1 {
   text-align: center;
 }
 
-.main {
-  width: 100%;
-  margin: auto;
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5%;
-  padding: 2em;
+#button-container {
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
+  gap: 1em; /* Add spacing between buttons */
+  margin: auto; /* Center the container itself */
+  margin-top: 1em;
+  width: 90%; /* Adjust width to fit the content */
 }
 
-.main button {
+#button-container button {
   background-color: #323232;
   border: 4px solid #323232;
-  color: #fff;
   border-radius: 20px;
-  font-size: 32px;
-  display: inline-block;
-  padding: 2em;
-  width: 90%;
-  margin-bottom: 1em;
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  cursor: pointer;
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
-.main button:hover {
-  border: 4px solid #14FFEC;
+#button-container button:hover {
+  border-color: #14FFEC;
 }
 
 #return{
@@ -128,15 +131,6 @@ a {
     font-size: 5em; /* Adjust the font size */
     color: #14FFEC; /* Match the theme color */
     margin: 0;
-}
-
-#button-container {
-  display: grid; /* Use CSS Grid */
-  grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
-  gap: 1em; /* Add spacing between buttons */
-  margin: auto; /* Center the container itself */
-  margin-top: 1em;
-  width: 90%; /* Adjust width to fit the content */
 }
 
 
