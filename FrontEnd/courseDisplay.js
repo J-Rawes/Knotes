@@ -102,7 +102,7 @@ async function saveCourse() {
         })
         .then(() => {
             saved = true;
-            document.getElementById("save").textContent = "Unsave Course";
+            document.getElementById("save").textContent = "Saved";
         })
 
         document.getElementById("save").style.backgroundColor = "#14FFEC";
@@ -252,9 +252,11 @@ window.addEventListener("DOMContentLoaded", () => {
         saved = data.isLiked;
         console.log("Saved course status:", saved);
         if (saved) {
+            document.getElementById("save").textContent = "Saved";
             document.getElementById("save").style.backgroundColor = "#14FFEC";
             document.getElementById("save").style.color = "#212121";
         } else {
+            document.getElementById("save").textContent = "Save Course";
             document.getElementById("save").style.backgroundColor = "#212121";
             document.getElementById("save").style.color = "#fff";
         }
