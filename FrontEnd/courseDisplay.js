@@ -202,16 +202,16 @@ function nextTxt(forward) {
     txtCanvas.innerHTML = txtArray[tArrPointer];
 }
 
-function likeNote(buttonEl) {
-    buttonEl.style.color = "red";
-    const username = localStorage.getItem("username");
+// function likeNote(buttonEl) {
+//     buttonEl.style.color = "red";
+//     const username = localStorage.getItem("username");
 
-    fetch('/likeNote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentNote, courseID, username })
-    }).catch(err => console.error('Error liking note:', err));
-}
+//     fetch('/likeNote', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ currentNote, courseID, username })
+//     }).catch(err => console.error('Error liking note:', err));
+// }
 
 // function downloadNote() {
 //     const image = displayImg.src;
