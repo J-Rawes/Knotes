@@ -39,7 +39,7 @@ h1 {
   margin-bottom: 1em;
 }
 
-.main a:hover {
+.main button:hover {
   border: 4px solid #14FFEC;
 }
 
