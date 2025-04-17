@@ -11,6 +11,7 @@ let txtArray = [];
 let currentNote = 0;
 let courseID;
 let likedNotes; // This variable is feeling a bit "unliked" since it's not used anywhere.
+var liked;
 
 // Grab the canvas elements and their contexts. Time to "draw" some conclusions!
 const imgCanvas = document.getElementById("imgCanvas");
@@ -124,17 +125,17 @@ function nextTxt(forward) {
 }
 
 // Function to like a note. Because everyone loves a little validation.
-function likeNote() {
-    document.getElementById("like-button").style.backgroundColor = "#14FFEC";
-    document.getElementById("like-button").style.color = "#212121";
-    const username = localStorage.getItem("username");
+// function likeNote() {
+//     document.getElementById("like-button").style.backgroundColor = "#14FFEC";
+//     document.getElementById("like-button").style.color = "#212121";
+//     const username = localStorage.getItem("username");
 
-    fetch('/likeNote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentNote, courseID, username }) // Send the love to the server.
-    }).catch(err => console.error('Error liking note:', err)); // If it fails, no love lost.
-}
+//     fetch('/likeNote', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ currentNote, courseID, username }) // Send the love to the server.
+//     }).catch(err => console.error('Error liking note:', err)); // If it fails, no love lost.
+// }
 
 // Function to download the current note
 function downloadNote() {
@@ -194,37 +195,37 @@ function generateComments(commentsArray) {
 //     }
 // }
 
-// function setLikeButton() {
-//     if (liked) {
-//         //unsaves the course
-//         fetch('/unlikeNote', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({courseID: courseID, username: username })
-//         })
-//         .then(() => {
-//             liked = false;
-//             document.getElementById("like-button").textContent = "Like ♥";
-//         })
+function likeNote() {
+    if (liked) {
+        //unsaves the course
+        fetch('/unlikeNote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({courseID: courseID, username: username })
+        })
+        .then(() => {
+            liked = false;
+            document.getElementById("like-button").textContent = "Like ♥";
+        })
 
-//         document.getElementById("like-button").style.backgroundColor = "#212121";
-//         document.getElementById("like-button").style.color = "#fff";
-//     } else {
-//         //saves the course
-//         fetch('/likeNote', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ courseID: courseID, username: username  })
-//         })
-//         .then(() => {
-//             like = true;
-//             document.getElementById("like-button").textContent = "Unlike ♥";
-//         })
+        document.getElementById("like-button").style.backgroundColor = "#212121";
+        document.getElementById("like-button").style.color = "#fff";
+    } else {
+        //saves the course
+        fetch('/likeNote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID: courseID, username: username  })
+        })
+        .then(() => {
+            like = true;
+            document.getElementById("like-button").textContent = "Unlike ♥";
+        })
 
-//         document.getElementById("like-button").style.backgroundColor = "#14FFEC";
-//         document.getElementById("like-button").style.color = "#212121";
-//     }
-// }
+        document.getElementById("like-button").style.backgroundColor = "#14FFEC";
+        document.getElementById("like-button").style.color = "#212121";
+    }
+}
 
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
@@ -238,7 +239,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     })
     .then(res => res.json())
     .then(data => {
-        const liked = data.isLiked;
+        liked = data.isLiked;
         console.log("Liked note status:", liked);
         if (liked) {
             document.getElementById("like-button").style.backgroundColor = "#14FFEC";
