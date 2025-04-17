@@ -196,12 +196,14 @@ function generateComments(commentsArray) {
 // }
 
 function likeNote() {
+    const noteID = localStorage.getItem("noteID");
+    const username = localStorage.getItem("username");
     if (liked) {
         //unsaves the course
         fetch('/unlikeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({courseID: courseID, username: username })
+            body: JSON.stringify({noteID: noteID, username: username })
         })
         .then(() => {
             liked = false;
@@ -215,7 +217,7 @@ function likeNote() {
         fetch('/likeNote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID: courseID, username: username  })
+            body: JSON.stringify({ noteID: noteID, username: username  })
         })
         .then(() => {
             like = true;
