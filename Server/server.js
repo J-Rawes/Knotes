@@ -717,7 +717,6 @@ app.post('/likeNote', async (req, res) => {
 
              await client.query(query, [noteID]);
              await client.query(query2, [noteID, username]);
-         await client.query(query, [courseID, username]);
  
              res.writeHead(200, { 'Content-Type': 'application/json' });
              res.end(JSON.stringify({message: 'Note liked successfully' }));
