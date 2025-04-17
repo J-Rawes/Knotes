@@ -885,7 +885,7 @@ app.post('/isNoteLiked', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const likedNotes = result.rows[0]?.liked_notes || [];
+        const likedNotes = result.rows[0]?.liked_notes.map(BigInt) || [];
         const isLiked = likedNotes.includes(BigInt(noteID)); // Convert noteID to a number for comparison
 
         if (isLiked) {
