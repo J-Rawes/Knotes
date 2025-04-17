@@ -688,7 +688,7 @@ app.post('/likeNote', async (req, res) => {
             console.log(noteID);
             console.log(username);
 
-            if (!currentNote) {
+            if (!noteID) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Missing note ID' }));
                 return;
@@ -724,8 +724,8 @@ app.post('/likeNote', async (req, res) => {
 // Endpoint to unlike note
 app.post('/unlikeNote', async (req, res) => {
     try {
-        const { currentNote, username } = req.body;
-        if (!currentNote) {
+        const { noteID, username } = req.body;
+        if (!noteID) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Missing note ID' }));
             return;
@@ -741,8 +741,8 @@ app.post('/unlikeNote', async (req, res) => {
             SET liked_notes = array_remove(liked_notes, $1::bigint)
             WHERE uname = $2
         `;
-        await client.query(query, [currentNote]);
-        await client.query(query2, [currentNote, username]);
+        await client.query(query, [noteID]);
+        await client.query(query2, [noteID, username]);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Note unliked successfully' }));
     } catch (error) {
