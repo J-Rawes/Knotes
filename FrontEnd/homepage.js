@@ -50,9 +50,10 @@ function displayCourse(courseName, courseID) {
 }
 
 async function getCourses() {
-     console.log("THE USERNAME IS: " + username); 
+    
 
     const username = localStorage.getItem("username");
+     console.log("THE USERNAME IS: " + username); 
 
     try {
         const response = await fetch('/getLikedCourses', { 
