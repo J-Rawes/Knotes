@@ -684,8 +684,8 @@ app.post('/getUserUploadedNotes', async (req, res) => {
 
 app.post('/likeNote', async (req, res) => {
         try {
-            const { currentNote, username } = req.body;
-            console.log(currentNote);
+            const { noteID, username } = req.body;
+            console.log(noteID);
             console.log(username);
 
             if (!currentNote) {
@@ -707,8 +707,8 @@ app.post('/likeNote', async (req, res) => {
                 WHERE uname = $2
             `;
 
-            await client.query(query, [currentNote]);
-            await client.query(query2, [currentNote, username]);
+            await client.query(query, [noteID]);
+            await client.query(query2, [noteID, username]);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({message: 'Note liked successfully' }));
