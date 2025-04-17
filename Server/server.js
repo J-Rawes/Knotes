@@ -767,24 +767,22 @@ app.post('/likeCourse', async (req, res) => {
         const { courseID, username } = req.body;
 
         if (!courseID || !username) {
-            res.status(400).json({ error: 'Missing course ID or username' });
-            return;
+            return res.status(400).json({ error: 'Missing course ID or username' });
         }
 
         const query = `
             UPDATE "Users"
             SET liked_courses = array_append(liked_courses, $1::bigint)
-            WHERE uname = $1
+            WHERE uname = $2
         `;
 
-        await client.query(query, [username]);
+        await client.query(query, [courseID, username]);
 
         res.status(200).json({ message: 'Course liked successfully' });
     } catch (error) {
         console.error('Error liking course:', error);
         res.status(500).json({ error: 'Server error' });
     }
-});
 
 // Endpoint to remove a like from a course
 app.post('/unlikeCourse', async (req, res) => {
