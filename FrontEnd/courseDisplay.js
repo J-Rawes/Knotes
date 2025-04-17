@@ -6,7 +6,7 @@ let imageArray = [];
 let txtArray = [];
 let currentNote = 0;
 let likedNotes;
-let saved;
+var saved;
 let username = localStorage.getItem("username");
 let courseID = localStorage.getItem("courseID");
 
@@ -75,12 +75,16 @@ function filterNotes(searchTerm) {
 
 async function saveCourse() {
     console.log( saved +" "+ +" "+ username)
+
+    courseID = localStorage.getItem("courseID");
+    username = localStorage.getItem("username");
+    
     if (saved) {
         //unsaves the course
         fetch('/unlikeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteID: noteId, username: username })
+            body: JSON.stringify({ courseID: courseID, username: username })
         })
         .then(() => {
             saved = false;
