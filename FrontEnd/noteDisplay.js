@@ -207,7 +207,7 @@ function likeNote() {
         })
         .then(() => {
             liked = false;
-            document.getElementById("like-button").textContent = "Like ♥";
+            document.getElementById("like-button").textContent = "♡";
         })
 
         document.getElementById("like-button").style.backgroundColor = "#212121";
@@ -221,7 +221,7 @@ function likeNote() {
         })
         .then(() => {
             liked = true;
-            document.getElementById("like-button").textContent = "Unlike ♥";
+            document.getElementById("like-button").textContent = "♥";
         })
 
         document.getElementById("like-button").style.backgroundColor = "#14FFEC";
@@ -244,9 +244,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         liked = data.isLiked;
         console.log("Liked note status:", liked);
         if (liked) {
+            document.getElementById("like-button").textContent = "♥";
             document.getElementById("like-button").style.backgroundColor = "#14FFEC";
             document.getElementById("like-button").style.color = "#212121";
         } else {
+            document.getElementById("like-button").textContent = "♡";
             document.getElementById("like-button").style.backgroundColor = "#212121";
             document.getElementById("like-button").style.color = "#fff";
         }
