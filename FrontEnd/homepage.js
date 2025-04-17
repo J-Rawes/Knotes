@@ -1,4 +1,4 @@
-window.onload = function () {
+window.addEventListener("DOMContentLoaded", () => {
 
     const dropdownToggle = document.getElementById('dropdownToggle');
     const dropdownMenu = document.getElementById('dropdownMenu');
