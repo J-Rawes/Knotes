@@ -5,8 +5,6 @@ let filteredNotes = [];
 let imageArray = [];
 let txtArray = [];
 let currentNote = 0;
-let courseID;
-let username;
 let likedNotes;
 let saved;
 let username = localStorage.getItem("username");
@@ -55,7 +53,6 @@ function sortNotes(criteria) {
         filteredNotes.sort((a, b) => b.num_likes - a.num_likes);
         generateButtons(filteredNotes);
     } else if (criteria === "liked") {
-        const username = localStorage.getItem("username");
         fetch('/getLikedNotes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -77,13 +74,13 @@ function filterNotes(searchTerm) {
 }
 
 async function saveCourse() {
-    console.log( saved +" "+courseid +" "+ username)
+    console.log( saved +" "+ +" "+ username)
     if (saved) {
         //unsaves the course
         fetch('/unlikeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID: courseID, username: username })
+            body: JSON.stringify({ : , username: username })
         })
         .then(() => {
             saved = false;
