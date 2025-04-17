@@ -905,7 +905,7 @@ app.post('/isNoteLiked', async (req, res) => {
 // Endpoint to see if a user has already liked a course
 app.post('/isCourseLiked', async (req, res) => {
     try {
-        const { username, courseID } = req.body;
+        const { courseID, username } = req.body;
 
         if (!username || !courseID) {
             res.status(400).json({ error: 'Missing username or courseID' });
@@ -919,10 +919,10 @@ app.post('/isCourseLiked', async (req, res) => {
         `;
 
         const result = await client.query(query, [username]);
-        const likedCourses = result.rows[0]?.liked_courses || [];
+        const likedCourses = result.rows[0]?.liked_courses.map(BigInt) || [];
 
         // Check if the courseID is in the likedCourses array
-        const isLiked = likedCourses.includes(courseID);
+        const isLiked = likedCourses.includes(BigInt(courseID));
         
         if (isLiked) {
             res.status(200).json({ isLiked: true });
