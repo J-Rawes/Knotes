@@ -191,6 +191,8 @@ app.post('/getLikedCourses', async (req, res) => {
             return;
         }
 
+      console.log("Username is: " + username);
+
         const query = 'SELECT liked_courses FROM "Users" WHERE uname = $1';
         const result = await client.query(query, [username]);
         const likedCourses = result.rows[0]?.liked_courses || [];
