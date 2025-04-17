@@ -80,7 +80,7 @@ async function saveCourse() {
         fetch('/unlikeCourse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ : , username: username })
+            body: JSON.stringify({ noteID: noteId, username: username })
         })
         .then(() => {
             saved = false;
