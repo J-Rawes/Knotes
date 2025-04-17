@@ -237,7 +237,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     fetch('/isNoteLiked', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ noteID, username })
+        body: JSON.stringify({noteID: noteID, username: username })
     })
     .then(res => res.json())
     .then(data => {
