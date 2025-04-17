@@ -173,58 +173,58 @@ function generateComments(commentsArray) {
 }
 
 
-async function seeIfNoteIsLiked() {
-    try {
-        const response = await fetch('/isNoteLiked', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, noteID: noteID })
-        });
+// async function seeIfNoteIsLiked() {
+//     try {
+//         const response = await fetch('/isNoteLiked', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ username: username, noteID: noteID })
+//         });
 
-        if (!response.ok) {
-            console.error('Error checking if note is liked:', response.statusText);
-            return false;
-        }
+//         if (!response.ok) {
+//             console.error('Error checking if note is liked:', response.statusText);
+//             return false;
+//         }
 
-        const data = await response.json();
-        return data.isLiked || false; // Assuming the server returns an `isLiked` boolean
-    } catch (error) {
-        console.error('Error checking if note is liked:', error);
-        return false;
-    }
-}
+//         const data = await response.json();
+//         return data.isLiked || false; // Assuming the server returns an `isLiked` boolean
+//     } catch (error) {
+//         console.error('Error checking if note is liked:', error);
+//         return false;
+//     }
+// }
 
-function setLikeButton() {
-    if (liked) {
-        //unsaves the course
-        fetch('/unlikeNote', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({courseID: courseID, username: username })
-        })
-        .then(() => {
-            liked = false;
-            document.getElementById("like-button").textContent = "Like ♥";
-        })
+// function setLikeButton() {
+//     if (liked) {
+//         //unsaves the course
+//         fetch('/unlikeNote', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({courseID: courseID, username: username })
+//         })
+//         .then(() => {
+//             liked = false;
+//             document.getElementById("like-button").textContent = "Like ♥";
+//         })
 
-        document.getElementById("like-button").style.backgroundColor = "#212121";
-        document.getElementById("like-button").style.color = "#fff";
-    } else {
-        //saves the course
-        fetch('/likeNote', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ courseID: courseID, username: username  })
-        })
-        .then(() => {
-            like = true;
-            document.getElementById("like-button").textContent = "Unlike ♥";
-        })
+//         document.getElementById("like-button").style.backgroundColor = "#212121";
+//         document.getElementById("like-button").style.color = "#fff";
+//     } else {
+//         //saves the course
+//         fetch('/likeNote', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ courseID: courseID, username: username  })
+//         })
+//         .then(() => {
+//             like = true;
+//             document.getElementById("like-button").textContent = "Unlike ♥";
+//         })
 
-        document.getElementById("like-button").style.backgroundColor = "#14FFEC";
-        document.getElementById("like-button").style.color = "#212121";
-    }
-}
+//         document.getElementById("like-button").style.backgroundColor = "#14FFEC";
+//         document.getElementById("like-button").style.color = "#212121";
+//     }
+// }
 
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
@@ -257,7 +257,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     await getNoteInfo(noteID);
     await displayNote(noteID);
-    await setLikeButton();
     generateComments(comments);
 
     window.nextImg = nextImg;
