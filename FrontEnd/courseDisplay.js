@@ -1,5 +1,218 @@
-// courseDisplay.js (cleaned up)
+// courseDisplay.js (cleaned up & fixed)
 
+let iArrPointer = 0;
+let tArrPointer = 0;
+let notesArr = [];
+let filteredNotes = [];
+let imageArray = [];
+let txtArray = [];
+let currentNote = 0;
+let courseID = localStorage.getItem("courseID");
+let username = localStorage.getItem("username");
+let likedNotes;
+let saved;
+
+const imgCanvas = document.getElementById("imgCanvas");
+const txtCanvas = document.getElementById("innerTxt");
+const imgCtx = imgCanvas.getContext("2d");
+const displayImg = new Image();
+
+function displayCourseInfo(courseInfo) {
+    const courseInfoContainer = document.getElementById("course-info");
+    courseInfoContainer.innerHTML = `
+        <h1>${courseInfo.course_name}</h1>
+        <b>Institution: ${courseInfo.institution}</b>
+        <div id="description"><p>${courseInfo.description}</p></div>
+    `;
+}
+
+function generateButtons(notesArr) {
+    const container = document.getElementById("button-container");
+    container.innerHTML = "";
+
+    notesArr.forEach((note) => {
+        let button = document.createElement("button");
+        let title = document.createElement("h1");
+        let likeCount = document.createElement("p");
+
+        title.textContent = note.title;
+        likeCount.innerHTML = `&#x2665; ${note.num_likes}`;
+
+        button.appendChild(title);
+        button.appendChild(likeCount);
+        button.onclick = () => displayNote(note.title, note.note_id);
+
+        container.appendChild(button);
+    });
+}
+
+function sortNotes(criteria) {
+    if (criteria === "title") {
+        filteredNotes.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (criteria === "likes") {
+        filteredNotes.sort((a, b) => b.num_likes - a.num_likes);
+    } else if (criteria === "liked") {
+        fetch('/getLikedNotes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        })
+        .then(res => res.json())
+        .then(data => {
+            likedNotes = (data.likedNotes || []).map(Number);
+            const likedFiltered = notesArr.filter(note => likedNotes.includes(note.note_id));
+            generateButtons(likedFiltered);
+        })
+        .catch(error => console.error('Error fetching liked notes:', error));
+        return;
+    }
+    generateButtons(filteredNotes);
+}
+
+function filterNotes(searchTerm) {
+    filteredNotes = notesArr.filter(note => note.title.toLowerCase().includes(searchTerm));
+    generateButtons(filteredNotes);
+}
+
+async function saveCourse() {
+    console.log(saved + " " + courseID + " " + username);
+
+    const saveBtn = document.getElementById("save");
+
+    if (saved) {
+        // Unsaving the course
+        fetch('/unlikeCourse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID, username })
+        })
+        .then(() => {
+            saved = false;
+            saveBtn.textContent = "Save Course";
+            saveBtn.style.backgroundColor = "#212121";
+            saveBtn.style.color = "#fff";
+        })
+        .catch(err => console.error("Error unsaving course:", err));
+    } else {
+        // Saving the course
+        fetch('/likeCourse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID, username })
+        })
+        .then(() => {
+            saved = true;
+            saveBtn.textContent = "Unsave Course";
+            saveBtn.style.backgroundColor = "#14FFEC";
+            saveBtn.style.color = "#212121";
+        })
+        .catch(err => console.error("Error saving course:", err));
+    }
+}
+
+async function getCourseNoteInfo(courseID) {
+    try {
+        const response = await fetch('/getCourseNoteInfo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseID })
+        });
+
+        const data = await response.json();
+        notesArr = data.noteNames;
+        filteredNotes = [...notesArr];
+        generateButtons(filteredNotes);
+        displayCourseInfo(data.courseInfo);
+    } catch (error) {
+        console.error('Error fetching course info:', error);
+    }
+}
+
+async function populateNote(noteID) {
+    const response = await fetch('/getNoteTombstoneInfo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ noteID })
+    });
+
+    return await response.json();
+}
+
+function closeModal(modalType) {
+    const modal = document.getElementById(modalType);
+    modal.style.display = "none";
+}
+
+function nextImg(forward) {
+    iArrPointer = (forward ? (iArrPointer + 1) : (iArrPointer - 1 + imageArray.length)) % imageArray.length;
+    displayImg.src = imageArray[iArrPointer];
+    displayImg.onload = () => {
+        imgCanvas.width = displayImg.naturalWidth;
+        imgCanvas.height = displayImg.naturalHeight;
+        imgCtx.drawImage(displayImg, 0, 0);
+    };
+}
+
+function nextTxt(forward) {
+    tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length;
+    txtCanvas.innerHTML = txtArray[tArrPointer];
+}
+
+const backLink = document.getElementById('back-link');
+if (backLink) {
+    backLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (document.referrer) {
+            window.location.href = document.referrer;
+        } else {
+            window.history.back();
+        }
+    });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (!username) {
+        alert("Please log in first");
+        return (window.location.href = "login.html");
+    }
+
+    fetch('/isCourseLiked', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseID, username })
+    })
+    .then(res => res.json())
+    .then(data => {
+        saved = data.isLiked;
+        const saveBtn = document.getElementById("save");
+        saveBtn.textContent = saved ? "Unsave Course" : "Save Course";
+        saveBtn.style.backgroundColor = saved ? "#14FFEC" : "#212121";
+        saveBtn.style.color = saved ? "#212121" : "#fff";
+    })
+    .catch(error => console.error('Error checking saved course:', error));
+
+    getCourseNoteInfo(courseID);
+    sortNotes("title");
+
+    document.getElementById("sort-button").addEventListener("click", () => {
+        sortNotes(document.getElementById("sort-options").value);
+    });
+
+    document.getElementById("search").addEventListener("input", (e) => {
+        filterNotes(e.target.value.toLowerCase());
+    });
+
+    window.nextImg = nextImg;
+    window.nextTxt = nextTxt;
+});
+
+function displayNote(noteName, noteID) {
+    localStorage.setItem("noteName", noteName);
+    localStorage.setItem("noteID", noteID);
+    window.location.href = `noteDisplay.html`;    
+}
+
+/*
 let iArrPointer = 0;
 let tArrPointer = 0;
 let notesArr = [];
@@ -11,6 +224,9 @@ let courseID;
 let username;
 let likedNotes;
 let saved;
+let username = localStorage.getItem("username");
+let courseID = localStorage.getItem("courseID");
+
 
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("innerTxt");
@@ -76,6 +292,7 @@ function filterNotes(searchTerm) {
 }
 
 async function saveCourse() {
+    console.log( saved +" "+courseid +" "+ username)
     if (saved) {
         //unsaves the course
         fetch('/unlikeCourse', {
