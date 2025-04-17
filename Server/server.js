@@ -197,6 +197,8 @@ app.post('/getLikedCourses', async (req, res) => {
         const result = await client.query(query, [username]);
         const likedCourses = result.rows[0]?.liked_courses || [];
 
+      console.log("Liked courses: " + likedCourses);
+
         const query2 = `
             SELECT course_name, course_id
             FROM "Courses"
@@ -211,6 +213,7 @@ app.post('/getLikedCourses', async (req, res) => {
         }
 
         const courseArr = result2.rows.map(row => ({ course_id: row.course_id, course_name: row.course_name }));
+      console.log("Course arr: " + courseArr);
         res.status(200).json({ courseArr: courseArr });
     } catch (error) {
         console.error('Error fetching liked courses:', error);
