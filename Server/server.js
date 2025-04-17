@@ -857,7 +857,7 @@ app.post('/getLikedCourses', async (req, res) => {
 // See if the user has already liked a course
 app.post('/isNoteLiked', async (req, res) => {
     try {
-        const { username, noteID } = req.body;
+        const { noteID, username } = req.body;
 
         if (!username || !noteID) {
             res.status(400).json({ error: 'Missing username or noteID' });
