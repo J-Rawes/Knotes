@@ -25,6 +25,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dropdownMenu.style.display = 'none';
       }
     });
+}); 
 
 function generateButtons(coursesArr) { 
 
