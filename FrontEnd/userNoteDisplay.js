@@ -290,8 +290,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const noteID = localStorage.getItem("noteID");
     currentNote = noteID;
     const username = localStorage.getItem("username");
-
-    await generateComments(currentNote);
     
     if (!username) {
         alert("Please log in first");
@@ -299,6 +297,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     await displayNote(noteID);
+    generateComments(noteID);
 
     // Attach event listeners for adding comments
     document.getElementById("addCommentButton").addEventListener("click", () => {
