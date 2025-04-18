@@ -179,7 +179,7 @@ async function deleteNote() {
 
         let data = await response.json();
         if (data.success) {
-            window.location.href = `myUploadedNotes.html`;
+            window.location.href = `homepage.html`;
         } else {
             console.error("Failed to delete note:", data.message);
             document.getElementById("message").innerText = "Failed to delete note.";
