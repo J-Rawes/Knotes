@@ -108,32 +108,64 @@ function nextTxt(forward) {
 }
 
 // Function to generate comments
-function generateComments(commentsArray) {
-    const container = document.getElementById("comments");
-    container.innerHTML = ""; // Clear existing content
+async function generateComments(noteID) {
+    try {
+        console.log(noteID);
+        // Fetch comments from the server
+        const response = await fetch('/getComments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteID })
+        });
+        console.log(response);
+        if (!response.ok) {
+            throw new Error(`Error fetching comments: ${response.statusText}`);
+        }
 
-    commentsArray.forEach((comment) => {
-        // Create a div for each comment
-        let commentDiv = document.createElement("div");
-        commentDiv.className = "comment-div";
+        const data = await response.json();
+        const commentsArray = data.comments || [];
 
-        // Create an h2 for the comment author
-        let authorHeading = document.createElement("h2");
-        authorHeading.textContent = comment.author + ":";
-        authorHeading.className = "comment-author";
+        // Get the comments container
+        const container = document.getElementById("comments");
+        container.innerHTML = ""; // Clear existing content
 
-        // Create a p for the comment text
-        let commentText = document.createElement("p");
-        commentText.textContent = comment.text;
-        commentText.className = "comment-text";
+        if (commentsArray.length === 0) {
+            // Display "No comments" message if there are no comments
+            const noCommentsMessage = document.createElement("p");
+            noCommentsMessage.textContent = "No comments yet. Be the first to comment!";
+            noCommentsMessage.className = "no-comments-message";
+            container.appendChild(noCommentsMessage);
+            return;
+        }
 
-        // Append the author and text to the comment div
-        commentDiv.appendChild(authorHeading);
-        commentDiv.appendChild(commentText);
+        // Generate comments
+        commentsArray.forEach((comment) => {
+            // Create a div for each comment
+            let commentDiv = document.createElement("div");
+            commentDiv.className = "comment-div";
 
-        // Append the comment div to the container
-        container.appendChild(commentDiv);
-    });
+            // Create an h2 for the comment author
+            let authorHeading = document.createElement("h2");
+            authorHeading.textContent = `${comment.uname}:`; // Assuming `comment.author` contains the author's name
+            authorHeading.className = "comment-author";
+
+            // Create a p for the comment text
+            let commentText = document.createElement("p");
+            commentText.textContent = comment.content; // Assuming `comment.text` contains the comment text
+            commentText.className = "comment-text";
+
+            // Append the author and text to the comment div
+            commentDiv.appendChild(authorHeading);
+            commentDiv.appendChild(commentText);
+
+            // Append the comment div to the container
+            container.appendChild(commentDiv);
+        });
+    } catch (error) {
+        console.error("Error generating comments:", error);
+        const container = document.getElementById("comments");
+        container.innerHTML = "<p class='error-message'>Failed to load comments. Please try again later.</p>";
+    }
 }
 
 // Function to add a comment
