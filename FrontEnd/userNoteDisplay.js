@@ -308,6 +308,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         return (window.location.href = "login.html");
     }
 
+    console.log(noteID);
     await displayNote(noteID);
     generateComments(noteID);
 
