@@ -42,7 +42,6 @@ async function displayNote(noteID) {
         // Load up the images and text
         imageArray = response.images || [];
         txtArray = response.text || [];
-        comments = response.comments || []; // Load comments from the response
 
         // Get the note's "tombstone" info
         const noteTombstone = response.noteInfo;
@@ -68,9 +67,6 @@ async function displayNote(noteID) {
             txtCanvas.style.display = "block";
             if (txtArray.length > 1) document.getElementById("t").style.display = "block"; // Show the "next" button if needed
         }
-
-        // Generate comments
-        generateComments(comments);
 
     } catch (err) {
         console.error("Error displaying note:", err);
