@@ -279,6 +279,11 @@ function openModal() {
     modal.style.display = "block";  // Show the modal
 }
 
+function closeModal(modalType) {
+    const modal = document.getElementById(String(modalType));
+    modal.style.display = "none";  // Hide the modal
+}
+
 // Event listener for DOMContentLoaded
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
