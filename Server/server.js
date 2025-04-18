@@ -581,6 +581,31 @@ app.post('/verifyUsername', async (req, res) => {
     });
 });
 
+app.post('/addComment', async (req, res) => {
+    try {
+        const { noteID, author, text } = req.body;
+
+        if (!noteID || !author || !text) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Generate a unique comment ID
+        const commentID = await generateID("Comments", "comment_id");
+
+        // Insert the comment into the database
+        const query = `
+            INSERT INTO "Comments" (comment_id, note_id, author, text)
+            VALUES ($1, $2, $3, $4)
+        `;
+        await client.query(query, [commentID, noteID, author, text]);
+
+        res.status(200).json({ success: true, message: 'Comment added successfully' });
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Delete Note Endpoint
 app.post('/deleteNote', async (req, res) => {
     try {
