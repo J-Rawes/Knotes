@@ -257,17 +257,21 @@ function likeNote() {
     }
 }
 
-function sendComment() {
+async function sendComment() {
 
     const text = document.getElementById("textInput").value;
     const noteID = localStorage.getItem("noteID");
     const username = localStorage.getItem("username");
 
-    fetch('/addComment', {
+    const check = await fetch('/addComment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ noteID: noteID, author: username ,text: text })
-        })
+    });
+
+    if(check){
+        window.location.href = "noteDisplay.html"
+    }
 }
 
 // Start it all
