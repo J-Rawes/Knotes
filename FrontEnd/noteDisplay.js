@@ -257,6 +257,19 @@ function likeNote() {
     }
 }
 
+function sendComment() {
+
+    const text = document.getElementById("textInput").value;
+    const noteID = localStorage.getItem("noteID");
+    const username = localStorage.getItem("username");
+
+    fetch('/addComment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteID: noteID, author: username ,text: text })
+        }))
+}
+
 // Start it all
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
