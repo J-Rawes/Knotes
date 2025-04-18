@@ -202,15 +202,27 @@ async function sendComment() {
     const noteID = localStorage.getItem("noteID");
     const username = localStorage.getItem("username");
 
-    const check = await fetch('/addComment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteID: noteID, author: username ,text: text })
-    });
+    try {
+        const response = await fetch('/addComment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ noteID: noteID, author: username ,text: text })
+        });
 
-    if(check){
-        window.location.href = "noteDisplay.html"
-    }
+        const data = await response.json();
+
+        if (data.success) {
+            // Reload the page after successfully adding the comment
+            window.location.reload();
+        } else {
+            console.error("Failed to add comment:", data.message);
+            alert("Failed to add comment. Please try again.");
+        }
+
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        alert("An error occurred while adding the comment. Please try again.");
+    }  
 }
 
 async function generateComments(noteID) {
