@@ -107,87 +107,87 @@ function nextTxt(forward) {
     innerTxt.innerHTML = txtArray[tArrPointer]; // Update the text
 }
 
-// Function to generate comments
-async function generateComments(noteID) {
-    try {
-        console.log(noteID);
-        // Fetch comments from the server
-        const response = await fetch('/getComments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteID })
-        });
-        console.log(response);
-        if (!response.ok) {
-            throw new Error(`Error fetching comments: ${response.statusText}`);
-        }
+// // Function to generate comments
+// async function generateComments(noteID) {
+//     try {
+//         console.log(noteID);
+//         // Fetch comments from the server
+//         const response = await fetch('/getComments', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ noteID })
+//         });
+//         console.log(response);
+//         if (!response.ok) {
+//             throw new Error(`Error fetching comments: ${response.statusText}`);
+//         }
 
-        const data = await response.json();
-        const commentsArray = data.comments || [];
+//         const data = await response.json();
+//         const commentsArray = data.comments || [];
 
-        // Get the comments container
-        const container = document.getElementById("comments");
-        container.innerHTML = ""; // Clear existing content
+//         // Get the comments container
+//         const container = document.getElementById("comments");
+//         container.innerHTML = ""; // Clear existing content
 
-        if (commentsArray.length === 0) {
-            // Display "No comments" message if there are no comments
-            const noCommentsMessage = document.createElement("p");
-            noCommentsMessage.textContent = "No comments yet. Be the first to comment!";
-            noCommentsMessage.className = "no-comments-message";
-            container.appendChild(noCommentsMessage);
-            return;
-        }
+//         if (commentsArray.length === 0) {
+//             // Display "No comments" message if there are no comments
+//             const noCommentsMessage = document.createElement("p");
+//             noCommentsMessage.textContent = "No comments yet. Be the first to comment!";
+//             noCommentsMessage.className = "no-comments-message";
+//             container.appendChild(noCommentsMessage);
+//             return;
+//         }
 
-        // Generate comments
-        commentsArray.forEach((comment) => {
-            // Create a div for each comment
-            let commentDiv = document.createElement("div");
-            commentDiv.className = "comment-div";
+//         // Generate comments
+//         commentsArray.forEach((comment) => {
+//             // Create a div for each comment
+//             let commentDiv = document.createElement("div");
+//             commentDiv.className = "comment-div";
 
-            // Create an h2 for the comment author
-            let authorHeading = document.createElement("h2");
-            authorHeading.textContent = `${comment.uname}:`; // Assuming `comment.author` contains the author's name
-            authorHeading.className = "comment-author";
+//             // Create an h2 for the comment author
+//             let authorHeading = document.createElement("h2");
+//             authorHeading.textContent = `${comment.uname}:`; // Assuming `comment.author` contains the author's name
+//             authorHeading.className = "comment-author";
 
-            // Create a p for the comment text
-            let commentText = document.createElement("p");
-            commentText.textContent = comment.content; // Assuming `comment.text` contains the comment text
-            commentText.className = "comment-text";
+//             // Create a p for the comment text
+//             let commentText = document.createElement("p");
+//             commentText.textContent = comment.content; // Assuming `comment.text` contains the comment text
+//             commentText.className = "comment-text";
 
-            // Append the author and text to the comment div
-            commentDiv.appendChild(authorHeading);
-            commentDiv.appendChild(commentText);
+//             // Append the author and text to the comment div
+//             commentDiv.appendChild(authorHeading);
+//             commentDiv.appendChild(commentText);
 
-            // Append the comment div to the container
-            container.appendChild(commentDiv);
-        });
-    } catch (error) {
-        console.error("Error generating comments:", error);
-        const container = document.getElementById("comments");
-        container.innerHTML = "<p class='error-message'>Failed to load comments. Please try again later.</p>";
-    }
-}
+//             // Append the comment div to the container
+//             container.appendChild(commentDiv);
+//         });
+//     } catch (error) {
+//         console.error("Error generating comments:", error);
+//         const container = document.getElementById("comments");
+//         container.innerHTML = "<p class='error-message'>Failed to load comments. Please try again later.</p>";
+//     }
+// }
 
-// Function to add a comment
-async function addComment(author, text) {
-    try {
-        const response = await fetch('/addComment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteID: currentNote, author, text })
-        });
+// // Function to add a comment
+// async function addComment(author, text) {
+//     try {
+//         const response = await fetch('/addComment', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ noteID: currentNote, author, text })
+//         });
 
-        const data = await response.json();
-        if (data.success) {
-            comments.push({ author, text }); // Add the new comment to the local array
-            generateComments(comments); // Regenerate the comments section
-        } else {
-            console.error("Failed to add comment:", data.message);
-        }
-    } catch (error) {
-        console.error("Error adding comment:", error);
-    }
-}
+//         const data = await response.json();
+//         if (data.success) {
+//             comments.push({ author, text }); // Add the new comment to the local array
+//             generateComments(comments); // Regenerate the comments section
+//         } else {
+//             console.error("Failed to add comment:", data.message);
+//         }
+//     } catch (error) {
+//         console.error("Error adding comment:", error);
+//     }
+// }
 
 // Function to delete a note
 async function deleteNote() {
