@@ -581,35 +581,36 @@ app.post('/verifyUsername', async (req, res) => {
     });
 });
 
+// Delete Note Endpoint
 app.post('/deleteNote', async (req, res) => {
-    let body = '';
+    try {
+        const { noteID } = req.body;
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-        try {
-            const { noteID } = JSON.parse(body);
-            const query = 'DELETE FROM "Notes" WHERE "note_id" = $1';
-            const result = await client.query(query, [noteID]);
-            
-            if (result.rowCount === 0) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Note not found' }));
-                return;
-            }
-            else{
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end("Note Successfully Deleted");
-                return;
-            }
-        } catch (error) {
-            console.error('Error verifying username:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Server error' }));
+        if (!noteID) {
+            return res.status(400).json({ error: 'Missing note ID' });
         }
-    });
+
+        // Delete associated images and text entries
+        const deleteImagesQuery = 'DELETE FROM "Images" WHERE note_id = $1';
+        const deleteTextQuery = 'DELETE FROM "Text" WHERE note_id = $1';
+        const deleteNoteQuery = 'DELETE FROM "Notes" WHERE note_id = $1';
+
+        await client.query('BEGIN'); // Start transaction
+        await client.query(deleteImagesQuery, [noteID]);
+        await client.query(deleteTextQuery, [noteID]);
+        const result = await client.query(deleteNoteQuery, [noteID]);
+        await client.query('COMMIT'); // Commit transaction
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        res.status(200).json({ success: true, message: 'Note deleted successfully' });
+    } catch (error) {
+        await client.query('ROLLBACK'); // Rollback transaction on error
+        console.error('Error deleting note:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 app.get('/protected', async (req, res) => {
