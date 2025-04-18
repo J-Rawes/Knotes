@@ -1,3 +1,4 @@
+const { not } = require("is");
 
 let iArrPointer = 0; // Image pointer 
 let tArrPointer = 0; // Text pointer (no "texting" while driving though!)
@@ -148,13 +149,14 @@ function downloadNote() {
 // Function to generate comments based on db data
 async function generateComments(noteID) {
     try {
+        console.log(noteID);
         // Fetch comments from the server
         const response = await fetch('/getComments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ noteID })
         });
-
+        console.log(response);
         if (!response.ok) {
             throw new Error(`Error fetching comments: ${response.statusText}`);
         }
@@ -183,12 +185,12 @@ async function generateComments(noteID) {
 
             // Create an h2 for the comment author
             let authorHeading = document.createElement("h2");
-            authorHeading.textContent = `${comment.author}:`; // Assuming `comment.author` contains the author's name
+            authorHeading.textContent = `${comment.uname}:`; // Assuming `comment.author` contains the author's name
             authorHeading.className = "comment-author";
 
             // Create a p for the comment text
             let commentText = document.createElement("p");
-            commentText.textContent = comment.text; // Assuming `comment.text` contains the comment text
+            commentText.textContent = comment.content; // Assuming `comment.text` contains the comment text
             commentText.className = "comment-text";
 
             // Append the author and text to the comment div
