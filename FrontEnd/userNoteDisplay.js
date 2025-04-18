@@ -168,26 +168,26 @@ function nextTxt(forward) {
 //     }
 // }
 
-// // Function to add a comment
-// async function addComment(author, text) {
-//     try {
-//         const response = await fetch('/addComment', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ noteID: currentNote, author, text })
-//         });
+// Function to add a comment
+async function addComment(author, text) {
+    try {
+        const response = await fetch('/addComment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteID: currentNote, author, text })
+        });
 
-//         const data = await response.json();
-//         if (data.success) {
-//             comments.push({ author, text }); // Add the new comment to the local array
-//             generateComments(comments); // Regenerate the comments section
-//         } else {
-//             console.error("Failed to add comment:", data.message);
-//         }
-//     } catch (error) {
-//         console.error("Error adding comment:", error);
-//     }
-// }
+        const data = await response.json();
+        if (data.success) {
+            comments.push({ author, text }); // Add the new comment to the local array
+            generateComments(comments); // Regenerate the comments section
+        } else {
+            console.error("Failed to add comment:", data.message);
+        }
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+}
 
 // Function to delete a note
 async function deleteNote() {
