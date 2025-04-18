@@ -606,6 +606,32 @@ app.post('/addComment', async (req, res) => {
     }
 });
 
+// Endpoint to retrieve comments for a specific note
+app.post('/getComments', async (req, res) => {
+    try {
+        const { noteID } = req.body;
+
+        if (!noteID) {
+            return res.status(400).json({ error: 'Missing note ID' });
+        }
+
+        // Query to get comments for the specified note
+        const query = `
+            SELECT comment_id, author, text
+            FROM "Comments"
+            WHERE note_id = $1
+            ORDER BY comment_id DESC
+        `;
+
+        const result = await client.query(query, [noteID]);
+
+        res.status(200).json({ comments: result.rows });
+    } catch (error) {
+        console.error('Error retrieving comments:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Delete Note Endpoint
 app.post('/deleteNote', async (req, res) => {
     try {
