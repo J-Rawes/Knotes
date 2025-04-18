@@ -1,4 +1,4 @@
-const { not } = require("is");
+//const { not } = require("is");
 
 let iArrPointer = 0; // Image pointer 
 let tArrPointer = 0; // Text pointer (no "texting" while driving though!)
