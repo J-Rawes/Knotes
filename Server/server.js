@@ -617,7 +617,7 @@ app.post('/getComments', async (req, res) => {
 
         // Query to get comments for the specified note
         const query = `
-            SELECT comment_id, author, text
+            SELECT comment_id, uname, content
             FROM "Comments"
             WHERE note_id = $1
             ORDER BY comment_id DESC
