@@ -54,16 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Onclick: display the note's details (images/text)
       button.addEventListener("click", () => displayNote(note.title, note.note_id));
   
-      // Add a delete button for each note
-      let deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.className = "delete-button";
-      deleteButton.addEventListener("click", (event) => {
-        event.stopPropagation(); // Prevent triggering the displayNote function
-        deleteNote(note.note_id);
-      });
-
-      button.appendChild(deleteButton);
       container.appendChild(button);
     });
   }
@@ -135,29 +125,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Function to delete a note
-  async function deleteNote(noteID) {
-    try {
-      const response = await fetch('/deleteNote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ noteID })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert("Note deleted successfully!");
-        // Redirect to the homepage after successful deletion
-        window.location.href = "homepage.html";
-      } else {
-        console.error("Failed to delete note:", data.message);
-        alert("Failed to delete note.");
-      }
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      alert("Error deleting note.");
-    }
-  }
 
   // Back link functionality
   document.getElementById("back-link").addEventListener("click", function (event) {
