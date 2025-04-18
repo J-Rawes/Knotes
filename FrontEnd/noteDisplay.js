@@ -21,12 +21,6 @@ const imgCtx = imgCanvas.getContext("2d");
 const displayImg = new Image(); // Our image loader
 const innerTxt = document.getElementById("innerTxt");
 
-const comments = [
-    { author: "Alice", text: "This is a great note!" },
-    { author: "Bob", text: "Thanks for sharing!" },
-    { author: "Charlie", text: "Very insightful!" }
-];
-
 // Function to display a note
 async function displayNote(noteID) {
     try {
@@ -296,7 +290,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     await getNoteInfo(noteID);
     await displayNote(noteID);
-    generateComments(comments);
+    generateComments(noteID);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
