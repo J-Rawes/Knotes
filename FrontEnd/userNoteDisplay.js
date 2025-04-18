@@ -1,5 +1,3 @@
-
-
 let iArrPointer = 0; // Image pointer 
 let tArrPointer = 0; // Text pointer (no "texting" while driving though!)
 
@@ -59,10 +57,10 @@ async function displayNote(noteID) {
             imgCanvas.style.display = "block";
             if (imageArray.length > 1) document.getElementById("i").style.display = "block"; // Show the "next" button if needed.
             displayImg.src = imageArray[0]; // Load the first image.
-            displayImg.onload = null; // Clear any previous onload handler.
             displayImg.onload = () => {
                 imgCanvas.width = displayImg.naturalWidth; // Set canvas size to match the image.
                 imgCanvas.height = displayImg.naturalHeight;
+                imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear the canvas before drawing
                 imgCtx.drawImage(displayImg, 0, 0); // Draw the image on the canvas.
             };
         }
@@ -95,10 +93,10 @@ function nextImg(forward) {
     if (imageArray.length === 0) return; // No images?
     iArrPointer = (forward ? (iArrPointer + 1) : (iArrPointer - 1 + imageArray.length)) % imageArray.length; // Move the pointer.
     displayImg.src = imageArray[iArrPointer]; // Load the new image.
-    displayImg.onload = null; // Clear any previous onload handler.
     displayImg.onload = () => {
         imgCanvas.width = displayImg.naturalWidth; // Resize the canvas.
         imgCanvas.height = displayImg.naturalHeight;
+        imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear the canvas before drawing
         imgCtx.drawImage(displayImg, 0, 0); // Draw the new image.
     };
 }
@@ -118,7 +116,7 @@ function closeModal(modalType) {
 // Function to go to the next or previous text chunk
 function nextTxt(forward) {
     tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length; // Move the pointer.
-    txtCanvas.innerHTML = txtArray[tArrPointer]; // Update the text
+    innerTxt.innerHTML = txtArray[tArrPointer]; // Update the text
 }
 
 function generateComments(commentsArray) {
@@ -132,7 +130,7 @@ function generateComments(commentsArray) {
 
         // Create an h2 for the comment author
         let authorHeading = document.createElement("h2");
-        authorHeading.textContent = comment.author +":"; // Assuming `comment.author` contains the author's name
+        authorHeading.textContent = comment.author + ":"; // Assuming `comment.author` contains the author's name
         authorHeading.className = "comment-author";
 
         // Create a p for the comment text
@@ -149,24 +147,61 @@ function generateComments(commentsArray) {
     });
 }
 
-async function deleteNote() {
-  try {
-    let response = await fetch('/deleteNote', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ noteID: currentNote })
-    });
+async function addComment(author, text) {
+    try {
+        const response = await fetch('/addComment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteID: currentNote, author, text })
+        });
 
-    let data = await response.json();
-    window.location.href = `myUploadedNotes.html`;   
-    return data;
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    document.getElementById("message").innerText = "Error connecting to server.";
-    return "Error";
-  }
+        const data = await response.json();
+        if (data.success) {
+            comments.push({ author, text });
+            generateComments(comments);
+        } else {
+            console.error("Failed to add comment:", data.message);
+        }
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+}
+
+async function deleteNote() {
+    try {
+        let response = await fetch('/deleteNote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ noteID: currentNote })
+        });
+
+        let data = await response.json();
+        if (data.success) {
+            window.location.href = `myUploadedNotes.html`;
+        } else {
+            console.error("Failed to delete note:", data.message);
+            document.getElementById("message").innerText = "Failed to delete note.";
+        }
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        document.getElementById("message").innerText = "Error connecting to server.";
+    }
+}
+
+function downloadNote() {
+    const element = document.createElement("a");
+    const noteContent = {
+        images: imageArray,
+        text: txtArray
+    };
+    const file = new Blob([JSON.stringify(noteContent, null, 2)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = `note_${currentNote}.json`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -175,18 +210,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     currentNote = noteID;
     const username = localStorage.getItem("username");
 
-    console.log(noteID);
-
     if (!username) {
         alert("Please log in first");
         return (window.location.href = "login.html");
     }
 
-    await getNoteInfo(noteID);
     await displayNote(noteID);
     generateComments(comments);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
+    window.addComment = addComment;
+    window.downloadNote = downloadNote;
 });
-
