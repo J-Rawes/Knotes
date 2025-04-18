@@ -594,7 +594,7 @@ app.post('/addComment', async (req, res) => {
 
         // Insert the comment into the database
         const query = `
-            INSERT INTO "Comments" (comment_id, note_id, author, text)
+            INSERT INTO "Comments" (comment_id, note_id, uname, content)
             VALUES ($1, $2, $3, $4)
         `;
         await client.query(query, [commentID, noteID, author, text]);
