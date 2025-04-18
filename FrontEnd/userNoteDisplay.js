@@ -286,7 +286,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     currentNote = noteID;
     const username = localStorage.getItem("username");
 
-    generateComments(localStorage.getItem("noteID"););
+    generateComments(localStorage.getItem("noteID"));
     
     if (!username) {
         alert("Please log in first");
