@@ -146,11 +146,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const data = await response.json();
       if (data.success) {
-        // Remove the deleted note from the arrays and regenerate buttons
-        notesArr = notesArr.filter(note => note.note_id !== noteID);
-        filteredNotes = filteredNotes.filter(note => note.note_id !== noteID);
-        generateButtons(filteredNotes);
         alert("Note deleted successfully!");
+        // Redirect to the homepage after successful deletion
+        window.location.href = "homepage.html";
       } else {
         console.error("Failed to delete note:", data.message);
         alert("Failed to delete note.");
