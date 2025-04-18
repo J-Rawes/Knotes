@@ -286,6 +286,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     currentNote = noteID;
     const username = localStorage.getItem("username");
 
+    generateComments(localStorage.getItem("noteID"););
+    
     if (!username) {
         alert("Please log in first");
         return (window.location.href = "login.html");
@@ -306,8 +308,6 @@ window.addEventListener("DOMContentLoaded", async () => {
             alert("Please fill out both fields before submitting.");
         }
     });
-
-    generateComments(noteID);
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
