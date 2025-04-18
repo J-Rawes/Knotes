@@ -1,5 +1,5 @@
 let iArrPointer = 0; // Image pointer 
-let tArrPointer = 0; // Text pointer (no "texting" while driving though!)
+let tArrPointer = 0; // Text pointer
 
 let notesArr = [];
 let filteredNotes = [];
@@ -10,18 +10,14 @@ let txtArray = [];
 let currentNote = 0;
 let courseID;
 
-// Grab the canvas elements and their contexts. Time to "draw" some conclusions!
+// Grab the canvas elements and their contexts
 const imgCanvas = document.getElementById("imgCanvas");
 const txtCanvas = document.getElementById("txtCanvas");
 const imgCtx = imgCanvas.getContext("2d");
 const displayImg = new Image(); // Our image loader
 const innerTxt = document.getElementById("innerTxt");
 
-const comments = [
-    { author: "Alice", text: "This is a great note!" },
-    { author: "Bob", text: "Thanks for sharing!" },
-    { author: "Charlie", text: "Very insightful!" }
-];
+let comments = []; // Initialize comments array
 
 // Function to display a note
 async function displayNote(noteID) {
@@ -37,7 +33,7 @@ async function displayNote(noteID) {
         // Fetch the note info
         const response = await getNoteInfo(noteID);
 
-        // If the response is empty or weird, RUN
+        // If the response is empty or invalid
         if (!response || !response.noteInfo) {
             console.error("Invalid response for noteID:", noteID, response);
             return;
@@ -46,22 +42,23 @@ async function displayNote(noteID) {
         // Load up the images and text
         imageArray = response.images || [];
         txtArray = response.text || [];
+        comments = response.comments || []; // Load comments from the response
 
-        // Get the note's "tombstone" info. Don't worry, it's not as grave as it sounds.
+        // Get the note's "tombstone" info
         const noteTombstone = response.noteInfo;
         document.getElementById("noteTitle").textContent = noteTombstone.title;
         document.getElementById("noteAuthor").textContent = `By: ${noteTombstone.username}`;
 
-        // If there are images, show the first one and prepare the canvas.
+        // If there are images, show the first one and prepare the canvas
         if (imageArray.length > 0) {
             imgCanvas.style.display = "block";
-            if (imageArray.length > 1) document.getElementById("i").style.display = "block"; // Show the "next" button if needed.
-            displayImg.src = imageArray[0]; // Load the first image.
+            if (imageArray.length > 1) document.getElementById("i").style.display = "block"; // Show the "next" button if needed
+            displayImg.src = imageArray[0]; // Load the first image
             displayImg.onload = () => {
-                imgCanvas.width = displayImg.naturalWidth; // Set canvas size to match the image.
+                imgCanvas.width = displayImg.naturalWidth; // Set canvas size to match the image
                 imgCanvas.height = displayImg.naturalHeight;
                 imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear the canvas before drawing
-                imgCtx.drawImage(displayImg, 0, 0); // Draw the image on the canvas.
+                imgCtx.drawImage(displayImg, 0, 0); // Draw the image on the canvas
             };
         }
 
@@ -69,8 +66,11 @@ async function displayNote(noteID) {
         if (txtArray.length > 0) {
             innerTxt.innerHTML = txtArray[0];
             txtCanvas.style.display = "block";
-            if (txtArray.length > 1) document.getElementById("t").style.display = "block"; // Show the "next" button if needed.
+            if (txtArray.length > 1) document.getElementById("t").style.display = "block"; // Show the "next" button if needed
         }
+
+        // Generate comments
+        generateComments(comments);
 
     } catch (err) {
         console.error("Error displaying note:", err);
@@ -82,7 +82,7 @@ async function getNoteInfo(noteID) {
     const response = await fetch('/getNoteTombstoneInfo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ noteID }) // Send the note ID in the body. Very official.
+        body: JSON.stringify({ noteID })
     });
 
     return await response.json(); // Return the parsed response
@@ -91,34 +91,23 @@ async function getNoteInfo(noteID) {
 // Function to go to the next or previous image
 function nextImg(forward) {
     if (imageArray.length === 0) return; // No images?
-    iArrPointer = (forward ? (iArrPointer + 1) : (iArrPointer - 1 + imageArray.length)) % imageArray.length; // Move the pointer.
-    displayImg.src = imageArray[iArrPointer]; // Load the new image.
+    iArrPointer = (forward ? (iArrPointer + 1) : (iArrPointer - 1 + imageArray.length)) % imageArray.length; // Move the pointer
+    displayImg.src = imageArray[iArrPointer]; // Load the new image
     displayImg.onload = () => {
-        imgCanvas.width = displayImg.naturalWidth; // Resize the canvas.
+        imgCanvas.width = displayImg.naturalWidth; // Resize the canvas
         imgCanvas.height = displayImg.naturalHeight;
         imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height); // Clear the canvas before drawing
-        imgCtx.drawImage(displayImg, 0, 0); // Draw the new image.
+        imgCtx.drawImage(displayImg, 0, 0); // Draw the new image
     };
-}
-
-function openModal() {
-    const modal = document.getElementById("textModal");
-    const textInput = document.getElementById("textInput");
-    modal.style.display = "block";  // Show the modal
-}
-
-// Close Modal Function
-function closeModal(modalType) {
-    const modal = document.getElementById(String(modalType));
-    modal.style.display = "none";  // Hide the modal
 }
 
 // Function to go to the next or previous text chunk
 function nextTxt(forward) {
-    tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length; // Move the pointer.
+    tArrPointer = (forward ? (tArrPointer + 1) : (tArrPointer - 1 + txtArray.length)) % txtArray.length; // Move the pointer
     innerTxt.innerHTML = txtArray[tArrPointer]; // Update the text
 }
 
+// Function to generate comments
 function generateComments(commentsArray) {
     const container = document.getElementById("comments");
     container.innerHTML = ""; // Clear existing content
@@ -130,12 +119,12 @@ function generateComments(commentsArray) {
 
         // Create an h2 for the comment author
         let authorHeading = document.createElement("h2");
-        authorHeading.textContent = comment.author + ":"; // Assuming `comment.author` contains the author's name
+        authorHeading.textContent = comment.author + ":";
         authorHeading.className = "comment-author";
 
         // Create a p for the comment text
         let commentText = document.createElement("p");
-        commentText.textContent = comment.text; // Assuming `comment.text` contains the comment text
+        commentText.textContent = comment.text;
         commentText.className = "comment-text";
 
         // Append the author and text to the comment div
@@ -147,6 +136,7 @@ function generateComments(commentsArray) {
     });
 }
 
+// Function to add a comment
 async function addComment(author, text) {
     try {
         const response = await fetch('/addComment', {
@@ -157,8 +147,8 @@ async function addComment(author, text) {
 
         const data = await response.json();
         if (data.success) {
-            comments.push({ author, text });
-            generateComments(comments);
+            comments.push({ author, text }); // Add the new comment to the local array
+            generateComments(comments); // Regenerate the comments section
         } else {
             console.error("Failed to add comment:", data.message);
         }
@@ -167,6 +157,7 @@ async function addComment(author, text) {
     }
 }
 
+// Function to delete a note
 async function deleteNote() {
     try {
         let response = await fetch('/deleteNote', {
@@ -190,6 +181,7 @@ async function deleteNote() {
     }
 }
 
+// Function to download a note
 function downloadNote() {
     const element = document.createElement("a");
     const noteContent = {
@@ -204,6 +196,7 @@ function downloadNote() {
     document.body.removeChild(element);
 }
 
+// Event listener for DOMContentLoaded
 window.addEventListener("DOMContentLoaded", async () => {
     const noteName = localStorage.getItem("noteName");
     const noteID = localStorage.getItem("noteID");
@@ -216,7 +209,20 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     await displayNote(noteID);
-    generateComments(comments);
+
+    // Attach event listeners for adding comments
+    document.getElementById("addCommentButton").addEventListener("click", () => {
+        const author = document.getElementById("commentAuthor").value;
+        const text = document.getElementById("commentText").value;
+
+        if (author && text) {
+            addComment(author, text);
+            document.getElementById("commentAuthor").value = ""; // Clear input fields
+            document.getElementById("commentText").value = "";
+        } else {
+            alert("Please fill out both fields before submitting.");
+        }
+    });
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
