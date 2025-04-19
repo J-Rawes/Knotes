@@ -187,6 +187,9 @@ async function addComment(author, text) {
 
 // Function to delete a note
 async function deleteNote() {
+
+  let text = "Are you sure you want to delete your note?";
+  if (confirm(text) == true) {  
     try {
         let response = await fetch('/deleteNote', {
             method: 'POST',
@@ -207,6 +210,7 @@ async function deleteNote() {
         console.error("Fetch Error:", error);
         document.getElementById("message").innerText = "Error connecting to server.";
     }
+  }
 }
 
 // Function to download a note
