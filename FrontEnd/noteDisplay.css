@@ -185,6 +185,7 @@ button:hover, #downloadBtn:hover {
 }
   
   #imgCanvas {
+    object-fit: cover;
     grid-row: 1/2;
     grid-column: 1/2;
     float: left;
@@ -192,6 +193,7 @@ button:hover, #downloadBtn:hover {
     margin: auto;
     max-width: 90%;
     max-height: 90%;
+    min-width: 40%;
   }
   
   #txtCanvas {
