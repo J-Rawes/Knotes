@@ -147,6 +147,22 @@ button:hover, #downloadBtn:hover {
   }
 
 
+#delete-button {
+
+    border-color: #c30026;
+    display: flex; /* Enable flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically (optional) */
+    margin: auto;
+
+}
+
+#delete-button:hover {
+
+    border-color: #ff1744;
+
+}
+
 #like-button, #downloadBtn, #uComment {
     display: flex; /* Enable flexbox */
     justify-content: center; /* Center horizontally */
