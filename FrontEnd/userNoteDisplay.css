@@ -301,6 +301,30 @@ position: relative;
   border-color: #ff1744;
 }
 
+#comments {
+    display: flex;
+    flex-direction: column; /* Stack comments vertically */
+    align-items: center;    /* Center-align the comments */
+    margin: 20px auto;
+    width: 90%; /* Adjust width as needed */
+}
+
+.comment-div {
+    border: 2px solid #13E3D5;
+    border-radius: 10px;
+    width: 60%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.no-comments-message {
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 20px
+}
+
   
   @media screen and (max-width: 600px) {
   
