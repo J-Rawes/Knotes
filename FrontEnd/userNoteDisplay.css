@@ -150,6 +150,7 @@ button:hover, #downloadBtn:hover {
 #delete-button {
 
     border-color: #c30026;
+    color: #c30026;
     display: flex; /* Enable flexbox */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically (optional) */
@@ -160,6 +161,7 @@ button:hover, #downloadBtn:hover {
 #delete-button:hover {
 
     border-color: #ff1744;
+    color: #ff1744;
 
 }
 
