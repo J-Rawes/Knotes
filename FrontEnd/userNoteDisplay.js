@@ -342,7 +342,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     // Attach event listeners for adding comments
     document.getElementById("addCommentButton").addEventListener("click", () => {
-        const author = document.getElementById("commentAuthor").value;
         const text = document.getElementById("commentText").value;
 
         if (author && text) {
