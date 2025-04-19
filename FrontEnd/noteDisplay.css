@@ -152,6 +152,12 @@ button:hover, #downloadBtn:hover {
     align-items: center; /* Center vertically (optional) */
     margin: auto;
 }
+
+#uComment {
+
+    width: 200px;
+
+}
   
 #details {
     color: #fff;
