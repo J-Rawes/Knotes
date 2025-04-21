@@ -164,6 +164,7 @@ app.post('/login', async (req, res) => {
 
         const query = 'SELECT pword FROM "Users" WHERE uname = $1';
         const result = await client.query(query, [username]);
+      console.log(result);
         const storedHashPass = result.rows[0]?.pword;
 
         console.log(storedHashPass + " " + password);
