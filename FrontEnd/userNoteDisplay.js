@@ -345,17 +345,17 @@ window.addEventListener("DOMContentLoaded", async () => {
     generateComments(noteID);
 
     // Attach event listeners for adding comments
-    document.getElementById("addCommentButton").addEventListener("click", () => {
-        const text = document.getElementById("commentText").value;
+    // document.getElementById("addCommentButton").addEventListener("click", () => {
+    //     const text = document.getElementById("commentText").value;
 
-        if (author && text) {
-            addComment(author, text);
-            document.getElementById("commentAuthor").value = ""; // Clear input fields
-            document.getElementById("commentText").value = "";
-        } else {
-            alert("Please fill out both fields before submitting.");
-        }
-    });
+    //     if (author && text) {
+    //         addComment(author, text);
+    //         document.getElementById("commentAuthor").value = ""; // Clear input fields
+    //         document.getElementById("commentText").value = "";
+    //     } else {
+    //         alert("Please fill out both fields before submitting.");
+    //     }
+    // });
 
     window.nextImg = nextImg;
     window.nextTxt = nextTxt;
